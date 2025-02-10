@@ -12,6 +12,8 @@ namespace ProjectPos.Services.Interfaces
     public interface IProductInventoryService
     {
         public ServiceResponse<ProductInventoryDto> Create(ProductInventoryDto inventory);
+        
+        public ServiceResponse<bool> UpdateStatus();
         public ServiceResponse<ProductInventoryDto> Update(ProductInventoryDto inventory);
 
         public ServiceResponse<List<ProductInventoryDto>> UpdateRange(List<ProductInventoryDto> inventory);

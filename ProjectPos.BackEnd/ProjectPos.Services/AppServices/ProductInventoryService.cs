@@ -73,6 +73,48 @@ namespace ProjectPos.Services.AppServices
             }
         }
 
+        public ServiceResponse<bool> UpdateStatus()
+        {
+            try
+            {
+                var products = _context.ProductInventories.ToList();
+                foreach (var product in products)
+                {
+                    if (product.QuantityOnHand <= 0)
+                    {
+                        product.Status = Status.OutOfStock;
+                    } else if (product.QuantityOnHand < product.IdealQuantity)
+                    {
+                        product.Status = Status.LowStock;
+                    }
+                    else
+                    {
+                        product.Status = Status.InStock;
+                    }
+                }
+                
+                _context.SaveChanges();
+                return new ServiceResponse<bool>()
+                {
+                    IsSuccess = true,
+                    Message = "Product Updated",
+                    Time = DateTime.Now,
+                    
+                };
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating status");
+                return new ServiceResponse<bool>
+                {
+                    IsSuccess = false,
+                    Message = $"Network Failed: {ex.Message}",
+                    Time = DateTime.Now,
+                };
+            }
+        }
+
         public ServiceResponse<ProductInventoryDto> Delete(int id)
         {
             try

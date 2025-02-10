@@ -1632,27 +1632,26 @@ export class PointOfSaleComponent implements OnInit {
       let baseWidth = 100;
       let l = this.newOder.salesOrderItems!.length * 12;
       var staus = this.newOder.status === SalesOrderStatus.Complete ? "TAX INVOICE" : "QUOTATION";
-      let pdf = new jspdf('p', 'mm', [baseWidth, l+150]);
+      let pdf = new jspdf('p', 'mm', [baseWidth, l+220]);
   
       //shearwate logo
       pdf.setFontSize(10);
       
       //shearwater address
-      pdf.text('Andile Fresh Farm Produce | Post Office Box 000'
-        +'\n0 Magwaza Complex | Mkhosana Main\nVictoria Falls | Zimbabwe\n+263 77 957 7216 | example@email.com'
-        +'\nVat No 0000000 | BP No 0000000\nwww.andilefreshfarm.com', baseWidth/2, 25, { align: 'center' });
+      pdf.text('T&T Solar | Post Office Box 642'
+        +'\nChinotimba\nVictoria Falls | Zimbabwe\n+263 783 134 362 | ', baseWidth/2, 25, { align: 'center' });
   
       pdf.setFontSize(12);
   
       pdf.text('Invoice Date:            ' 
           +  '\nInvoice No:               '
           +  '\nBuyer Name:         ' 
-          +  '\nReceipt Number:  ' , 3, 65);
+          +  '\nReceipt Number:  ' , 3, 50);
   
       pdf.text( new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) 
           +  '\n' + this.newOder.id 
-          +  '\n' + customerName
-          +  '\n' + this.newOder.id, baseWidth - 5, 65, { align: 'right' });
+          +  '\n' + 'Walk In'
+          +  '\n' + this.newOder.id, baseWidth - 5, 50, { align: 'right' });
       
   
   
@@ -1688,7 +1687,7 @@ export class PointOfSaleComponent implements OnInit {
           [ '', '', 'Change', (change).toFixed(2)],
           [ '', '', 'Return', (creditReturn).toFixed(2)],
         ],
-        startY: 80,
+        startY: 72,
         margin: 3,
         theme: 'striped',
         styles: {
@@ -1707,24 +1706,24 @@ export class PointOfSaleComponent implements OnInit {
         }
       });
 
-      let footerY = autoTableEndPosY + 10 || 90; // Position footer based on table end
+      let footerY = autoTableEndPosY; // Position footer based on table end
   
-      pdf.line(3,  footerY + 5, baseWidth - 5,  footerY + 5, 'F');
+      pdf.line(3,  footerY + 5, baseWidth - 3,  footerY + 5, 'F');
 
       pdf.text('TELLER:            ' 
         +  '\nTERMINAL:               '
-        +  '\nTIME:         ' , 5, footerY + 10);
+        +  '\nTIME:         ' , 3, footerY + 10);
 
       pdf.text( this.user.fullName
           +  '\n' + new Date().getTime()
-          +  '\n' + new Date(new Date().getTime() + (2 * 60 * 60 * 1000)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }), baseWidth - 5, footerY + 10, { align: 'right' });
-      pdf.text('Thank you for shopping with us!',baseWidth/2,  footerY + 33 , {align: 'center'})
+          +  '\n' + new Date(new Date().getTime() + (2 * 60 * 60 * 1000)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }), baseWidth - 3, footerY + 10, { align: 'right' });
+      pdf.text('Thank you for shopping with us!',baseWidth/2,  footerY + 30 , {align: 'center'})
       // pdf.autoPrint();
       // window.open(pdf.output('bloburl'));
 
       var receipt = pdf.output("blob");
       var newReceipt : PrintReceiptDto = {
-        printerName: "EPSON TM-T88V Receipt (2)",
+        printerName: "SLK-TL320",
         receipt: receipt
       }
       this.salesOrderService.printReceipt(newReceipt).subscribe((res) => {
