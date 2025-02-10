@@ -1,0 +1,594 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <!-- confirmation dialogue box -->
+				<p-confirmDialog #cd header="Notification">
+					<ng-template pTemplate="content">
+						<!-- confirmation message here -->
+					</ng-template>
+					<ng-template pTemplate="footer">
+						<button type="button" class="p-button-danger mr-2" pButton icon="pi pi-times" label="NO" (click)="cd.reject()"></button>
+						<button type="button" class="p-button-success mr-2" pButton icon="pi pi-check" label="YES" (click)="cd.accept()"></button>
+					</ng-template>
+				</p-confirmDialog>
+                <div class="col-12">
+                    <p-tabView orientation="left">
+                        <!-- fresh produce inventory -->
+                        <p-tabPanel header="Fresh Produce" class="line-height-3 m-0">
+                            <p-fieldset class="col-6" legend="Period Select">
+                                <div class="col-9 flex flex-column md:flex-row p-1 w-full gap-5">
+                                    <span class="p-float-label">
+                                        <p-dropdown appendTo="body" inputId="id" [options]="filterOptions" [(ngModel)]="filter"
+                                            placeholder="Filter By" (onChange)="showAll()">
+                                        </p-dropdown>
+                                        <label for="currency">Filter By</label>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                                        <p-dropdown appendTo="body" inputId="id" [options]="freshCategories" [(ngModel)]="subCategory"
+                                            placeholder="Filter By" optionLabel="name" (onChange)="filterFreshProducts()">
+                                        </p-dropdown>
+                                        <label for="currency">Category</label>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL' && isFreshStockTake">
+                                        <button pButton label="UPDATE INVENTORY" icon="pi pi-plus" class="p-button-success mr-2"
+                                                    (click)="updateFreshInventory()"></button>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL'&& isFreshStockTake">
+                                        <button pButton label="PRINT STOCK SHEET" icon="pi pi-plus" class="p-button-success mr-2"
+                                                    (click)="printStockCountSheet(isFresh)"></button>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL'&& isFreshStockTake">
+                                        <button pButton label="PRINT ON TILL" icon="pi pi-plus" class="p-button-success mr-2"
+                                                    (click)="printStockCountSheet100(isFresh)"></button>
+                                    </span>
+                                </div>
+                            </p-fieldset>
+
+                            <!-- fresh produce table -->
+                            <div class="col-12">
+                                <p-table class="header-line-table" #dt [value]="filteredFreshInventories" [columns]="cols" responsiveLayout="scroll" 
+                                    [globalFilterFields]="['name', 'barCode']" [(selection)]="damagedProducts"
+                                    [showCurrentPageReport]="true"  [scrollable]="true" scrollHeight="500px" 
+                                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                                    [rowHover]="true" dataKey="id">
+                                    <ng-template pTemplate="caption">
+                                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                            <span class="block mt-2 md:mt-0 p-input-icon-right">
+                                                
+                                                <button pButton label="GENERATE REPORT" icon="pi pi-plus" class="p-button-success mr-2" *ngIf="isFreshStockTake"
+                                                    (click)="generateStockTake('FreshProduce')" (click)="fresh()"></button>
+                                                <button pButton label="GENERATE STOCK VALUE REPORT" icon="pi pi-plus" class="p-button-primary mr-2" *ngIf="isFreshStockTake"
+                                                    (click)="generateStockTakeValue('FreshProduce')"></button>
+                                                <button pButton label="OPEN STOCK TAKE" icon="pi pi-times" class="p-button-success mr-2" *ngIf="!isFreshStockTake"
+                                                    (click)="onOpenStockTake('FreshProduce')"></button>
+                                                <button pButton label="CLOSE STOCK TAKE" icon="pi pi-times" class="p-button-danger mr-2" *ngIf="isFreshStockTake"
+                                                    (click)="onCloseStockTake('FreshProduce')"></button>    
+
+                                            </span>
+                                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                                <i class="pi pi-search"></i>
+                                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                                    class="w-full sm:w-auto" />
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width: 3rem">
+                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                            </th>
+                                            
+                                            <th pSortableColumn="pluCode">Barcode <p-sortIcon field="pluCode"></p-sortIcon></th>
+                                            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                                            <th >Qty On Hand </th>
+                                            <th pSortableColumn="description">Stock Count</th>
+                                            <th >Unit </th>
+                                            <th >Price </th>
+                                            <th >Status </th>
+                                            <th></th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-product>
+                                        <tr>
+                                            <td>
+                                                <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span class="p-column-title">pluCode</span>
+                                                {{product.barCode}}
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span class="p-column-title">name</span>
+                                                {{product.name}}
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span class="p-column-title">Phone</span>
+                                                {{product.quantityOnHand}}
+                                            </td>
+                                            <td style="width:14%; min-width:8rem;">
+                                                <span class="p-column-title">description</span>
+                                                {{product.stockCount}}
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span class="p-column-title">Country</span>
+                                                {{product.unit}}
+                                            </td>
+                                            <td style="width:14%; min-width:8rem;" *ngIf="product.productPrice">
+                                                <span class="p-column-title">description</span>
+                                                {{product.productPrice.price | currency}}
+                                            </td>
+                                            <td style="width:14%; min-width:8rem;" *ngIf="!product.productPrice">
+                                                <span class="p-column-title">description</span>
+                                                $0.00
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span [class]="'product-badge status-' + product.status.toLowerCase()">{{product.status}}</span>
+                                            </td>
+                                            <!-- <td style="width:14%; min-width:8rem;">
+                                                <div class="flex">
+                                                    <button pButton pRipple icon="pi pi-pencil" label="EDIT" class="p-button-success mr-2"
+                                                        (click)="edit(product)"></button>
+                                                    <button pButton pRipple icon="pi pi-trash" label="DELETE" class="p-button-danger"
+                                                        (click)="delete(product)"></button>
+                                                </div>
+                                            </td> -->
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+
+                        <!-- dry goods inventory -->
+                        <p-tabPanel header="Dry Goods" class="line-height-3 m-0">
+                            <p-fieldset class="col-6" legend="Period Select">
+                                <div class="col-9 flex flex-column md:flex-row p-1 w-full gap-5">
+                                    <span class="p-float-label">
+                                        <p-dropdown appendTo="body" inputId="id" [options]="filterOptions" [(ngModel)]="filter"
+                                            placeholder="Filter By" (onChange)="showAll()">
+                                        </p-dropdown>
+                                        <label for="currency">Filter By</label>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                                        <p-dropdown appendTo="body" inputId="id" [options]="dryCategories" [(ngModel)]="subCategory"
+                                            placeholder="Filter By" optionLabel="name" (onChange)="filterDryProducts()">
+                                        </p-dropdown>
+                                        <label for="currency">Category</label>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL' && isDryStockTake">
+                                        <button pButton label="UPDATE INVENTORY" icon="pi pi-plus" class="p-button-success mr-2"
+                                                    (click)="updateDryInventory()" (click)="dry()" ></button>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL' && isDryStockTake">
+                                        <button pButton label="PRINT STOCK SHEET" icon="pi pi-plus" class="p-button-success mr-2"
+                                                    (click)="printStockCountSheet(!isFresh)"></button>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL'&& isDryStockTake">
+                                        <button pButton label="PRINT ON TILL" icon="pi pi-plus" class="p-button-success mr-2"
+                                                    (click)="printStockCountSheet100(!isFresh)"></button>
+                                    </span>
+                                </div>
+                            </p-fieldset>
+                            <div class="col-12">
+                                <p-table class="header-line-table" #dt2 [value]="filteredDryInventories" [columns]="cols" responsiveLayout="scroll" 
+                                    [globalFilterFields]="['name', 'barCode']" [(selection)]="damagedProducts"
+                                    [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                                    [rowHover]="true" dataKey="id">
+                                    <ng-template pTemplate="caption">
+                                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                            <span class="block mt-2 md:mt-0 p-input-icon-right">
+                                                
+                                                <button pButton label="GENERATE REPORT" icon="pi pi-plus" class="p-button-success mr-2" *ngIf="isDryStockTake"
+                                                    (click)="generateStockTake('DryGoods')" (click)="fresh()"></button>
+                                                
+                                                <button pButton label="GENERATE STOCK VALUE REPORT" icon="pi pi-plus" class="p-button-primary mr-2" *ngIf="isDryStockTake"
+                                                            (click)="generateStockTakeValue('DryGoods')"></button>
+                                                <button pButton label="OPEN STOCK TAKE" icon="pi pi-times" class="p-button-success mr-2" *ngIf="!isDryStockTake"
+                                                                (click)="onOpenStockTake('DryGoods')"></button>
+                                                <button pButton label="CLOSE STOCK TAKE" icon="pi pi-times" class="p-button-danger mr-2" *ngIf="isDryStockTake"
+                                                            (click)="onCloseStockTake('DryGoods')"></button> 
+
+                                            </span>
+                                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                                <i class="pi pi-search"></i>
+                                                <input pInputText type="text" (input)="onGlobalFilter(dt2, $event)" placeholder="Search..."
+                                                    class="w-full sm:w-auto" />
+                                            </span>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th style="width: 3rem">
+                                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                            </th>
+                                            
+                                            <th pSortableColumn="barCode">Bar Code <p-sortIcon field="barCode"></p-sortIcon></th>
+                                            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                                            <th pSortableColumn="description">Qty On Hand</th>
+                                            <th pSortableColumn="description">Stock Count</th>
+                                            <th pSortableColumn="country">Unit </th>
+                                            <th pSortableColumn="country">Price </th>
+                                            <th pSortableColumn="country">Status </th>
+                                            <th></th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-product>
+                                        <tr>
+                                            <td>
+                                                <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span class="p-column-title">barCode</span>
+                                                {{product.barCode}}
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span class="p-column-title">name</span>
+                                                {{product.name}}
+                                            </td>
+                                            <td style="width:14%; min-width:8rem;">
+                                                <span class="p-column-title">description</span>
+                                                {{product.quantityOnHand}}
+                                            </td>
+                                            <td style="width:14%; min-width:8rem;">
+                                                <span class="p-column-title">description</span>
+                                                {{product.stockCount}}
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span class="p-column-title">Country</span>
+                                                {{product.unit}}
+                                            </td>
+                                            <td style="width:14%; min-width:8rem;" *ngIf="product.productPrice">
+                                                <span class="p-column-title">description</span>
+                                                {{product.productPrice.price | currency}}
+                                            </td>
+                                            <td style="width:14%; min-width:8rem;" *ngIf="!product.productPrice">
+                                                <span class="p-column-title">description</span>
+                                                $0.00
+                                            </td>
+                                            <td style="width:14%; min-width:10rem;">
+                                                <span [class]="'product-badge status-' + product.status.toLowerCase()">{{product.status}}</span>
+                                            </td>
+                                            <!-- <td style="width:14%; min-width:8rem;">
+                                                <div class="flex">
+                                                    <button pButton pRipple icon="pi pi-pencil" label="EDIT" class="p-button-success mr-2"
+                                                        (click)="edit(product)"></button>
+                                                    <button pButton pRipple icon="pi pi-trash" label="DELETE" class="p-button-danger"
+                                                        (click)="delete(product)"></button>
+                                                </div>
+                                            </td> -->
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- update inventory -->
+        <p-dialog [(visible)]="updadteInventoryModal" [style]="{ width: '40%' }" header="{{subCategory.name}}"
+            [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <!-- <div class="flex flex-column md:flex-row align-items-center p-3 w-full"> -->
+                            <p-table class="header-line-table" #dt3 [value]="filteredInventories" [columns]="cols" responsiveLayout="scroll"
+                                    [globalFilterFields]="['name']" [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="80%" 
+                                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                    [rowHover]="true" dataKey="id">
+                                    <ng-template pTemplate="caption">
+                                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                            <span class="block mt-2 md:mt-0 p-input-icon-right">
+                                                <h5 class="m-0">Change Quantities</h5>
+                                            </span>
+                                            
+                                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                                <i class="pi pi-search"></i>
+                                                <input pInputText type="text" (input)="onGlobalFilter(dt3, $event)" placeholder="Search..."
+                                                    class="w-full sm:w-auto" />
+                                            </span>
+                                        </div>
+                                        
+                                    </ng-template>
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Bar Code </th>
+                                            <th>Name </th>
+                                            <th>Stock Count</th>
+                                            <th>Unit </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-product>
+                                        <tr>
+                                            <td style="width:20%; min-width:10rem;">
+                                                <span class="p-column-title">Name</span>
+                                                {{product.barCode}}
+                                            </td>
+                                            <td style="width:40%; min-width:10rem;">
+                                                <span class="p-column-title">Phone</span>
+                                                {{product.name}}
+                                            </td>
+                                            <td [pEditableColumn]="product.quantity" pEditableColumnField="quantity">
+                                                <p-cellEditor>
+                                                    <ng-template pTemplate="input">
+                                                        <input pInputText type="text" [(ngModel)]="product.quantity" />
+                                                    </ng-template>
+                                                    <ng-template pTemplate="output">
+                                                        {{ product.quantity }}
+                                                    </ng-template>
+                                                </p-cellEditor>
+                                            </td>
+                                            <td style="width:20%; min-width:10rem;">
+                                                <span class="p-column-title">Country</span>
+                                                {{product.unit}}
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" 
+                    (click)="updateRange()"></button>
+            </ng-template>
+        </p-dialog> 
+
+        <!-- stocktake report -->
+        <p-dialog [(visible)]="stockTakeReportModal" [style]="{ width: '80%' }" header="{{subCategory.name || department}}"
+            [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <p-fieldset class="col-6" legend="Period Select">
+                            <div class="col-9 flex flex-column md:flex-row p-1 w-full gap-5">
+                                <span class="p-float-label">
+                                    <p-dropdown appendTo="body" inputId="id" [options]="filterOptions" [(ngModel)]="filter"
+                                        placeholder="Filter By" (onChange)="onFilter($event)">
+                                    </p-dropdown>
+                                    <label for="currency">Filter By</label>
+                                </span>
+                                <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                                    <p-dropdown appendTo="body" inputId="id" [options]="freshCategories" [(ngModel)]="subCategory" *ngIf="department === 'FreshProduce'"
+                                        placeholder="Filter By" optionLabel="name" (onChange)="filterStockTakeReport($event)">
+                                    </p-dropdown>
+                                    <p-dropdown appendTo="body" inputId="id" [options]="dryCategories" [(ngModel)]="subCategory" *ngIf="department === 'DryGoods'"
+                                        placeholder="Filter By" optionLabel="name" (onChange)="filterStockTakeReport($event)">
+                                    </p-dropdown>
+                                    <label for="currency">Category</label>
+                                </span>
+                                <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                                    <button pButton label="PRINT" icon="pi pi-plus" class="p-button-success mr-2"
+                                                (click)="updateFreshInventory()"></button>
+                                </span>
+                                
+                            </div>
+                        </p-fieldset>
+                        <!-- <div class="flex flex-column md:flex-row align-items-center p-3 w-full"> -->
+                        <p-table class="header-line-table" #dt3 [value]="filteredStockTakeReport" [columns]="cols" responsiveLayout="scroll"
+                                [globalFilterFields]="['name']" [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                [rowHover]="true" dataKey="id" [rowHover]="true" dataKey="id" sortMode="single" [tableStyle]="{'min-width': '75rem'}">
+                                
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" rowspan='2'>Bar Code</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" rowspan='2'>Name</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" [attr.colspan]="9">Stock Quantities</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Opening</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Received</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Damaged</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Returned</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Sold</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Closing</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">On Hand</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">On Shelf</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Variance</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-product>
+                                    <tr>
+                                        <td style="width:15%; min-width:10rem;">
+                                            <span class="p-column-title">Name</span>
+                                            {{product.barCode}}
+                                        </td>
+                                        <td style="width:30%; min-width:10rem;">
+                                            <span class="p-column-title">Phone</span>
+                                            {{product.productName}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.openingStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.receivedQuantity.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.damagedQuantity.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.returnedQuantity.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.soldQuantity.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.closingStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.quantityOnHand.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.quantityOnShelf.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.variance.toFixed(2)}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td colspan="2" class="text-left">Totals</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{openingStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{receivedStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{damagedStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{returnedStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{soldStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{closingStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{quantityOnHand.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{quantityOnShelf.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{variance.toFixed(2) }}</td>
+                                    </tr>
+            
+                                </ng-template>
+                            </p-table>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </ng-template>
+        </p-dialog> 
+
+        <!-- stocktake report -->
+        <p-dialog [(visible)]="stockValueReportModal" [style]="{ width: '80%' }" header="{{subCategory.name || department}}"
+            [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <p-fieldset class="col-6" legend="Period Select">
+                            <div class="col-9 flex flex-column md:flex-row p-1 w-full gap-5">
+                                <span class="p-float-label">
+                                    <p-dropdown appendTo="body" inputId="id" [options]="filterOptions" [(ngModel)]="filter"
+                                        placeholder="Filter By" (onChange)="onFilterStockValue($event)">
+                                    </p-dropdown>
+                                    <label for="currency">Filter By</label>
+                                </span>
+                                <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                                    <p-dropdown appendTo="body" inputId="id" [options]="freshCategories" [(ngModel)]="subCategory" *ngIf="department === 'FreshProduce'"
+                                        placeholder="Filter By" optionLabel="name" (onChange)="filterStockValueReport($event)">
+                                    </p-dropdown>
+                                    <p-dropdown appendTo="body" inputId="id" [options]="dryCategories" [(ngModel)]="subCategory" *ngIf="department === 'DryGoods'"
+                                        placeholder="Filter By" optionLabel="name" (onChange)="filterStockValueReport($event)">
+                                    </p-dropdown>
+                                    <label for="currency">Category</label>
+                                </span>
+                                <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                                    <button pButton label="PRINT" icon="pi pi-plus" class="p-button-success mr-2"
+                                                (click)="updateFreshInventory()"></button>
+                                </span>
+                                
+                            </div>
+                        </p-fieldset>
+                        <!-- <div class="flex flex-column md:flex-row align-items-center p-3 w-full"> -->
+                        <p-table class="header-line-table" #dt3 [value]="filteredStockValueReport" [columns]="cols" responsiveLayout="scroll"
+                                [globalFilterFields]="['name']" [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                                [rowHover]="true" dataKey="id" [rowHover]="true" dataKey="id" sortMode="single" [tableStyle]="{'min-width': '75rem'}">
+                                
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" rowspan='2'>Bar Code</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" rowspan='2'>Name</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" [attr.colspan]="9">Stock Quantities</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Opening</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Received</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Damaged</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Returned</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Sold</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Closing</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">On Hand</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">On Shelf</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">Variance</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-product>
+                                    <tr>
+                                        <td style="width:15%; min-width:10rem;">
+                                            <span class="p-column-title">Name</span>
+                                            {{product.barCode}}
+                                        </td>
+                                        <td style="width:30%; min-width:10rem;">
+                                            <span class="p-column-title">Phone</span>
+                                            {{product.productName}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.openingStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.receivedStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.damagedStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.returnedStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.soldStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.closingStock.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.stockOnHand.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.stockOnShelf.toFixed(2)}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" class="text-right">
+                                            <span class="p-column-title">Country</span>
+                                            {{product.variance.toFixed(2)}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td colspan="2" class="text-left">Totals</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{openingStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{receivedStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{damagedStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{returnedStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{soldStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{closingStock.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{quantityOnHand.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{quantityOnShelf.toFixed(2) }}</td>
+                                        <td class="text-right" style="background-color: rgb(202, 201, 201);font-size:larger;">{{variance.toFixed(2) }}</td>
+                                    </tr>
+            
+                                </ng-template>
+                            </p-table>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </ng-template>
+        </p-dialog> 
+    </div>
+</div>
+

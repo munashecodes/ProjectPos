@@ -1,0 +1,242 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+               
+                <div class="col-12">
+                    <p-table class="header-line-table" #dt [value]="rates" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                    [globalFilterFields]="['name']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                    [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <div class="col-10">
+                                <button pButton label="CREATE" icon="pi pi-plus" class="p-button-success mr-2"
+                                (click)="create()"></button>
+                                <button pButton pRipple label="DELETE" icon="pi pi-trash" class="p-button-danger"
+                                    (click)="deleteSelected()">
+                                </button>
+                            </div>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            
+                            <th pSortableColumn="name">Currency <p-sortIcon field="name"></p-sortIcon></th>
+                            <th pSortableColumn="phone">Base Currency <p-sortIcon field="phone"></p-sortIcon></th>
+                            <th pSortableColumn="email">Rate Base<p-sortIcon field="email"></p-sortIcon></th>
+                            <th pSortableColumn="country">Date Effected <p-sortIcon field="country"></p-sortIcon></th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rate>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="rate"></p-tableCheckbox>
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Currency</span>
+                                {{ rate.currency }}
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Base Currency</span>
+                                {{ rate.exchangeRate.baseCurrency }}
+                            </td>
+                            <td style="width:20%; min-width:8rem;">
+                                <span class="p-column-title">Rate To Base</span>
+                                {{ rate.exchangeRate.baseToRate }}
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Date Effected</span>
+                                {{ rate.dateEffected | date: 'd MMMM y' }}
+                            </td>
+                            <td style="width:20%; min-width:8rem;">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-pencil" label="EDIT" class="p-button-success mr-2"
+                                        (click)="edit(rate)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" label="DELETE" class="p-button-danger"
+                                        (click)="delete(rate)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+                
+            </div>
+
+            <!-- create modal -->
+            <p-dialog [(visible)]="createModal" [style]="{ width: '30%' }" header="New rate"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+                                <div class="field col-12">
+                                    <!-- <div class="field">
+                                        <span class="p-float-label">
+                                            <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newRate.baseCurrency" inputId="name"
+                                                [options]="currencies" placeholder="Select Country">
+                                                <ng-template pTemplate="selectedCountry">
+                                                    <span *ngIf="newRate && newRate.baseCurrency">{{ newRate.baseCurrency }}
+                                                    </span>
+                                                </ng-template>
+                                                <ng-template let-option pTemplate="item">
+                                                    <span>{{ option }}</span>
+                                                </ng-template>
+                                            </p-dropdown>
+                                            <label for="country">Base Currency</label>
+                                        </span>
+                                        
+                                    </div> -->
+                                    <div class="field">
+                                        <span class="p-float-label">
+                                            <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newRate.currency" inputId="name"
+                                                [options]="currencies" placeholder="Select Country">
+                                                <ng-template pTemplate="selectedCountry">
+                                                    <span *ngIf="newRate && newRate.currency">{{ newRate.currency }}
+                                                    </span>
+                                                </ng-template>
+                                                <ng-template let-option pTemplate="item">
+                                                    <span>{{ option }}</span>
+                                                </ng-template>
+                                            </p-dropdown>
+                                            <label for="country">Currency</label>
+                                        </span>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <span class="p-float-label">
+                                            <input type="number" pInputText id="price" [(ngModel)]="newRate.baseToRate" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newRate.baseToRate}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newRate.baseToRate">Item
+                                                phone is
+                                                required.</small>
+                                            <label for="price">Base To Rate</label>
+                                        </span>
+                                        
+                                    </div>
+                                    <!-- <div class="field">
+                                        <label for="createdOn">Registration Date</label>
+                                        <p-calendar appendTo="body" class="p-inputtext-sm" type="date" [(ngModel)]="newRate.dateEffected"
+                                            dateFormat="d MM yy" [showIcon]="true"></p-calendar>
+                                        <small class="ng-dirty ng-invalid"
+                                            *ngIf="submitted && !newRate.dateEffected">Registration Date
+                                            is required.</small>
+                                    </div> -->
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                        [disabled]="!newRate.currency "></button>
+                </ng-template>
+            </p-dialog> 
+
+            <!-- create modal -->
+            <p-dialog [(visible)]="editModal" [style]="{ width: '30%' }" header="New rate"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+                                <div class="field col-12">
+                                    <div class="field">
+                                        <span class="p-float-label">
+                                            <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newRate.baseCurrency" inputId="name"
+                                                [options]="currencies" placeholder="Select Country">
+                                                <ng-template pTemplate="selectedCountry">
+                                                    <span *ngIf="newRate && newRate.baseCurrency">{{ newRate.baseCurrency }}
+                                                    </span>
+                                                </ng-template>
+                                                <ng-template let-option pTemplate="item">
+                                                    <span>{{ option }}</span>
+                                                </ng-template>
+                                            </p-dropdown>
+                                            <label for="country">Base Currency</label>
+                                        </span>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <span class="p-float-label">
+                                            <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newRate.currency" inputId="name"
+                                                [options]="currencies" placeholder="Select Country">
+                                                <ng-template pTemplate="selectedCountry">
+                                                    <span *ngIf="newRate && newRate.currency">{{ newRate.currency }}
+                                                    </span>
+                                                </ng-template>
+                                                <ng-template let-option pTemplate="item">
+                                                    <span>{{ option }}</span>
+                                                </ng-template>
+                                            </p-dropdown>
+                                            <label for="country">Currency</label>
+                                        </span>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <span class="p-float-label">
+                                            <input type="number" pInputText id="price" [(ngModel)]="newRate.baseToRate" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newRate.baseToRate}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newRate.baseToRate">Item
+                                                phone is
+                                                required.</small>
+                                            <label for="price">Base To Rate</label>
+                                        </span>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <label for="createdOn">Registration Date</label>
+                                        <p-calendar appendTo="body" class="p-inputtext-sm" [(ngModel)]="newRate.dateEffected"
+                                            dateFormat="d MM yy" [showIcon]="true"></p-calendar>
+                                        <small class="ng-dirty ng-invalid"
+                                            *ngIf="submitted && !newRate.dateEffected">Registration Date
+                                            is required.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                        [disabled]="!newRate.currency "></button>
+                </ng-template>
+            </p-dialog> 
+
+            <!-- edit modal -->
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span *ngIf="newRate">Are you sure you want to delete <b>{{newRate.currency}}</b>?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="deleteModal = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="confirmDelete()"></button>
+                </ng-template>
+            </p-dialog>
+    </div>
+</div>
+

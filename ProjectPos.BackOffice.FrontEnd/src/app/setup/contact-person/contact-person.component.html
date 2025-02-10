@@ -1,0 +1,412 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                
+                <div class="col-12">
+                    <p-table class="header-line-table" #dt [value]="contactPersons" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                    [globalFilterFields]="['firstName']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,14,30]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                    [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <div class="col-10">
+                                <button pButton label="NEW" icon="pi pi-plus" class="p-button-success mr-2"
+                                (click)="create()"></button>
+                                <button pButton pRipple label="DELETE" icon="pi pi-trash" class="p-button-danger"
+                                    (click)="deleteSelected()">
+                                </button>
+                            </div>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th pSortableColumn="title">Title <p-sortIcon field="title"></p-sortIcon></th>
+                            <th pSortableColumn="firstName">First Name <p-sortIcon field="firstName"></p-sortIcon></th>
+                            <th pSortableColumn="lastName">Last Name <p-sortIcon field="lastName"></p-sortIcon></th>
+                            <th pSortableColumn="jobPostion">Job Position <p-sortIcon field="jobPostion"></p-sortIcon></th>
+                            <th pSortableColumn="email">Email<p-sortIcon field="email"></p-sortIcon></th>
+                            <th pSortableColumn="phone1">Cell<p-sortIcon field="phone1"></p-sortIcon></th>
+                            <th pSortableColumn="company">Company <p-sortIcon field="company"></p-sortIcon></th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-person>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="person"></p-tableCheckbox>
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">title</span>
+                                {{person.title}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">firstName</span>
+                                {{person.firstName}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{person.lastName}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">jobPostion</span>
+                                {{person.jobPosition}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <span class="p-column-title">Email</span>
+                                {{person.email}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <span class="p-column-title">phone1</span>
+                                {{person.phone1}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">company</span>
+                                {{person.company.name}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-pencil" label="EDIT" class="p-button-success mr-2"
+                                        (click)="edit(person)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" label="DELETE" class="p-button-danger"
+                                        (click)="delete(person)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+                
+            </div>
+
+            <!-- create modal -->
+            <p-dialog [(visible)]="createModal" [style]="{ width: '50%' }" header="New Contact Person"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="company">Company</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.company"
+                                        inputId="name" [options]="companies" placeholder="Select Company" optionLabel="name">
+        
+                                    </p-dropdown>
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="title">Title</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.title"
+                                        inputId="name" [options]="titles" placeholder="Select Title" >
+        
+                                    </p-dropdown>
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="firstName">First Name</label>
+                                    <input type="text" pInputText id="firstName" [(ngModel)]="newContactPerson.firstName" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.firstName}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.firstName">Item
+                                        firstName is
+                                        required.</small>
+                                        
+                               
+                                
+                            </div>
+                            <div class="field">
+                                <label for="description">Last Name</label>
+                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.lastName" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.lastName}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.lastName">Item
+                                        phone is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="description">Cell</label>
+                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.phone1" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.phone1}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.phone1">Item
+                                        phone is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="title">Job Title</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.jobPosition"
+                                        inputId="name" [options]="JobTitles" placeholder="Select Title" >
+        
+                                    </p-dropdown>
+                                    
+                               
+                                
+                            </div>
+                        </div>
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="description">Email</label>
+                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.email" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.email}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.email">Item
+                                        email is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="street">Street</label>
+                                    <input type="text" pInputText id="street" [(ngModel)]="street" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !street}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !street">Item
+                                        email is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="addressLine1">Address Line 1</label>
+                                    <input type="text" pInputText id="city" [(ngModel)]="addressLine" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !addressLine}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !addressLine">address! line is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="city">City</label>
+                                    <input type="text" pInputText id="city" [(ngModel)]="city" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !city}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !city">city is
+                                        required.</small>
+                                        
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="state">State</label>
+                                    <input type="text" pInputText id="state" [(ngModel)]="state" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !state}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !state">Item
+                                        idealPortions is
+                                        required.</small>
+                                        
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="country">Country</label>
+                                    <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="country" inputId="id" inputValue="name"
+                                        [options]="countries" placeholder="Select Country">
+                                        <ng-template pTemplate="selectedCountry">
+                                            <span *ngIf="newContactPerson && newContactPerson.address?.country">{{ country }}
+                                            </span>
+                                        </ng-template>
+                                        <ng-template let-option pTemplate="item">
+                                            <span>{{ option }}</span>
+                                        </ng-template>
+                                    </p-dropdown>
+                                    
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                        [disabled]="!country "></button>
+                </ng-template>
+            </p-dialog> 
+
+            <!-- edit modal -->
+            <p-dialog [(visible)]="editModal" [style]="{width: '40%'}" header="Edit Contact Person"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="company">Company</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.company"
+                                        inputId="name" [options]="companies" placeholder="Select Company" optionLabel="name">
+        
+                                    </p-dropdown>
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="title">Title</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.title"
+                                        inputId="name" [options]="titles" placeholder="Select Title" >
+        
+                                    </p-dropdown>
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="firstName">First Name</label>
+                                    <input type="text" pInputText id="firstName" [(ngModel)]="newContactPerson.firstName" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.firstName}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.firstName">Item
+                                        firstName is
+                                        required.</small>
+                                        
+                               
+                                
+                            </div>
+                            <div class="field">
+                                <label for="description">Last Name</label>
+                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.lastName" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.lastName}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.lastName">Item
+                                        phone is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="description">Cell</label>
+                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.phone1" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.phone1}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.phone1">Item
+                                        phone is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="title">Job Title</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.jobPosition"
+                                        inputId="name" [options]="JobTitles" placeholder="Select Title" >
+        
+                                    </p-dropdown>
+                                    
+                               
+                                
+                            </div>
+                        </div>
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="description">Email</label>
+                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.email" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.email}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.email">Item
+                                        email is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="street">Street</label>
+                                    <input type="text" pInputText id="street" [(ngModel)]="newContactPerson.address!.street" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !street}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !street">Item
+                                        email is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="addressLine1">Address Line 1</label>
+                                    <input type="text" pInputText id="city" [(ngModel)]="newContactPerson.address!.addressLine1" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !addressLine}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !addressLine">address! line is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="city">City</label>
+                                    <input type="text" pInputText id="city" [(ngModel)]="newContactPerson.address!.city" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !city}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !city">city is
+                                        required.</small>
+                                        
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="state">State</label>
+                                    <input type="text" pInputText id="state" [(ngModel)]="newContactPerson.address!.state" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !state}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !state">Item
+                                        idealPortions is
+                                        required.</small>
+                                        
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="country">Country</label>
+                                    <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newContactPerson.address!.country" inputId="id" inputValue="name"
+                                        [options]="countries" placeholder="Select Country">
+                                        <ng-template pTemplate="selectedCountry">
+                                            <span *ngIf="newContactPerson && newContactPerson.address?.country">{{ country }}
+                                            </span>
+                                        </ng-template>
+                                        <ng-template let-option pTemplate="item">
+                                            <span>{{ option }}</span>
+                                        </ng-template>
+                                    </p-dropdown>
+                                    
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="update()"
+                        [disabled]="!newContactPerson.firstName "></button>
+                </ng-template>
+            </p-dialog> 
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span *ngIf="newContactPerson">Are you sure you want to delete <b>{{newContactPerson.firstName}}</b>?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="deleteModal = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="confirmDelete()"></button>
+                </ng-template>
+            </p-dialog>
+    </div>
+</div>
+

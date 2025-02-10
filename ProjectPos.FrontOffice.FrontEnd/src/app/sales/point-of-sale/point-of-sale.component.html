@@ -1,0 +1,480 @@
+<div class="grid">
+	<div class="col-12">
+		<div class="card">
+			<p-toast></p-toast>
+			<div class="grid">
+				<!-- confirmation dialogue box -->
+				<p-confirmDialog #cd header="Notification">
+					<ng-template pTemplate="content">
+						<!-- confirmation message here -->
+					</ng-template>
+					<ng-template pTemplate="footer">
+						<button type="button" class="p-button-danger mr-2" pButton icon="pi pi-times" label="CANCEL" (click)="cd.reject()"></button>
+						<button type="button" class="p-button-success mr-2" pButton icon="pi pi-check" label="OK" (click)="cd.accept()"></button>
+					</ng-template>
+				</p-confirmDialog>
+
+				<!-- <div class="col-6" style=" border: 1px solid rgb(0, 0, 255);"> -->
+						<!-- <p-dataView #dv [value]="products" [paginator]="true" [rows]="5" filterBy="name" [sortField]="sortField" [sortOrder]="sortOrder" layout="list">
+							<ng-template pTemplate="header">
+								<div class="flex flex-column md:flex-row md:justify-content-between gap-2">
+									<span class="p-input-icon-left">
+										<input type="search" pInputText placeholder="bar code" (input)="onFilter(dv, $event)" autofocus>
+										
+									</span>	
+									<p-dataViewLayoutOptions></p-dataViewLayoutOptions>
+								</div>
+							</ng-template>
+			
+							<ng-template let-product pTemplate="listItem">
+								<div class="col-12">
+									<div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+										<img [src]="product.product.imageDisplay" [alt]="product.name" class="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5" [height]="100"/>
+										<div class="flex-1 flex flex-column align-items-center text-center md:text-left">
+											<div class="font-bold text-2xl">{{product.name}}</div>
+											<div class="mb-2">{{product.barCode}}</div>
+											<p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false" styleClass="mb-2"></p-rating>
+											<div class="flex align-items-center mt-2">
+												<i class="pi pi-tag mr-2"></i>
+												<span class="font-semibold">{{product.category}}</span>
+											</div>
+										</div>
+										<div class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
+											<span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">{{product.productPrice.price | currency:'USD':'symbol'}}</span>
+											<p-button icon="pi pi-shopping-cart" label="Add to Cart" [disabled]="product.status === 'OUTOFSTOCK'" styleClass="mb-2 p-button-sm"
+												(click)="addToCart(product)"></p-button>
+											<span [class]="'product-badge status-' + product.status.toLowerCase()">{{product.status}}</span>
+										</div>
+									</div>
+								</div>
+							</ng-template>
+			
+							<ng-template let-product pTemplate="gridItem">
+								<div class="col-12 md:col-2">
+									<div class="card m-3 border-1 surface-border">
+										<div class="flex flex-wrap gap-2 align-items-center justify-content-between mb-2">
+											<span [class]="'product-badge status-' + product.status.toLowerCase()">{{product.status}}</span>
+										</div>
+										<div class="flex flex-column align-items-center text-center mb-3">
+											<img [src]="product.product.imageDisplay" [alt]="product.name" class="w-9 shadow-2 my-3 mx-0" [height]="125"/>
+											<div class="text-2xl font-bold">{{product.name}}</div>
+											<div class="mb-3">{{product.barCode}}</div>
+											<p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
+										</div>
+										<div class="flex align-items-center justify-content-between">
+											<span class="text-2xl font-semibold">{{product.productPrice.price | currency:'USD':'symbol'}}</span>
+											<p-button icon="pi pi-shopping-cart" [disabled]="product.status === 'OUTOFSTOCK'" (click)="addToCart(product)"></p-button>
+										</div>
+									</div>
+								</div>
+							</ng-template>
+						</p-dataView> -->
+					
+				<!-- </div>
+				<div class="col-6" style="position:relative; border: 1px solid rgb(0, 0, 255);">
+						
+						
+				</div> -->
+				<div class="col-12">
+					<p-splitter [style]="{ height: '650px' }" styleClass="mb-5" class="p-fluid">
+						<ng-template pTemplate >
+							<div class="col-12" style=" border: 1px solid rgb(0, 0, 255);">
+								<div class="col-12">	
+									<p-table class="header-line-table" #dt [value]="filteredProducts" [columns]="cols" responsiveLayout="scroll" 
+										[globalFilterFields]="['name', 'barCode']" 
+										[showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+										currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+										[rowHover]="true" dataKey="id">
+										<ng-template pTemplate="caption">
+											<div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+												<span class="block mt-2 md:mt-0 p-input-icon-left">
+													<input pInputText type="text" placeholder="Search..." [autofocus]="true"
+														class="w-full sm:w-auto" (input)="onGlobalFilter(dt, $event)" (keyup.enter)="onBarCodeScan($event )" />
+												</span>
+												<!-- <span class="block mt-2 md:mt-0 p-input-icon-left">
+													<i class="pi pi-search"></i>
+													<input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+														class="w-full sm:w-auto"/>
+												</span> -->
+												<!-- <span class=" flex flex-column md:flex-row md:justify-content-between md:align-items-right">
+													<button pButton pRipple label="CLEAR" icon="pi pi-times" 
+														class="p-button-danger  mr-2" (click)="onClear()" ></button>
+												</span> -->
+											</div>
+										</ng-template>
+										<ng-template pTemplate="header">
+											<tr>
+												<th >Code </th>
+												<th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+												<th pSortableColumn="country">Price </th>
+												<th pSortableColumn="country">Status </th>
+												<th></th>
+											</tr>
+										</ng-template>
+										<ng-template pTemplate="body" let-product>
+											<tr>
+												<td style="width:20%; min-width:10rem;">
+													<span class="p-column-title">barCode</span>
+													{{product.barCode}}
+												</td>
+												<td style="width:30%; min-width:10rem;">
+													<span class="p-column-title">name</span>
+													{{product.name}}
+												</td>
+												<td style="width:20%; min-width:8rem;" *ngIf="product.productPrice">
+													<span class="p-column-title">description</span>
+													{{product.productPrice.price | currency}}
+												</td>
+												<td style="width:20%; min-width:8rem;" *ngIf="!product.productPrice">
+													<span class="p-column-title">description</span>
+													$0.00
+												</td>
+												<td style="width:20%; min-width:10rem;">
+													<span [class]="'product-badge status-' + product.status.toLowerCase()">{{product.status}}</span>
+												</td>
+												<td style="width:10%; min-width:8rem;" >
+													<div class="flex" *ngIf="!isReturn">
+														<p-button icon="pi pi-shopping-cart" label="Add to Cart" [disabled]="product.status === 'OUTOFSTOCK'" styleClass="mb-2 p-button-sm"
+															(click)="addToCart(product)" [disabled]="isReturn"></p-button>
+													</div>
+												</td>
+											</tr>
+										</ng-template>
+									</p-table>
+								</div>
+							</div>
+						</ng-template>
+						<ng-template pTemplate>
+							<div class="col-12" style=" border: 1px solid rgb(0, 0, 255);">
+								<hr/>
+								<h2>SUB TOTAL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   : {{price | currency:'USD' }}</h2>
+								<h2>VAT    	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;		: {{vat | currency:'USD' }}</h2>
+								<h2>TOTAL  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;	: {{ priceIncludingVat | currency:'USD' }}</h2>
+								<hr/>
+								<h2>Cart</h2>
+								<hr/>
+								<div class="col-12">
+									<p-table #dt [value]="newOder.salesOrderItems!"  responsiveLayout="scroll" 
+										[(selection)]="selectedOrderItems" selectionMode="multiple" [scrollable]="true" scrollHeight="350px" >
+										<ng-template pTemplate="header">
+											<tr>
+												<th>
+													<p-tableHeaderCheckbox/>
+												</th>
+												<th >Name</th>
+												<th >Price</th>
+												<th >Qty</th>
+												<th >Total </th>
+											</tr>
+										</ng-template>
+										<ng-template pTemplate="body" let-item >
+											<tr>
+												<th>
+													<p-tableCheckbox [value]="item.rowIndex"/>
+												</th>
+												<td style="width:40%; min-width:10rem;">
+													<span class="p-column-title">Name</span>
+													{{item.productName}}
+												</td>
+												<td style="width:20%; min-width:10rem;">
+													<span class="p-column-title">Phone</span>
+													{{item.currencyUnitPrice | currency:'USD':'symbol'}}
+												</td>
+												<td style="width:20%; min-width:10rem;">
+													<span class="p-column-title">quantity</span>
+													{{item.quantity}}
+												</td>
+												<td style="width:20%; min-width:10rem;">
+													<span class="p-column-title">Country</span>
+													{{item.currencyPrice | currency:'USD':'symbol'}}
+												</td>
+											</tr>
+										</ng-template>
+										<ng-template pTemplate="content">
+											<tr>
+												<td></td>
+												<td></td>
+												<td></td>
+												<td>Total Cost:</td>
+												<td>{{invoiceValue | currency:'USD' }}</td>
+											</tr>
+					
+										</ng-template>
+									</p-table>
+									<hr/>
+								</div>
+								<div class="col-12" style="border:1px solid green;position:relative; bottom: 5px; left: 0">
+									<div class="grid">
+										<span class=" p-float-label" *ngIf="isReturn === false">
+											<p-dropdown appendTo="body" [options]="currencies"  [(ngModel)]="newOder.currency" (onChange)="changeRate($event)"
+												class="mr-2">
+											</p-dropdown>
+										</span>
+										<span class=" p-float-label" *ngIf="isReturn === false">
+											<p-dropdown appendTo="body" [options]="saleType"  [(ngModel)]="newOder.saleType" 
+												class="mr-2"    >
+											</p-dropdown>
+										</span>
+										<span class=" p-float-label">
+											<button pButton pRipple label="REMOVE" icon="pi pi-minus" 
+												class="p-button-danger  mr-2" (click)="onRemoveFromCart()" ></button>
+										</span>
+										<span class=" p-float-label" *ngIf="isReturn === false">
+											<button pButton pRipple label="DIRECT" icon="pi pi-check" [disabled]="!newOder.currency" 
+												class="p-button-success  mr-2" (click)="directSale(1)" [disabled]="isReturn" ></button>
+										</span>
+										<span class=" p-float-label" *ngIf="isReturn === true && isRemoved">
+											<button pButton pRipple label="CONFIRM RETURN" icon="pi pi-check" [disabled]="!newOder.currency"
+												class="p-button-success  mr-2" (click)="update()" ></button>
+										</span>
+										<span class=" p-float-label" *ngIf="isReturn === false">
+											<button pButton pRipple label="COMPANY" icon="pi pi-check"
+												class="p-button-primary  mr-2" (click)="create()" ></button>
+										</span>
+										<span class=" p-float-label" *ngIf="isReturn === false">
+											<button pButton pRipple label="QUOTATION" icon="pi pi-check"
+												class="p-button-primary  mr-2" (click)="createQuot()" ></button>
+										</span>
+										<span class=" p-float-label" *ngIf="isReturn === false">
+											<button pButton pRipple label="RETURN" icon="pi pi-times" 
+												class="p-button-danger  mr-2" (click)="onReturn()" ></button>
+										</span>
+										<span class=" p-float-label" *ngIf="isReturn === true">
+											<button pButton pRipple label="CANCEL" icon="pi pi-times" 
+												class="p-button-danger  mr-2" (click)="hideDialog()" ></button>
+										</span>
+									</div>
+								</div>
+							</div>
+						</ng-template>
+					</p-splitter>
+				</div>
+			</div>
+			
+		</div>
+
+		<!-- Create Modal -->
+		<p-dialog [(visible)]="createModal" [style]="{width: '20%'}" header="New Stock Item"
+            [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+				<div class="formgrid grid">
+                    <div class="field col-12">
+						<div class="field">
+							<label for="company">Customer</label>
+							<p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newOder.customer" inputId="name"
+								[options]="companies" placeholder="Select Customer" optionLabel="name" [disabled]="!newOder.saleType ">
+		
+							</p-dropdown>
+						</div>
+					</div>
+				</div>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+				<button pButton pRipple label="Print" icon="pi pi-print" class="p-button-text"
+                    [disabled]="!newOder.currency " *ngIf="isQuotation"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="inDirectSale()"
+                    [disabled]="!newOder.currency "></button>
+            </ng-template>
+        </p-dialog> 
+
+		<!-- Add item to trollrey modal -->
+        <p-dialog [(visible)]="trolleyModal" [style]="{width: '500px'}" header="New Stock Item"
+            [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <h2>Cart is Empty</h2>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Ok" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <!-- <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="update()"
+                    [disabled]="!selectedOrder.price "></button> -->
+            </ng-template>
+        </p-dialog> 
+
+		<!-- quantity modal -->
+        <p-dialog [(visible)]="quantityModal" header="Add Quantity" [modal]="true" [style]="{width:'500px'}" class="p-fluid">
+			<ng-template pTemplate="content">
+				<div class="field">
+					<div class="field col-12">
+						<input type="string" pInputText id="description" [(ngModel)]="confirm.quantity" required autofocus
+							[ngClass]="{'ng-invalid ng-dirty' : submitted && !confirm.quantity}" (input)="onQuantityChange()"/>
+					</div>
+				</div>
+				<div class="keypad">
+					<div class="display">{{ currentValue }}</div>
+					
+					<!-- Numeric buttons -->
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick('1')">1</button>
+						<button class="button" (click)="onButtonClick('2')">2</button>
+						<button class="button" (click)="onButtonClick('3')">3</button>
+					</div>
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick('4')">4</button>
+						<button class="button" (click)="onButtonClick('5')">5</button>
+						<button class="button" (click)="onButtonClick('6')">6</button>
+					</div>
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick('7')">7</button>
+						<button class="button" (click)="onButtonClick('8')">8</button>
+						<button class="button" (click)="onButtonClick('9')">9</button>
+					</div>
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick('0')">0</button>
+						<button class="button" (click)="onButtonClick('.')">.</button>
+						<button class="button" (click)="keyPadDelete()">DEL</button>
+					</div>
+					<!-- Clear button -->
+					<button class="clear" (click)="clear()">Clear</button>
+				</div>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+				<button pButton pRipple class="button" style="background-color: red;" label="CANCEL"
+					(click)="quantityModal = false" (click)="clear()"></button>
+                <button pButton pRipple icon="pi pi-check"class="button" style="background-color: rgb(5, 154, 5);"  label="OK"
+					(click)="confirmAddToCart()"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- null quantity modal -->
+		<p-dialog [(visible)]="nullQuantityModal"  [modal]="true" [style]="{width:'500px'}">
+			<ng-template pTemplate="content text-center">
+				<h3>Quantity Is Zero</h3>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Ok"
+				(click)="nullQuantityModal = false"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- product is out stok modal -->
+		<p-dialog [(visible)]="outOfStockModal"  [modal]="true" [style]="{width:'500px'}">
+			<ng-template pTemplate="content text-center">
+				<h3>Product is out of stock</h3>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Ok"
+				(click)="outOfStockModal = false"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- rate maodal -->
+		<p-dialog [(visible)]="rateModal"  [modal]="true" [style]="{width:'500px'}">
+			<ng-template pTemplate="content text-center">
+				<h3>Rate is not set for today</h3>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Ok"
+				(click)="resetRate()"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- pay maodal -->
+		<p-dialog [(visible)]="payModal"  [modal]="true" [style]="{width:'500px'}" class="p-fluid">
+			<ng-template pTemplate="content text-center">
+				<h3>Amount Due:  	<b>{{priceIncludingVat| currency}}</b> </h3>
+				<div class="grid">
+					<div class="col-12">
+						<div class="field">
+							<input type="number" pInputText id="description" [(ngModel)]="paidValue" required autofocus
+								[ngClass]="{'ng-invalid ng-dirty' : submitted && !paidValue}" (input)="getChange($event)"/>
+						</div>
+					</div>
+				</div>
+				<h3>Change:  		<b>{{changeValue | currency}}</b> </h3>
+
+				<div class="keypad">
+					<div class="display">{{ currentValue2 }}</div>
+					
+					<!-- Numeric buttons -->
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick2('1')">1</button>
+						<button class="button" (click)="onButtonClick2('2')">2</button>
+						<button class="button" (click)="onButtonClick2('3')">3</button>
+					</div>
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick2('4')">4</button>
+						<button class="button" (click)="onButtonClick2('5')">5</button>
+						<button class="button" (click)="onButtonClick2('6')">6</button>
+					</div>
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick2('7')">7</button>
+						<button class="button" (click)="onButtonClick2('8')">8</button>
+						<button class="button" (click)="onButtonClick2('9')">9</button>
+					</div>
+					<div class="keypad-row">
+						<button class="button" (click)="onButtonClick2('0')">0</button>
+						<button class="button" (click)="onButtonClick2('.')">.</button>
+						<button class="button" (click)="keyPadDelete2()">DEL</button>
+					</div>
+					<!-- Clear button -->
+					<button class="clear" (click)="clear2()">Clear</button>
+				</div>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+				<button pButton pRipple label="CANCEL" class="button" style="background-color: red;"
+					(click)="payModal = false" (click)="clear2()"></button>
+                <button pButton pRipple icon="pi pi-check" class="button" style="background-color: rgb(5, 154, 5);" label="Ok"
+					(click)="saveOrder()"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- void modal -->
+        <p-dialog [(visible)]="voidModal" header="Enter Supervisor Code" [modal]="true" [style]="{width:'500px'}" class="p-fluid">
+			<ng-template pTemplate="content">
+				<div class="field col-12">
+					<input type="password" pInputText id="description" [(ngModel)]="supervisorCode" required autofocus
+						[ngClass]="{'ng-invalid ng-dirty' : submitted && !supervisorCode}" />
+				</div>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="button" style="background-color: red;" label="Cancel"
+                    (click)="voidModal = false" (click)="this.supervisorCode = ''"></button>
+                <button pButton pRipple icon="pi pi-check" class="button" style="background-color: rgb(5, 154, 5);" label="Remove"
+                    (click)="onVoidApprove()"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- void modal -->
+        <p-dialog [(visible)]="returnApproveModal" header="Enter Supervisor Code" [modal]="true" [style]="{width:'500px'}" class="p-fluid">
+			<ng-template pTemplate="content">
+				<div class="field col-12">
+					<input type="password" pInputText id="description" [(ngModel)]="supervisorCode" required autofocus
+						[ngClass]="{'ng-invalid ng-dirty' : submitted && !supervisorCode}" />
+				</div>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="button" style="background-color: red;" label="Cancel"
+                    (click)="returnApproveModal = false" (click)="this.supervisorCode = ''"></button>
+                <button pButton pRipple icon="pi pi-check" class="button" style="background-color: rgb(5, 154, 5);" label="Remove"
+                    (click)="onReturnApprove()"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- return modal -->
+        <p-dialog [(visible)]="returnModal" header="Enter Receipt Number" [modal]="true" [style]="{width:'500px'}" class="p-fluid">
+			<ng-template pTemplate="content">
+				<div class="field col-12">
+					<input type="number" pInputText id="description" [(ngModel)]="receiptNumber" required autofocus
+						[ngClass]="{'ng-invalid ng-dirty' : submitted && !receiptNumber}" />
+				</div>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="button" style="background-color: red;" label="Cancel"
+                    (click)="returnModal = false" (click)="this.receiptNumber = 0"></button>
+                <button pButton pRipple icon="pi pi-check" class="button" style="background-color: rgb(5, 154, 5);" label="Get Receipt"
+                    (click)="onConfirmReturn()"></button>
+            </ng-template>
+        </p-dialog>
+	</div>
+</div>

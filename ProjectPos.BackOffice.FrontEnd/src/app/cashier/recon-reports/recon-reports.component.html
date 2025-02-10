@@ -1,0 +1,95 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12">
+                    <p-table class="header-line-table" #dt [value]="products" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['productName', 'barCode']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,14,30]"
+                        [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                        [rowHover]="true" dataKey="id" [rowHover]="true" rowGroupMode="rowspan"
+                        groupRowsBy="subCategory" [tableStyle]="{'min-width': '75rem'}">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <div class="col-10">
+                                    <div class="grid">
+                                        <div class="col-1">
+                                            <p-calendar class="p-inputtext-sm" appendTo="body"
+                                                [(ngModel)]="date" dateFormat="d MM yy"
+                                                (onSelect)="setOption()"></p-calendar>
+                                        </div>
+                                        <div class="col-1">
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="option" inputId="name"
+                                                [options]="options" placeholder="Option"
+                                                (onChange)="getRecon()"></p-dropdown>
+                                        </div>
+                                        <div class="col-2" *ngIf="option === 'Single'">
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="teller" inputId="name"
+                                                [options]="users" optionLabel="fullName" placeholder="Select Teller"
+                                                (onChange)="getSingle()"></p-dropdown>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                        class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr >
+                                <th style="width:20%; min-width:10rem;">Category</th>
+                                <th style="width:20%; min-width:10rem;">Code</th>
+                                <th style="width:40%; min-width:10rem;">Name</th>
+                                <th style="width:20%; min-width:10rem;">Unit Pice</th>
+                                <th style="width:20%; min-width:10rem;">Quantity </th>
+                                <th style="width:20%; min-width:10rem;">Price</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item let-rowgroup="rowgroup" let-rowspan="rowspan">
+                            <tr>
+                                <td *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                                    <span>{{item.subCategory}}</span>
+                                </td>
+                                <td style="width:10%; min-width:10rem;" >
+                                    <span class="p-column-title">Name</span>
+                                    {{item.barCode}} 
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">Phone</span>
+                                    {{item.productName }}
+                                </td>
+                                <td style="width:15%; min-width:8rem;">
+                                    <span class="p-column-title">Email</span>
+                                    {{item.unitPrice  | currency:'USD':'symbol' }}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{item.quantity }}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{item.price | currency:'USD':'symbol'}}
+                                </td>
+                                
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            <tr>
+                                <th colspan="4" class="text-left">Totals</th>
+                                <th class="text-left">{{totalCount.toFixed(2) }}</th>
+                                <th class="text-left">{{(totalSales) | currency:'USD' }}</th>
+                            </tr>
+
+                        </ng-template>
+                    </p-table>
+                </div>
+                
+            </div>
+
+    </div>
+</div>
+

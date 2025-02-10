@@ -1,0 +1,144 @@
+<div class="layout-topbar">
+    <a class="layout-topbar-logo" routerLink="">
+       
+        <span><strong>ICODEEX POS: {{ label | uppercase }}</strong></span>
+    </a>
+
+    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+        <span class="block mt-2 md:mt-0 p-input-icon-center">
+            <strong>{{ currentDate | date: 'mediumTime' }}</strong>
+        </span>
+    </div>
+
+    <!-- <button #menubutton class="p-link layout-menu-button layout-topbar-button" (click)="layoutService.onMenuToggle()">
+        <i class="pi pi-bars"></i>
+    </button> -->
+
+    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button" (click)="layoutService.showProfileSidebar()">
+        <i class="pi pi-ellipsis-v"></i>
+    </button>
+
+    <div #topbarmenu class="layout-topbar-menu" [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
+        <button class="p-link layout-topbar-button">
+            <i class="pi pi-calendar"></i>
+            <span>Calendar</span>
+        </button>
+        <button class="p-link layout-topbar-button" [routerLink]="'/documentation'">
+            <i class="pi pi-cog"></i>
+            <span>Settings</span>
+        </button>
+        <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
+        <button class="p-link layout-topbar-button" (click)="menu.toggle($event)">
+            <i class="pi pi-user"></i>
+            <span>Profile</span>
+        </button>
+    </div>
+</div>
+
+<!-- create modal -->
+<p-dialog [(visible)]="cashUpModal" [style]="{ width: '30%' }" header="New Cash Up"
+    [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="formgrid grid">
+            <div class="field col-12">
+                <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+                    <div class="field col-12">
+                        <div class="field">
+                            <span class="p-float-label">
+                                <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="cashUpForm.currency" inputId="name"
+                                    [options]="currencies" placeholder="Select Currency">
+                                    <ng-template pTemplate="selectedCountry">
+                                        <span *ngIf="cashUpForm && cashUpForm.currency">{{ cashUpForm.currency }}
+                                        </span>
+                                    </ng-template>
+                                    <ng-template let-option pTemplate="item">
+                                        <span>{{ option }}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                                <label for="country">Currency</label>
+                            </span>
+                        </div>
+                        <br/>
+                        <div class="field">
+                            <span class="p-float-label">
+                                <input type="number" pInputText id="price" [(ngModel)]="cashUpForm.amount" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : cashUpForm && !cashUpForm.amount}" />
+                                <label for="price">Amount</label>
+                            </span>
+                            
+                        </div>
+                        <div class="field">
+                            <button pButton label="ADD" icon="pi pi-plus" class="p-button-success mr-2"
+                                (click)="addCashUp(cashUpForm)" [disabled]=""></button>
+                        </div>
+                    </div>
+
+                    
+                    
+                </div>
+                
+            </div>
+            <div class="field col-12">
+                <p-table [value]="cashUps" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            
+                            <th >Currency</th>
+                            <th >Rate</th>
+                            <th >Amount</th>
+                            <th >USD Amount </th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td style="width:25%; min-width:10rem;" >
+                                <span class="p-column-title">Name</span>
+                                {{item.currency}} 
+                            </td>
+                            <td style="width:25%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{item.rate }}
+                            </td>
+                            <td style="width:25%; min-width:8rem;">
+                                <span class="p-column-title">Email</span>
+                                {{item.amount  | currency:'USD':'symbol' }}
+                            </td>
+                            <td style="width:25%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{item.usdAmount | currency:'USD':'symbol'}}
+                            </td>
+                            <td style="width:5%; min-width:10rem;">
+                                <div class="flex">
+                                    <!-- <button pButton pRipple icon="pi pi-plus"
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="addItem(item)"></button> -->
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                        (click)="removeItem(item)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="content">
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>Total Cost:</td>
+                            <td>{{totalAmount | currency:'USD' }}</td>
+                            <td></td>
+                        </tr>
+    
+                    </ng-template>
+                </p-table>
+            </div>
+            
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+        [disabled]="!cashUps[0]"></button>
+    </ng-template>
+</p-dialog> 
+

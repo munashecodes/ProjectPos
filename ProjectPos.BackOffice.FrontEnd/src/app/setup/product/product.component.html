@@ -1,0 +1,350 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                
+                <div class="col-12">
+                    <p-table class="header-line-table" #dt [value]="products" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                    [globalFilterFields]="['barCode', 'name', 'subCategoryName', 'category']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,14,30]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                    [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <div class="col-10">
+                                <button pButton label="New Product" icon="pi pi-plus" class="p-button-success mr-2"
+                                    (click)="createFresh()"></button>
+                                <span *ngIf="user.role !== 'StockController'">
+                                    <button pButton label="Generate Inventory" icon="pi pi-plus" class="p-button-success mr-2"
+                                        (click)="create()"></button>
+                                </span>
+                                <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+                                    (click)="deleteSelected()">
+                                </button>
+                            </div>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                            <th>Description</th>
+                            <th pSortableColumn="subCategoryName">Sub Category <p-sortIcon field="subCategoryName"></p-sortIcon></th>
+                            <th pSortableColumn="category">Category <p-sortIcon field="category"></p-sortIcon></th>
+                            <th>Cost</th>
+                            <th>Grade</th>
+                            <th>Taxable</th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-product>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="product"></p-tableCheckbox>
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{product.name}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <span class="p-column-title">description</span>
+                                {{product.description}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{product.subCategoryName}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{product.category}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <span class="p-column-title">description</span>
+                                {{product.cost | currency }}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <span class="p-column-title">description</span>
+                                {{product.grade}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;" *ngIf="product.isTaxable === true">
+                                <span class="p-column-title">description</span>
+                                Yes
+                            </td>
+                            <td style="width:14%; min-width:8rem;" *ngIf="product.isTaxable === false">
+                                <span class="p-column-title">description</span>
+                                No
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-pencil" label="EDIT" class="p-button-success mr-2"
+                                        (click)="edit(product)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" label="DELETE" class="p-button-danger"
+                                        (click)="delete(product)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+                
+            </div>
+
+            <!-- create modal -->
+            <p-dialog [(visible)]="createModal" [style]="{ width: '30%' }" header="New product"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+                                <div class="field col-12">
+                                    
+                                    <div class="field">
+                                        <label for="country">Category</label>
+                                            <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newProduct.category" inputId="name"
+                                                [options]="categories" placeholder="Select Category" (onChange)="filterCategories($event)">
+                                                <ng-template pTemplate="selectedCountry">
+                                                    <span *ngIf="newProduct && newProduct.category">{{ newProduct.category }}
+                                                    </span>
+                                                </ng-template>
+                                                <ng-template let-option pTemplate="item">
+                                                    <span>{{ option }}</span>
+                                                </ng-template>
+                                            </p-dropdown>
+                                            
+                                        
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <label for="company">Sub Category</label>
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="subCategory"
+                                                inputId="name" [options]="filteredSubCategories" placeholder="Select Sub Category" optionLabel="name"
+                                                [disabled]="!newProduct.category ">
+                
+                                            </p-dropdown>
+                                            
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <label for="name">Name</label>
+                                            <input type="text" pInputText id="name" [(ngModel)]="newProduct.name" required [disabled]="!subCategory"
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.name}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.name">Item
+                                                name is
+                                                required.</small>
+                                            
+                                        
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <label for="description">Description</label>
+                                            <input type="text" pInputText id="description" [(ngModel)]="newProduct.description" required [disabled]="!newProduct.name"
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.description}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.description">Item
+                                                description is
+                                                required.</small>
+                                            
+                                        
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <label for="barCode">Bar Code</label>
+                                            <input type="text" pInputText id="barCode" [(ngModel)]="newProduct.barCode" required [disabled]="!newProduct.name"
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.barCode}" minlength="6" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.barCode">Item
+                                                barCode is
+                                                required.</small>
+                                            
+                                        
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <label for="addressLine1">Cost</label>
+                                            <input type="number" pInputText id="city" [(ngModel)]="newProduct.cost" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.cost}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.cost">address! line is
+                                                required.</small>
+                                                
+                                        
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <label for="company">Unit</label>
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProduct.unit"
+                                                inputId="name" [options]="units | keyvalue" optionLabel="value" optionValue="key" placeholder="Unit">
+                
+                                            </p-dropdown>
+                                            
+                                        
+                                    </div>
+                                    <div class="field" *ngIf="isFresh === true">
+                                        <label for="company">Grade</label>
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProduct.grade" [disabled]="!newProduct.barCode"
+                                                inputId="name" [options]="grades" placeholder="Grade" >
+                
+                                            </p-dropdown>
+                                            
+                                        
+                                    </div>
+                                    <div class="field col-6">
+                                        <br />
+                                        <br />
+                                        <div claa="field">
+                                            <div class="field-radiobutton">
+                                                <p-radioButton name="isActive" value=true
+                                                    type="number" [(ngModel)]="isTaxable" id="isActive"></p-radioButton>
+                                                <label for="city1">Taxable</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field col-6">
+                                        <br />
+                                        <br />
+                                        <div claa="field">
+                                            <div class="field-radiobutton">
+                                                <p-radioButton name="isActive" value=false
+                                                    type="number" [(ngModel)]="isTaxable" id="isActive"></p-radioButton>
+                                                <label for="city1">Not Taxable</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFile()"
+                        [disabled]="!newProduct.grade"></button>
+                </ng-template>
+            </p-dialog> 
+
+            <!-- edit modal -->
+            <p-dialog [(visible)]="editModal" [style]="{width: '30%'}" header="New Stock Item"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            
+                            <div class="field">
+                                <label for="country">Category</label>
+                                    <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newProduct.category" inputId="name"
+                                        [options]="categories" placeholder="Select Category" (onChange)="filterCategories($event)">
+                                        <ng-template pTemplate="selectedCountry">
+                                            <span *ngIf="newProduct && newProduct.category">{{ newProduct.category }}
+                                            </span>
+                                        </ng-template>
+                                        <ng-template let-option pTemplate="item">
+                                            <span>{{ option }}</span>
+                                        </ng-template>
+                                    </p-dropdown>
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="company">Sub Category</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="subCategory"
+                                        inputId="name" [options]="filteredSubCategories" placeholder="Select Sub Category" optionLabel="name"
+                                        [disabled]="!newProduct.category ">
+        
+                                    </p-dropdown>
+                                    
+                            </div>
+                            <div class="field">
+                                <label for="name">Name</label>
+                                    <input type="text" pInputText id="name" [(ngModel)]="newProduct.name" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.name}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.name">Item
+                                        name is
+                                        required.</small>
+                                    
+                                
+                            </div>
+                            <div class="field">
+                                <label for="description">Description</label>
+                                    <input type="text" pInputText id="description" [(ngModel)]="newProduct.description" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.description}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.description">Item
+                                        description is
+                                        required.</small>
+                                    
+                                
+                            </div>
+                            <div class="field">
+                                <label for="barCode">Bar Code</label>
+                                    <input type="text" pInputText id="barCode" [(ngModel)]="newProduct.barCode" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.barCode}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.barCode">Item
+                                        barCode is
+                                        required.</small>
+                                    
+                                
+                                
+                            </div>
+                            <div class="field">
+                                <label for="addressLine1">Cost</label>
+                                    <input type="number" pInputText id="city" [(ngModel)]="newProduct.cost" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.cost}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProduct.cost">address! line is
+                                        required.</small>
+                                        
+                                
+                                
+                            </div>
+
+                            <div class="field">
+                                <label for="company">Unit</label>
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProduct.unit"
+                                        inputId="name" [options]="units | keyvalue" optionLabel="value" optionValue="key" placeholder="Unit">
+        
+                                    </p-dropdown>
+                                    
+                                
+                            </div>
+                            <div class="field">
+                                <span class="p-float-label" *ngIf="isFresh === true">
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProduct.grade"
+                                        inputId="name" [options]="grades" placeholder="Grade" >
+        
+                                    </p-dropdown>
+                                    <label for="company">Grade</label>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFile()"
+                        [disabled]="!newProduct.name "></button>
+                </ng-template>
+            </p-dialog> 
+            
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span *ngIf="newProduct">Are you sure you want to delete <b>{{newProduct.name}}</b>?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="deleteModal = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="confirmDelete()"></button>
+                </ng-template>
+            </p-dialog>
+    </div>
+</div>
+

@@ -1,0 +1,212 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <!-- main view -->
+            <div class="grid">
+
+                <!-- confirmation dialogue box -->
+				<p-confirmDialog #cd header="Notification">
+					<ng-template pTemplate="content">
+						<!-- confirmation message here -->
+					</ng-template>
+					<ng-template pTemplate="footer">
+						<button type="button" class="p-button-success mr-2" pButton icon="pi pi-check" label="OK" (click)="cd.accept()"></button>
+                        <button type="button" class="p-button-error mr-2" pButton icon="pi pi-check" label="CANCEL" (click)="cd.reject()"></button>
+					</ng-template>
+				</p-confirmDialog>
+
+                <!-- main table -->
+                <div class="col-12">
+                    <p-table #dt [value]="filteredExpenses" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['id', 'orderNumber', 'invoiceNumber']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                        [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                        [rowHover]="true" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <div class="col-10">
+                                    <div class="grid">
+                                        <div class="col-10">
+                                            <button pButton label="NEW EXPENSE" icon="pi pi-plus" class="p-button-success mr-2"
+                                                (click)="openCreateModal()"></button>
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="accountCategory" inputId="name" optionLabel="name"
+                                                [options]="filteredAccountCategories" placeholder="Option" (onChange)="filterByAccountCategory()">
+                                            </p-dropdown>
+                                            <!-- <p-calendar class="p-inputtext-sm mr-2" appendTo="body" *ngIf="selectedMainFilter === 'Date'" placeholder="Date"
+                                                [(ngModel)]="date" dateFormat="d MM yy" (onSelect)="onGetByDate()"></p-calendar>
+                                            
+                                            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="onGetByDateRange()"
+                                                *ngIf="selectedMainFilter === 'Date Range'" class="p-inputtext-sm mr-2" placeholder="Range"/>
+                                        
+                                            <p-calendar [(ngModel)]="month" view="month" dateFormat="MM" [readonlyInput]="true" (onSelect)="onGetByMonth()" class="p-inputtext-sm mr-2"
+                                                *ngIf="selectedMainFilter === 'Month'" placeholder="Month"/> -->
+                                            <!-- <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="month" inputId="name" *ngIf="selectedMainFilter === 'Month'"
+                                                [options]="months" placeholder="Month"
+                                                (onChange)="onGetByMonth()"></p-dropdown> -->
+                                        
+                                            <!-- <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="supplier" inputId="name" *ngIf="selectedMainFilter === 'Supplier'"
+                                                [options]="companies" optionLabel="name" placeholder="Supplier"
+                                                (onChange)="onGetBySupplier()"></p-dropdown>
+
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="status" inputId="name"
+                                                [options]="statusFilter" placeholder="Status" (onChange)="onFilterByStatus()">
+                                            </p-dropdown> -->
+                                        
+                                            <!-- <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="customer" inputId="name"*ngIf="option2 === 'Customer'"
+                                                [options]="customers" optionLabel="name" placeholder="Customer"
+                                                (onChange)="filterByCustomer()"></p-dropdown> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                        class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="name">Expense <p-sortIcon field="name"></p-sortIcon></th>
+                                <th pSortableColumn="name">Description <p-sortIcon field="name"></p-sortIcon></th>
+                                <th pSortableColumn="name">Pay Method<p-sortIcon field="name"></p-sortIcon></th>
+                                <th pSortableColumn="cell">Payee <p-sortIcon field="cell"></p-sortIcon></th>
+                                <th pSortableColumn="email">Company<p-sortIcon field="email"></p-sortIcon></th>
+                                <th pSortableColumn="email">Amount<p-sortIcon field="email"></p-sortIcon></th>
+                                <th pSortableColumn="email">Approved<p-sortIcon field="email"></p-sortIcon></th>
+                                <th pSortableColumn="country">Date <p-sortIcon field="country"></p-sortIcon></th>
+                                <th></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-expense>
+                            <tr>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Name</span>
+                                    {{expense.accountName}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Name</span>
+                                    {{expense.description}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Phone</span>
+                                    {{expense.paymentMethod}}
+                                </td>
+                                <td style="width:14%; min-width:8rem;">
+                                    <span class="p-column-title">Email</span>
+                                    {{expense.payee}}
+                                </td>
+                                <td style="width:14%; min-width:8rem;">
+                                    <span class="p-column-title">Email</span>
+                                    {{expense.companyName}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{expense.amount | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <i class="pi" [ngClass]="{
+                                        'true-icon pi-check-circle text-green-500': expense.isApproved, 
+                                        'false-icon pi-times-circle text-pink-500': !expense.isApproved
+                                    }"></i>
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{expense.creationTime | date: 'dd/MM/yyyy'}}
+                                </td>
+                                <td>
+                                    <div class="flex">
+                                        <div *ngIf="user?.role === 'Admin' || user?.role === 'Manager'">
+                                            <button pButton pRipple icon="pi pi-pencil" type="button" label="APPROVE" [disabled]="expense.isApproved"
+                                                class="p-button-success mr-2" (click)="openApproveModal(expense)"></button>
+                                        </div>
+                                        <button pButton pRipple icon="pi pi-pencil" type="button" label="EDIT" 
+                                            class="p-button-success mr-2" (click)="openEditModal(expense)"></button>
+                                        <button pButton pRipple icon="pi pi-trash" class=" p-button-danger"
+                                            type="button" label="DELETE" (click)="openDeleteModal(expense)"></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <!-- create modal -->
+            <p-dialog [(visible)]="createModal" [modal]="true" [style]="{width: '50%'}" header="Create Expense" class="p-fluid">
+                    <ng-template pTemplate="content">
+                        <div class="p-field">
+                            <label for="companyId">Company</label>
+                            <p-dropdown id="companyId" appendTo="body" [(ngModel)]="newExpense.companyId" [options]="companies" optionLabel="name" optionValue="id" placeholder="Select Company"></p-dropdown>
+                        </div>
+                        <div class="p-field">
+                            <label for="accountId">Account</label>
+                            <p-dropdown id="accountId" appendTo="body" [(ngModel)]="newExpense.accountId" [options]="filteredAcoounts" optionLabel="name" optionValue="id" placeholder="Select Account" ></p-dropdown>
+                            <small class="p-error" *ngIf="submitted && !newExpense.accountId">Account is required.</small>
+                        </div>
+                        <div class="p-field">
+                            <label for="payee">Payee</label>
+                            <input id="payee" pInputText [(ngModel)]="newExpense.payee" required />
+                            <small class="p-error" *ngIf="submitted && !newExpense.payee">Payee is required.</small>
+                        </div>
+                        <div class="p-field">
+                            <label for="description">Description</label>
+                            <textarea id="description" pInputTextarea [(ngModel)]="newExpense.description"></textarea>
+                        </div>
+                        <div class="p-field">
+                            <label for="amount">Amount</label>
+                            <input id="amount" pInputText type="number" [(ngModel)]="newExpense.amount" required />
+                            <small class="p-error" *ngIf="submitted && !newExpense.amount">Amount is required.</small>
+                        </div>
+                        <div class="p-field">
+                            <label for="paymentMethod">Payment Method</label>
+                            <p-dropdown id="paymentMethod" appendTo="body" [(ngModel)]="newExpense.paymentMethod" [options]="paymentMethods"></p-dropdown>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <button pButton label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                        <button pButton label="Save" icon="pi pi-check" class="p-button-text" (click)="saveExpense()" [disabled]="!newExpense.payee || !newExpense.amount || !newExpense.accountId"></button>
+                    </ng-template>
+            </p-dialog>
+
+            <!-- edit modal -->
+            <p-dialog [(visible)]="editModal" [modal]="true" [style]="{width: '50%'}" header="Edit Expense" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="p-field">
+                        <label for="companyId">Company</label>
+                        <p-dropdown id="companyId" appendTo="body" [(ngModel)]="newExpense.companyId" [options]="companies" optionLabel="name" optionValue="id" placeholder="Select Company"></p-dropdown>
+                    </div>
+                    <div class="p-field">
+                        <label for="accountId">Account</label>
+                        <p-dropdown id="accountId" appendTo="body" [(ngModel)]="newExpense.accountId" [options]="filteredAcoounts" optionLabel="name" optionValue="id" placeholder="Select Account" ></p-dropdown>
+                        <small class="p-error" *ngIf="submitted && !newExpense.accountId">Account is required.</small>
+                    </div>
+                    <div class="p-field">
+                        <label for="payee">Payee</label>
+                        <input id="payee" pInputText [(ngModel)]="newExpense.payee" required />
+                        <small class="p-error" *ngIf="submitted && !newExpense.payee">Payee is required.</small>
+                    </div>
+                    <div class="p-field">
+                        <label for="description">Description</label>
+                        <textarea id="description" pInputTextarea [(ngModel)]="newExpense.description"></textarea>
+                    </div>
+                    <div class="p-field">
+                        <label for="amount">Amount</label>
+                        <input id="amount" pInputText type="number" [(ngModel)]="newExpense.amount" required />
+                        <small class="p-error" *ngIf="submitted && !newExpense.amount">Amount is required.</small>
+                    </div>
+                    <div class="p-field">
+                        <label for="paymentMethod">Payment Method</label>
+                        <p-dropdown id="paymentMethod" appendTo="body" [(ngModel)]="newExpense.paymentMethod" [options]="paymentMethods"></p-dropdown>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                    <button pButton label="Update" icon="pi pi-check" class="p-button-text" (click)="updateExpense()" [disabled]="!newExpense.payee || !newExpense.amount || !newExpense.accountId"></button>
+                </ng-template>
+        </p-dialog>
+        </div>
+    </div>
+</div>

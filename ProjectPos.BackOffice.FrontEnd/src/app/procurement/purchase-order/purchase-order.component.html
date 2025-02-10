@@ -1,0 +1,721 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <div class="col-12">
+                <p-table #dt [value]="orders" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                [globalFilterFields]="['supplierName', 'id', ]" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-orders-center">
+                            <div class="col-10">
+                                <div class="grid">
+                                    <div class="col-10">
+                                        <button pButton label="NEW ORDER" icon="pi pi-plus" class="p-button-success mr-2"
+                                            (click)="create()"></button>
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="selectedMainFilter" inputId="name"
+                                            [options]="mainFilters" placeholder="Option" (onChange)="onMainFilter()">
+                                        </p-dropdown>
+                                        <p-calendar class="p-inputtext-sm mr-2" appendTo="body" *ngIf="selectedMainFilter === 'Date'" placeholder="Date"
+                                            [(ngModel)]="date" dateFormat="d MM yy" (onSelect)="onGetByDate()"></p-calendar>
+                                        
+                                        <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="onGetByDateRange()"
+                                            *ngIf="selectedMainFilter === 'Date Range'" class="p-inputtext-sm mr-2" placeholder="Range"/>
+                                    
+                                        <p-calendar [(ngModel)]="month" view="month" dateFormat="MM" [readonlyInput]="true" (onSelect)="onGetByMonth()"
+                                            *ngIf="selectedMainFilter === 'Month'" placeholder="Month"/>
+                                    
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="supplier" inputId="name" *ngIf="selectedMainFilter === 'Supplier'"
+                                            [options]="companies" optionLabel="name" placeholder="Supplier"
+                                            (onChange)="onGetBySupplier()"></p-dropdown>
+
+                                        <!-- <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="status" inputId="name"
+                                            [options]="statusFilter" placeholder="Status" (onChange)="onFilterByStatus()">
+                                        </p-dropdown> -->
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th pSortableColumn="code">Order N# <p-sortIcon field="code"></p-sortIcon></th>
+                            <th pSortableColumn="code">Supplier <p-sortIcon field="code"></p-sortIcon></th>
+                            <th pSortableColumn="name">Approved <p-sortIcon field="name"></p-sortIcon></th>
+                            <th pSortableColumn="serialNumber">Received<p-sortIcon field="serialNumber"></p-sortIcon></th>
+                            <th pSortableColumn="status">Order Date<p-sortIcon field="status"></p-sortIcon></th>
+                            <th pSortableColumn="creationTime">ETA<p-sortIcon field="creationTime"></p-sortIcon></th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-order>
+                        <tr>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Code</span>
+                                {{order.id}}
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Code</span>
+                                {{order.supplierName}}
+                            </td>
+                            <td style="width:15%; min-width:10rem;">
+                                <i class="pi" [ngClass]="{
+                                    'true-icon pi-check-circle text-green-500': order.isApproved, 
+                                    'false-icon pi-times-circle text-pink-500': !order.isApproved
+                                }"></i>
+                            </td>
+                            <td style="width:15%; min-width:10rem;">
+                                <i class="pi" [ngClass]="{
+                                    'true-icon pi-check-circle text-green-500': order.isReceived, 
+                                    'false-icon pi-times-circle text-pink-500': !order.isReceived
+                                }"></i>
+                            </td>
+                            <td style="width:25%; min-width:10rem;">
+                                <span class="p-column-title">issueDate</span>
+                                {{order.creationTime | date : 'EEEE, MMMM d y'}}
+                            </td>
+                            <td style="width:25%; min-width:10rem;">
+                                <span class="p-column-title">issueDate</span>
+                                {{order.eta | date : 'EEEE, MMMM d y'}}
+                            </td>
+                            <td>
+                                <div class="flex">
+                                    <div *ngIf="currentUser.role === 'Admin'">
+                                        <button pButton pRipple icon="pi pi-check" type="button" label="APPROVE"
+                                        class="p-button-primary mr-2"
+                                        (click)="approve(order)"
+                                        [disabled]="order.isApproved === true"></button>
+                                    </div>
+                                    <button pButton pRipple icon="pi pi-pencil" type="button" label="EDIT"
+                                        class="p-button-success mr-2" [disabled]="order.isApproved === true"
+                                        (click)="edit(order)"></button>
+                                    <button pButton pRipple icon="pi pi-print" type="button" label="PRINT"
+                                        class="p-button-success mr-2" [disabled]="order.isApproved === false"
+                                        (click)="printOrder(order)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" class=" p-button-danger" type="button" label="DELETE"
+                                        (click)="delete(order)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+        <!-- create modal -->
+        <p-dialog [(visible)]="createOrderModal" [style]="{width: '50%'}" header="New Purchace Order"
+        [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="currency">Supplier</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="company" inputId="id"
+                                [options]="companies" placeholder="Select Supplier" optionLabel="name"
+                                [filter]="true" filterBy="name"  [showClear]="true">
+                                
+                            </p-dropdown>
+                        </div>
+                        <div class="field">
+                            <div>
+                                <label for="udatedOn">Order Date</label>
+                                <p-calendar appendTo="body" class="p-inputtext-sm" [(ngModel)]="newOrder.creationTime"
+                                    dateFormat="dd.mm.yy" [disabled]="!company.name"></p-calendar>
+                                <small class="ng-dirty ng-invalid"
+                                    *ngIf="submitted && !newOrder.creationTime">Date
+                                    is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="name">Order Value</label>
+                            <input appendTo="body" type="currency" pInputText id="name" [(ngModel)]="newOrder.invoiceValue" required autofocus
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newOrder.invoiceValue}" 
+                                [disabled]="!newOrder.approvedById"/>
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newOrder.invoiceValue">Item
+                                name is
+                                required.</small>
+                        </div>
+                        <div class="field">
+                            <div>
+                                <label for="udatedOn">ETA</label>
+                                <p-calendar appendTo="body" class="p-inputtext-sm" [(ngModel)]="newOrder.eta"
+                                    dateFormat="dd.mm.yy" [disabled]="!newOrder.creationTime"></p-calendar>
+                                <small class="ng-dirty ng-invalid"
+                                    *ngIf="submitted && !newOrder.eta">Date
+                                    is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <label  for="currency">Category</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" [disabled]="!newOrder.eta"
+                                [options]="categories" placeholder="Select Item"
+                                (onChange)="filterItems($event)">
+                                
+                            </p-dropdown>
+                    </div>
+                    <div class="field col-6">
+                        <label  for="currency">Select Stock Item</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="selectedStockItem" inputId="id"
+                                [options]="filteredStockItems" placeholder="Select Item" optionLabel="name" [disabled]="!newOrder.eta"
+                                [filter]="true" filterBy="name"  [showClear]="true" (onChange)="confirmQuantity()">
+                                
+                            </p-dropdown>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <p-table [value]="newOrder.purchaceOrderItems!" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    
+                                    <th pSortableColumn="name">Item Name <p-sortIcon field="name"></p-sortIcon></th>
+                                    <th pSortableColumn="cell">Cost<p-sortIcon field="cell"></p-sortIcon></th>
+                                    <th pSortableColumn="email">Quantity<p-sortIcon field="email"></p-sortIcon></th>
+                                    <th pSortableColumn="country">Total Price <p-sortIcon field="country"></p-sortIcon></th>
+                                    <th></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td style="width:25%; min-width:10rem;" >
+                                        <span class="p-column-title">Name</span>
+                                        {{item.name}} 
+                                    </td>
+                                    <!-- <td style="width:25%; min-width:10rem;">
+                                        <span class="p-column-title">Phone</span>
+                                        {{item.unitPrice  | currency:'USD':'symbol'}}
+                                    </td> -->
+                                    <td [pEditableColumn]="item.unitPrice" pEditableColumnField="unitPrice" style="width:25%; min-width:10rem;" >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="number" [(ngModel)]="item.unitPrice" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output" >
+                                                {{ item.unitPrice | currency:'USD':'symbol'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <!-- <td style="width:25%; min-width:8rem;">
+                                        <span class="p-column-title">Email</span>
+                                        {{item.quantity}}
+                                    </td> -->
+                                    <td [pEditableColumn]="item.quantity" pEditableColumnField="code" style="width:25%; min-width:10rem;" >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="text" [(ngModel)]="item.quantity" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output" >
+                                                {{ item.quantity }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td style="width:20%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.price | currency:'USD':'symbol'}}
+                                    </td>
+                                    <td style="width:5%; min-width:10rem;">
+                                        <div class="flex">
+                                            <!-- <button pButton pRipple icon="pi pi-plus"
+                                                class="p-button-rounded p-button-success mr-2"
+                                                (click)="addItem(item)"></button> -->
+                                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                                (click)="removeItem(item)"></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="content">
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Total Cost:</td>
+                                    <td>{{newOrder.invoiceValue | currency:'USD' }}</td>
+                                    <td></td>
+                                </tr>
+            
+                            </ng-template>
+                        </p-table>
+                        <div class="field">
+                            <div class="formgrid grid">
+                                <div class="col-8"></div>
+                                <div class="col-4">
+                                    <p-table>
+                                        <ng-template pTemplate="header">
+                                            <!-- <tr>
+                                                <th>Labor Cost:</th>
+                                                <th>{{jobcard.laborCost | currency:'USD' }}</th>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <th>Material Cost:</th>
+                                                <th>{{jobcard.cost | currency:'USD' }}</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Discount:</th>
+                                                <th>{{jobcard.discount | currency:'USD' }}</th>
+                                            </tr>-->
+                                            <tr>
+                                                <th>Total Cost:</th>
+                                                <th>{{newOrder.invoiceValue | currency:'USD' }}</th>
+                                                <td></td>
+                                            </tr> 
+                                        </ng-template>
+                                        <ng-template pTemplate="body">
+                                            <tr>
+                                                <td>Total Cost:</td>
+                                                <td>{{newOrder.invoiceValue | currency:'USD' }}</td>
+                                                <td></td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Process" icon="pi pi-check" class="p-button-text" 
+                    (click)="process()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                    [disabled]="!newOrder.invoiceValue"></button>
+            </ng-template>
+        </p-dialog>
+
+        <!-- edit modal -->
+        <p-dialog [(visible)]="editModal" [style]="{width: '50%'}" header="Edit Purchace Order"
+        [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="currency">Supplier</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newOrder.company" inputId="name"
+                                    [options]="companies" placeholder="{{ newOrder.company!.name }}" >
+                                    <ng-template pTemplate="selectedItem">
+                                        <span *ngIf="newOrder">{{ newOrder.company?.name }}
+                                        </span>
+                                    </ng-template>
+                                    <ng-template let-option pTemplate="item">
+                                        <span>{{ option.name }}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                        </div>
+                        <div class="field">
+                            <div>
+                                <label for="creationTime">Order Date</label>
+                                <p-calendar class="p-inputtext-sm" [(ngModel)]="newOrder.creationTime"
+                                    dateFormat="dd.mm.yy"></p-calendar>
+                                <small class="ng-dirty ng-invalid"
+                                    *ngIf="submitted && !newOrder.creationTime">Date
+                                    is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="name">Invoice Number</label>
+                            <input type="text" pInputText id="name" [(ngModel)]="newOrder.invoiceValue" required autofocus
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newOrder.invoiceValue}" 
+                                [disabled]="!newOrder.approvedById"/>
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newOrder.invoiceValue">Item
+                                name is
+                                required.</small>
+                        </div>
+                        <div class="field">
+                            <div>
+                                <label for="eta">ETA</label>
+                                <p-calendar class="p-inputtext-sm" [(ngModel)]="newOrder.eta"
+                                    dateFormat="dd.mm.yy"></p-calendar>
+                                <small class="ng-dirty ng-invalid"
+                                    *ngIf="submitted && !newOrder.eta">Date
+                                    is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-4">
+                        <label  for="currency">Department</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm"
+                                [options]="categories" placeholder="Select Item"
+                                (onChange)="filterCategories($event)">
+                                
+                            </p-dropdown>
+                    </div>
+                    <div class="field col-4">
+                        <label  for="currency">Category</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm"  inputId="id"
+                                [options]="filteredCategories" placeholder="Select Item" optionLabel="name"
+                                (onChange)="filterItems($event)">
+                                
+                            </p-dropdown>
+                    </div>
+                    <div class="field col-4">
+                        <label  for="currency">Select Stock Item</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="selectedStockItem" inputId="id"
+                                [options]="filteredStockItems" placeholder="Select Item" optionLabel="name"
+                                [filter]="true" filterBy="name"  [showClear]="true" (onChange)="confirmQuantity()">
+                                
+                            </p-dropdown>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <p-table [value]="newOrder.purchaceOrderItems!" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    
+                                    <th pSortableColumn="name">Item Name <p-sortIcon field="name"></p-sortIcon></th>
+                                    <th pSortableColumn="cell">Cost<p-sortIcon field="cell"></p-sortIcon></th>
+                                    <th pSortableColumn="email">Quantity<p-sortIcon field="email"></p-sortIcon></th>
+                                    <th pSortableColumn="country">Total Price <p-sortIcon field="country"></p-sortIcon></th>
+                                    <th></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td style="width:25%; min-width:10rem;">
+                                        <span class="p-column-title">Name</span>
+                                        {{item.name}} 
+                                    </td>
+                                    <td [pEditableColumn]="item.unitPrice" pEditableColumnField="unitPrice" style="width:25%; min-width:10rem;" >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="number" [(ngModel)]="item.unitPrice" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output" >
+                                                {{ item.unitPrice | currency:'USD':'symbol'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <!-- <td style="width:25%; min-width:8rem;">
+                                        <span class="p-column-title">Email</span>
+                                        {{item.quantity}}
+                                    </td> -->
+                                    <td [pEditableColumn]="item.quantity" pEditableColumnField="code" >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="text" [(ngModel)]="item.quantity" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output" >
+                                                {{ item.quantity }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td style="width:14%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.price | currency:'USD':'symbol'}}
+                                    </td>
+                                    <td>
+                                        <div class="flex">
+                                            <!-- <button pButton pRipple icon="pi pi-plus"
+                                                class="p-button-rounded p-button-success mr-2"
+                                                (click)="addItem(item)"></button> -->
+                                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                                (click)="removeItem(item)"></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="content">
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Total Cost:</td>
+                                    <td>{{newOrder.invoiceValue | currency:'USD' }}</td>
+                                    <td></td>
+                                </tr>
+            
+                            </ng-template>
+                        </p-table>
+                        <div class="field">
+                            <div class="formgrid grid">
+                                <div class="col-8"></div>
+                                <div class="col-4">
+                                    <p-table>
+                                        <ng-template pTemplate="header">
+                                            <!-- <tr>
+                                                <th>Labor Cost:</th>
+                                                <th>{{jobcard.laborCost | currency:'USD' }}</th>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <th>Material Cost:</th>
+                                                <th>{{jobcard.cost | currency:'USD' }}</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Discount:</th>
+                                                <th>{{jobcard.discount | currency:'USD' }}</th>
+                                            </tr>-->
+                                            <tr>
+                                                <th>Total Cost:</th>
+                                                <th>{{newOrder.invoiceValue | currency:'USD' }}</th>
+                                                <td></td>
+                                            </tr> 
+                                        </ng-template>
+                                        <ng-template pTemplate="body">
+                                            <tr>
+                                                <td>Total Cost:</td>
+                                                <td>{{newOrder.invoiceValue | currency:'USD' }}</td>
+                                                <td></td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Process" icon="pi pi-check" class="p-button-text" 
+                    (click)="process()"></button>
+                <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="update()"
+                    [disabled]="!newOrder.purchaceOrderItems"></button>
+            </ng-template>
+        </p-dialog>
+        
+        <!-- approve modal -->
+        <p-dialog [(visible)]="approveModal" [style]="{width: '50%'}" header="Approve Purchace Order"
+        [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="currency">Supplier</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newOrder.company" inputId="id"
+                                [options]="companies" placeholder="Select Currency" optionLabel="name">
+                                
+                            </p-dropdown>
+                        </div>
+                        <div class="field">
+                            <div>
+                                <label for="creationTime">Order Date</label>
+                                <p-calendar class="p-inputtext-sm" [(ngModel)]="newOrder.creationTime"
+                                    dateFormat="dd.mm.yy"></p-calendar>
+                                <small class="ng-dirty ng-invalid"
+                                    *ngIf="submitted && !newOrder.creationTime">Date
+                                    is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="name">Invoice Number</label>
+                            <input type="text" pInputText id="name" [(ngModel)]="newOrder.invoiceValue" required autofocus
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newOrder.invoiceValue}" 
+                                [disabled]="!newOrder.approvedById"/>
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newOrder.invoiceValue">Item
+                                name is
+                                required.</small>
+                        </div>
+                        <div class="field">
+                            <div>
+                                <label for="eta">ETA</label>
+                                <p-calendar class="p-inputtext-sm" [(ngModel)]="newOrder.eta"
+                                    dateFormat="dd.mm.yy"></p-calendar>
+                                <small class="ng-dirty ng-invalid"
+                                    *ngIf="submitted && !newOrder.eta">Date
+                                    is required.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-4">
+                        <label  for="currency">Department</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm"
+                                [options]="categories" placeholder="Select Item"
+                                (onChange)="filterCategories($event)">
+                                
+                            </p-dropdown>
+                    </div>
+                    <div class="field col-4">
+                        <label  for="currency">Category</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm"  inputId="id"
+                                [options]="filteredCategories" placeholder="Select Item" optionLabel="name"
+                                (onChange)="filterItems($event)">
+                                
+                            </p-dropdown>
+                    </div>
+                    <div class="field col-4">
+                        <label  for="currency">Select Stock Item</label>
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="selectedStockItem" inputId="id"
+                                [options]="filteredStockItems" placeholder="Select Item" optionLabel="name"
+                                (onChange)="confirmQuantity()">
+                                
+                            </p-dropdown>
+                    </div>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col-12">
+                        <p-table [value]="newOrder.purchaceOrderItems!" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    
+                                    <th pSortableColumn="name">Item Name <p-sortIcon field="name"></p-sortIcon></th>
+                                    <th pSortableColumn="cell">Cost<p-sortIcon field="cell"></p-sortIcon></th>
+                                    <th pSortableColumn="email">Quantity<p-sortIcon field="email"></p-sortIcon></th>
+                                    <th pSortableColumn="country">Total Price <p-sortIcon field="country"></p-sortIcon></th>
+                                    <th></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td style="width:25%; min-width:10rem;">
+                                        <span class="p-column-title">Name</span>
+                                        {{item.product.name}} 
+                                    </td>
+                                    <td [pEditableColumn]="item.unitPrice" pEditableColumnField="unitPrice" style="width:25%; min-width:10rem;" >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="number" [(ngModel)]="item.unitPrice" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output" >
+                                                {{ item.unitPrice | currency:'USD':'symbol'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <!-- <td style="width:25%; min-width:8rem;">
+                                        <span class="p-column-title">Email</span>
+                                        {{item.quantity}}
+                                    </td> -->
+                                    <td [pEditableColumn]="item.quantity" pEditableColumnField="code" >
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="text" [(ngModel)]="item.quantity" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output" >
+                                                {{ item.quantity }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td style="width:14%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.price | currency:'USD':'symbol'}}
+                                    </td>
+                                    <td>
+                                        <div class="flex">
+                                            <!-- <button pButton pRipple icon="pi pi-plus"
+                                                class="p-button-rounded p-button-success mr-2"
+                                                (click)="addItem(item)"></button> -->
+                                            <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                                (click)="removeItem(item)"></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="content">
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>Total Cost:</td>
+                                    <td>{{newOrder.invoiceValue | currency:'USD' }}</td>
+                                    <td></td>
+                                </tr>
+            
+                            </ng-template>
+                        </p-table>
+                        <div class="field">
+                            <div class="formgrid grid">
+                                <div class="col-8"></div>
+                                <div class="col-4">
+                                    <p-table>
+                                        <ng-template pTemplate="header">
+                                            <!-- <tr>
+                                                <th>Labor Cost:</th>
+                                                <th>{{jobcard.laborCost | currency:'USD' }}</th>
+                                                
+                                            </tr>
+                                            <tr>
+                                                <th>Material Cost:</th>
+                                                <th>{{jobcard.cost | currency:'USD' }}</th>
+                                            </tr>
+                                            <tr>
+                                                <th>Discount:</th>
+                                                <th>{{jobcard.discount | currency:'USD' }}</th>
+                                            </tr>-->
+                                            <tr>
+                                                <th>Total Cost:</th>
+                                                <th>{{newOrder.invoiceValue | currency:'USD' }}</th>
+                                                <td></td>
+                                            </tr> 
+                                        </ng-template>
+                                        <ng-template pTemplate="body">
+                                            <tr>
+                                                <td>Total Cost:</td>
+                                                <td>{{newOrder.invoiceValue | currency:'USD' }}</td>
+                                                <td></td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="Process" icon="pi pi-check" class="p-button-text" 
+                    (click)="process()"></button>
+                <button pButton pRipple label="Approve" icon="pi pi-check" class="p-button-text" (click)="update()" (click)="newOrder.isApproved = true"
+                    [disabled]="!newOrder.purchaceOrderItems"></button>
+            </ng-template>
+        </p-dialog>
+        <!-- quantity modal nts -->
+        <p-dialog [(visible)]="quantityModal" header="Add Quantity" [modal]="true" [style]="{width:'300px'}">
+			<ng-template pTemplate="content">
+				<div class="field">
+					<label for="quantity">Quantity</label>
+                        <input type="number" pInputText id="quantity" [(ngModel)]="quantity" required autofocus
+                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !quantity}" />
+                        <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !quantity">Item
+                            quantity is
+                            required.</small>
+				</div>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="quantityModal = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                    (click)="addItem($event)"></button>
+            </ng-template>
+        </p-dialog>
+        <!-- delete modal -->
+        <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="newOrder">Are you sure you want to delete order number <b>{{newOrder.id}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="deleteModal = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                    (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>

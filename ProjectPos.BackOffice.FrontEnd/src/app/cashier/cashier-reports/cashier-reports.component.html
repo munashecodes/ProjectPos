@@ -1,0 +1,213 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-fieldset class="col-6" legend="Period Select">
+                <div class="col-9 flex flex-column md:flex-row p-1 w-full gap-5">
+                    <span class="p-float-label">
+                        <p-dropdown appendTo="body" inputId="id" [options]="filterOptions" [(ngModel)]="filter"
+                            placeholder="Filter By">
+                        </p-dropdown>
+                        <label for="currency">Filter By</label>
+                    </span>
+                    <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                        <p-dropdown appendTo="body" inputId="id" [options]="users" [(ngModel)]="user"
+                            placeholder="Filter By" optionLabel="fullName">
+                        </p-dropdown>
+                        <label for="currency">User</label>
+                    </span>
+                    <span class="p-float-label">
+                        <p-calendar appendTo="body" dateFormat="dd/mm/yy" [(ngModel)]="date">
+                        </p-calendar>
+                        <label htmlFor="description">Date</label>
+                    </span>
+                    <span class="p-float-label">
+                        <button pButton label="LOAD CASH UP" icon="pi pi-plus" class="p-button-success mr-2"
+                                    (click)="load()"></button>
+                    </span>
+                </div>
+
+            </p-fieldset>
+            <div class="col-12">
+                <p-table class="header-line-table" #dt [value]="products" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                    [globalFilterFields]="['productName', 'barCode', 'pluCode']" [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                    [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <div class="col-10">
+                                <div class="grid">
+                                    <div class="col-4">
+                                        <button pButton pRipple type="button" label="SAVE PDF" icon="pi pi-plus"
+                                            class="p-button-primary mr-2" (click)="categorizeItems()"></button>
+                                        <button pButton pRipple type="button" label="CLOSE DAY" icon="pi pi-plus"
+                                            class="p-button-success mr-2" (click)="confirmCloseDay()"></button>
+                                        <input type="text" pInputText id="description" [ngModel]="todayDate | date: 'd MMMM y' " 
+                                        required autofocus [disabled]="dissabled"/>
+                                    </div>
+                                    <div class="col-4">
+                                        <h4>{{message}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr >
+                            <th style="width:20%; min-width:10rem;">Code</th>
+                            <th style="width:40%; min-width:10rem;">Name</th>
+                            <th style="width:20%; min-width:10rem;">Unit Pice</th>
+                            <th style="width:20%; min-width:10rem;">Quantity </th>
+                            <th style="width:20%; min-width:10rem;">Price</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-item>
+                        <tr>
+                            <td style="width:10%; min-width:10rem;" >
+                                <span class="p-column-title">Name</span>
+                                {{item.barCode}} 
+                            </td>
+                            <td style="width:15%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{item.productName }}
+                            </td>
+                            <td style="width:15%; min-width:8rem;">
+                                <span class="p-column-title">Email</span>
+                                {{item.unitPrice  | currency:'USD':'symbol' }}
+                            </td>
+                            <td style="width:15%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{item.quantity }}
+                            </td>
+                            <td style="width:15%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{item.price | currency:'USD':'symbol'}}
+                            </td>
+                            
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <th colspan="3" class="text-left">Totals</th>
+                            <th class="text-left">{{totalCount.toFixed(2) }}</th>
+                            <th class="text-left">{{(totalSales) | currency:'USD' }}</th>
+                        </tr>
+
+                    </ng-template>
+                </p-table>
+            </div>
+
+            <!----------------direct CashUp Modal---------->
+            <p-dialog [(visible)]="cashUpModal" [style]="{ width: '80%' }" [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div id="directCashup" #directCashup class="pdfContainer" >
+                        <div  class="pdf-section" id="pdf-section-1" #pdfSection1 >
+                            <div class="field col-12">
+                                <h1 style="margin-bottom: 0.1px; color: grey;">CashUp: {{date | date }}</h1>
+                                <h2 style="margin-bottom: 0.1px; color: grey;">{{display}}</h2>
+                            </div>
+                            <p-table [value]="cashUprecons" id="pdf-table" sortField="id"
+                            [columns]="cols" responsiveLayout="scroll" styleClass="p-datatable-gridlines"
+                            [globalFilterFields]="['id']" [rows]="15" [paginator]="true"
+                            [rowsPerPageOptions]="[5, 10, 15]" [showCurrentPageReport]="true"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                            selectionMode="multiple" [rowHover]="true" dataKey="id" sortMode="single" [tableStyle]="{'min-width': '75rem'}">
+                                <ng-template pTemplate="header" let-product>
+                                    <tr>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" rowspan='2'>First Name</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" [attr.colspan]="currencyCountCash + 1" *ngIf="isCash">Cash</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" [attr.colspan]="currencyCountEcoCash" *ngIf="isEcoCash">EcoCash</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" [attr.colspan]="currencyCountCreditCard" *ngIf="isCreditCard">Credit Card</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" [attr.colspan]="currencyCountCredit" *ngIf="isCredit">Credit Card</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" colspan="1">Payment total</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" colspan="1">Cash Up Total</th>
+                                        <th style="font-size: larger;background-color: rgb(240, 240, 240);" colspan="1">Surplus/ (Shortfall)</th>
+                                    </tr>
+                                    <tr>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;" *ngFor="let currency of cashCurrencies">{{currency}}</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;" *ngIf="isCash">USD Total</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;" *ngFor="let currency of ecoCashCurrencies">{{currency}}</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;" *ngFor="let currency of creditCardCurrencies">{{currency}}</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;" *ngFor="let currency of creditCurrencies">{{currency}}</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">USD</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">USD</th>
+                                        <th style="background-color: rgb(202, 201, 201);font-size: larger;">USD</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-product>
+                                    <tr>
+                                        <td>{{ product.name | uppercase }}</td>
+                                        <ng-container *ngFor="let cash of product.cashReport; let i = index">
+                                            <td>{{ (cash.amount || 0) | number:'1.2-2' }} </td>
+                                        </ng-container>
+                                        <td *ngIf="isCash">{{ product.cashTotal  | currency: 'USD'}}</td>
+                                        <ng-container *ngFor="let ecoCash of product.ecoCashReport; let i = index">
+                                            <td>{{ ecoCash.amount | number:'1.2-2' }}</td>
+                                        </ng-container>
+                                        <ng-container *ngFor="let card of product.creditCardReport; let i = index">
+                                            <td>{{card.amount | number:'1.2-2' }}</td>
+                                        </ng-container>
+                                        <ng-container *ngFor="let credit of product.creditReport; let i = index">
+                                            <td>{{credit.amount | number:'1.2-2' }}</td>
+                                        </ng-container>
+                                        <td>{{ product.paymentTotal  | currency: 'USD'}}</td>
+                                        <td>{{ product.cashUpTotal  | currency: 'USD'}}</td>
+                                        <td>{{ product.changeAmount  | currency: 'USD'}}</td>
+                                        
+                                    </tr>
+                                </ng-template>
+                                <!-- <ng-template pTemplate="footer">
+                                    <tr>
+                                        <td colspan="2" class="text-right" style="background-color: rgb(202, 201, 201);font-weight: bold;">TOTAL FROM ALL SALES</td>
+                                        <ng-container *ngFor="let currency of uniquebankDepositCurrencies; let i = index">
+                                            <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{ReturnFinalAmount(currency,"bankDepositReport") | number:'1.2-2'}}</td>
+                                        </ng-container>
+                                        <ng-container *ngFor="let currency of uniqueCashCurrencies; let i = index">
+                                            <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{ReturnFinalAmount(currency,"cashReport") | number:'1.2-2'}}</td>
+                                        </ng-container>
+                                        <ng-container *ngFor="let currency of uniqueCreditCardCurrencies; let i = index">
+                                            <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{ReturnFinalAmount(currency,"creditCardReport") | number:'1.2-2'}}</td>
+                                        </ng-container>
+                                        <ng-container *ngFor="let currency of uniqueDpoCurrencies; let i = index">
+                                            <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{ReturnFinalAmount(currency,"dpoReport") | number:'1.2-2'}}</td>
+                                        </ng-container>
+                                        <ng-container *ngFor="let currency of uniqueDpoSimunyeCurrencies; let i = index">
+                                            <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{ReturnFinalAmount(currency,"dpoSimunye") | number:'1.2-2'}}</td>
+                                        </ng-container>
+                                        <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{ ReturnTotalPayment()  | currency: 'USD'}}</td>
+                                        <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{finalInvoiceValueTotal  | currency: 'USD'}}</td>
+                                        <td style="background-color: rgb(202, 201, 201);font-weight: bold;"></td>
+                                        <td style="background-color: rgb(202, 201, 201);font-weight: bold;">{{(finalInvoiceValueTotal - ReturnTotalPayment() )  | currency: 'USD'}}</td>
+                                    </tr>
+                                </ng-template> -->
+                            </p-table>
+                        </div>
+                    </div>
+
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton icon="pi pi-print" class="p-button-primary" label="SAVE PDF"
+                        (click)="captureReportModal()"></button>
+                </ng-template>
+            </p-dialog>
+
+            <p-dialog [(visible)]="confirmModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span >Are you sure you want to close the day? When you close the day all the sales that come there after will fall into the next day</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="confirmModal = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="closeDay()"></button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div>

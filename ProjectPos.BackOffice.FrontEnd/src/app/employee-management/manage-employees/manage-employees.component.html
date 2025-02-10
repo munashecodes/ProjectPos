@@ -1,0 +1,444 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12">
+                    <button pButton label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                    (click)="create()"></button>
+                    <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+                        (click)="deleteSelected()">
+                    </button>
+                </div>
+                <div class="col-12">
+                    <p-table class="header-line-table" #dt [value]="employees" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                    [globalFilterFields]="['name']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                    [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <h5 class="m-0">Manage employees</h5>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            
+                            <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                            <th pSortableColumn="name">Surname <p-sortIcon field="name"></p-sortIcon></th>
+                            <th pSortableColumn="name">Nat ID <p-sortIcon field="name"></p-sortIcon></th>
+                            <th pSortableColumn="country">D.O.B <p-sortIcon field="country"></p-sortIcon></th>
+                            <th pSortableColumn="cell">Cell <p-sortIcon field="cell"></p-sortIcon></th>
+                            <th pSortableColumn="email">Email<p-sortIcon field="email"></p-sortIcon></th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-employee>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="employee"></p-tableCheckbox>
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Name</span>
+                                {{employee.name}}
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Name</span>
+                                {{employee.surname}}
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Name</span>
+                                {{employee.natId}}
+                            </td>
+                            
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{employee.dob | date : 'MMM d, y'}}
+                            </td>
+                            <td style="width:20%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{employee.cell}}
+                            </td>
+                            <td style="width:20%; min-width:8rem;">
+                                <span class="p-column-title">Email</span>
+                                {{employee.email}}
+                            </td>
+                            <td style="width:20%; min-width:8rem;">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-pencil"
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="edit(employee)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                                        (click)="delete(employee)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+                
+            </div>
+
+            <!-- create modal -->
+            <p-dialog [(visible)]="createModal" [style]="{ width: '50%' }" header="New employee"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+                                <div class="field col-6">
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="name">Name</label>
+                                            <input type="text" pInputText id="name" [(ngModel)]="newEmployee.name" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.name}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.name">Item
+                                                name is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="surname">Surname</label>
+                                            <input type="text" pInputText id="surname" [(ngModel)]="newEmployee.surname" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.surname}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.surname">Item
+                                                surname is
+                                                required.</small>
+                                                
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="natId">Nat Id</label>
+                                            <input type="text" pInputText id="natId" [(ngModel)]="newEmployee.natId" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.natId}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.natId">Item
+                                                natId is
+                                                required.</small>
+                                                
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="natId">D.O.B</label>
+                                            <p-calendar appendTo="body" [showIcon]="true" inputId="icon" [(ngModel)]="newEmployee.dob" autofocus></p-calendar>
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.natId">Item
+                                                natId is
+                                                required.</small>
+                                                
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="description">Phone</label>
+                                            <input type="text" pInputText id="description" [(ngModel)]="newEmployee.cell" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.cell}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.cell">Item
+                                                phone is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="description">Email</label>
+                                            <input type="text" pInputText id="description" [(ngModel)]="newEmployee.email" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.email}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.email">Item
+                                                email is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="field col-6">
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="street">Street</label>
+                                            <input type="text" pInputText id="street" [(ngModel)]="newEmployee.address!.street" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.street}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.street">Item
+                                                email is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="addressLine1">Address Line 1</label>
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="addressLine1">Address Line 2</label>
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" [disabled]="!newEmployee.name || newEmployee.name"/>
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="city">City</label>
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.city" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.city}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.city">city is
+                                                required.</small>
+                                                
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="state">State</label>
+                                            <input type="text" pInputText id="state" [(ngModel)]="newEmployee.address!.state" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.state}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.state">Item
+                                                idealPortions is
+                                                required.</small>
+                                                
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="country">Country</label>
+                                            <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newEmployee.address!.country" inputId="name"
+                                                [options]="countries" placeholder="Select Country">
+                                                <ng-template pTemplate="selectedCountry">
+                                                    <span *ngIf="newEmployee && newEmployee.address!.country">{{ newEmployee.address.country }}
+                                                    </span>
+                                                </ng-template>
+                                                <ng-template let-option pTemplate="item">
+                                                    <span>{{ option }}</span>
+                                                </ng-template>
+                                            </p-dropdown>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                        [disabled]="!newEmployee.name "></button>
+                </ng-template>
+            </p-dialog> 
+
+            <!-- edit modal -->
+            <p-dialog [(visible)]="editModal" [style]="{width: '40%'}" header="New Stock Item"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+                                <div class="field col-6">
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="name">Name</label>
+                                            <input type="text" pInputText id="name" [(ngModel)]="newEmployee.name" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.name}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.name">Item
+                                                name is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="surname">Surname</label>
+                                            <input type="text" pInputText id="surname" [(ngModel)]="newEmployee.surname" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.surname}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.surname">Item
+                                                surname is
+                                                required.</small>
+                                                
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="natId">Nat Id</label>
+                                            <input type="text" pInputText id="natId" [(ngModel)]="newEmployee.natId" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.natId}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.natId">Item
+                                                natId is
+                                                required.</small>
+                                                
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="natId">D.O.B</label>
+                                            <p-calendar appendTo="body" [showIcon]="true" inputId="icon" [(ngModel)]="newEmployee.dob" autofocus></p-calendar>
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.natId">Item
+                                                natId is
+                                                required.</small>
+                                                
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="description">Phone</label>
+                                            <input type="text" pInputText id="description" [(ngModel)]="newEmployee.cell" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.cell}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.cell">Item
+                                                phone is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="description">Email</label>
+                                            <input type="text" pInputText id="description" [(ngModel)]="newEmployee.email" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.email}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.email">Item
+                                                email is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                </div>
+                                <div class="field col-6">
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="street">Street</label>
+                                            <input type="text" pInputText id="street" [(ngModel)]="newEmployee.address!.street" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.street}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.street">Item
+                                                email is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="addressLine1">Address Line 1</label>
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="addressLine1">Address Line 2</label>
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" [disabled]="!newEmployee.name || newEmployee.name"/>
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
+                                                required.</small>
+                                                
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="city">City</label>
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.city" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.city}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.city">city is
+                                                required.</small>
+                                                
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="state">State</label>
+                                            <input type="text" pInputText id="state" [(ngModel)]="newEmployee.address!.state" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.state}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.state">Item
+                                                idealPortions is
+                                                required.</small>
+                                                
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <div class="flex flex-column gap-2">
+                                            <label for="country">Country</label>
+                                            <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newEmployee.address!.country" inputId="name"
+                                                [options]="countries" placeholder="Select Country">
+                                                <ng-template pTemplate="selectedCountry">
+                                                    <span *ngIf="newEmployee && newEmployee.address!.country">{{ newEmployee.address.country }}
+                                                    </span>
+                                                </ng-template>
+                                                <ng-template let-option pTemplate="item">
+                                                    <span>{{ option }}</span>
+                                                </ng-template>
+                                            </p-dropdown>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="update()"
+                        [disabled]="!newEmployee.name "></button>
+                </ng-template>
+            </p-dialog> 
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span *ngIf="newEmployee">Are you sure you want to delete <b>{{newEmployee.name}}</b>?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="deleteModal = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="confirmDelete()"></button>
+                </ng-template>
+            </p-dialog>
+    </div>
+</div>
+

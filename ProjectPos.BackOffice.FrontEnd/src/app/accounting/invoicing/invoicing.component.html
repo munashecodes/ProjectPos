@@ -1,0 +1,466 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12">
+                    <p-table class="header-line-table" #dt [value]="filteredOrders" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                    [globalFilterFields]="['name']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,14.28,30]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                    [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <div class="col-10">
+                                <div class="grid">
+                                    <!-- <div class="p-float-label">
+                                        <button pButton pRipple type="button" label="QUOTATION" icon="pi pi-plus"
+                                            class="p-button-success mr-2" (click)="quot()"></button>
+                                    </div>
+                                    <div class="col-2">
+                                        <button pButton pRipple type="button" label="CREDIT SALE" icon="pi pi-plus"
+                                            class="p-button-success mr-2" (click)="creditSale()"></button>
+                                    </div>
+                                    <hr/> -->
+                                    <span class="p-float-label ">
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm  mr-2" [(ngModel)]="option" inputId="name"
+                                            [options]="saleOptions" placeholder="Option" (onChange)="get()"
+                                            ></p-dropdown>
+                                        </span>
+                                    <span class="p-float-label" *ngIf="option === 'Date'">
+                                        <p-calendar class="p-inputtext-sm  mr-2" appendTo="body"
+                                            [(ngModel)]="date" dateFormat="d MM yy" (onSelect)="getByDate()"></p-calendar>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="option === 'Date Range'">
+                                        <p-calendar class="p-inputtext-sm  mr-2" appendTo="body"
+                                            [(ngModel)]="startDate" dateFormat="d MM yy" ></p-calendar>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="option === 'Date Range'">
+                                        <p-calendar class="p-inputtext-sm  mr-2" appendTo="body"
+                                            [(ngModel)]="endDate" dateFormat="d MM yy" (onSelect)="getByDateRange()"></p-calendar>
+                                    </span>
+                                    <span class="p-float-label" *ngIf="option === 'Month'">
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="month"
+                                            [options]="months" placeholder="Month"
+                                            (onChange)="getByMonth($event)"></p-dropdown>
+                                    </span>
+                                    <span class="p-float-label">
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="option2" inputId="name"
+                                            [options]="saleOptions2" placeholder="Option"
+                                            (onChange)="filterAll()"></p-dropdown>
+                                    </span>
+                                    <div class="p-float-label" *ngIf="option2 === 'Teller'">
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="teller" inputId="name" [filter]="true" filterBy="fullName"
+                                            [options]="users" optionLabel="fullName" placeholder="Teller" [showClear]="true" (onClear)="resetFilter()"
+                                            (onChange)="filterByUser()"></p-dropdown>
+                                    </div>
+                                    <span class="p-float-label" *ngIf="option2 === 'Customer'">
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="customer" inputId="name" [filter]="true" filterBy="name"
+                                            [options]="customers" optionLabel="name" placeholder="Customer" [showClear]="true" (onClear)="resetFilter()"
+                                            (onChange)="filterByCustomer()"></p-dropdown>
+                                    </span>
+                                    <span class="p-float-label">
+                                        <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="status" inputId="name" [filter]="true" filterBy="name"
+                                            [options]="statuses" placeholder="Status" [showClear]="true" (onClear)="resetFilter()"
+                                            (onChange)="filterByStatus()"></p-dropdown>
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            
+                            <th pSortableColumn="name">Order No <p-sortIcon field="name"></p-sortIcon></th>
+                            <th pSortableColumn="phone">Customer <p-sortIcon field="phone"></p-sortIcon></th>
+                            <th pSortableColumn="email">Currency<p-sortIcon field="email"></p-sortIcon></th>
+                            <th pSortableColumn="country">Amount <p-sortIcon field="country"></p-sortIcon></th>
+                            <th pSortableColumn="country">Balance <p-sortIcon field="country"></p-sortIcon></th>
+                            <th pSortableColumn="country">Status <p-sortIcon field="country"></p-sortIcon></th>
+                            <th pSortableColumn="country">Date <p-sortIcon field="country"></p-sortIcon></th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-order>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="order"></p-tableCheckbox>
+                            </td>
+                            <td style="width:14.28%; min-width:10rem;">
+                                <span class="p-column-title">Name</span>
+                                {{order.id}}
+                            </td>
+                            <td style="width:14.28%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{order.customerName}}
+                            </td>
+                            <td style="width:14.28%; min-width:8rem;">
+                                <span class="p-column-title">Email</span>
+                                {{order.currency}}
+                            </td>
+                            <td style="width:14.28%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{order.price | currency}}
+                            </td>
+                            <td style="width:14.28%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{order.balance | currency}}
+                            </td>
+                            <td style="width:15%; min-width:10rem;" *ngIf="order.status === 'Quotation'">
+                                <span class="p-column-title"> Status </span>
+                                <span highlighted><mark
+                                        style="background-color: rgb(222, 18, 18); color:white">{{order.status | uppercase}}</mark>
+                                </span>
+                            </td>
+                            <td style="width:15%; min-width:10rem;" *ngIf="order.status === 'NotPaid'">
+                                <span class="p-column-title"> Status </span>
+                                <span highlighted><mark
+                                        style="background-color: rgb(235, 158, 65); color:white">{{order.status | uppercase}}</mark>
+                                </span>
+                            </td>
+                            <td style="width:15%; min-width:10rem;" *ngIf="order.status === 'Incomplete'">
+                                <span class="p-column-title"> Status </span>
+                                <span highlighted><mark
+                                        style="background-color: rgb(215, 222, 18); color:white">{{order.status | uppercase}}</mark>
+                                </span>
+                            </td>
+                            <td style="width:15%; min-width:10rem;" *ngIf="order.status === 'Complete'">
+                                <span class="p-column-title"> Status </span>
+                                <span highlighted><mark
+                                        style="background-color: rgb(2, 199, 61);">{{order.status | uppercase}}</mark></span>
+                            </td>
+                            <td style="width:14.28%; min-width:10rem;">
+                                <span class="p-column-title">Date Effected</span>
+                                {{ order.creationTime | date: 'd MMMM y' }}
+                            </td>
+                            <td style="width:14.28%; min-width:8rem;">
+                                <div class="flex">
+                                    <button pButton pRipple type="button" label="PRINT" icon="pi pi-print"
+                                        class="p-button-success mr-2" (click)="printOrder(order)"></button>
+                                    <button pButton pRipple type="button" label="VIEW" icon="pi pi-eye"
+                                        class="p-button-primary mr-2"
+                                        (click)="view(order)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+                
+            </div>
+
+            <!-- view modal -->
+            <p-dialog [(visible)]="editModal" [style]="{width: '1100px', height: '1800px'}" 
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="grid">
+                        <div class="col-12">
+                            <div class="text-center mt-3">
+                                <h2><strong><u>TAX INVOICE</u></strong></h2>
+                            </div>
+                            
+                            <hr/>
+
+                            <div class="grid">
+                                <div class="col-8">
+                                    <div class="logos text-left">
+                                        <img class="img-logo" src="../../../assets/demo/images/logos/logo-sample.jpg"
+                                            style="max-width: 150px; height: auto;" />
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-right mt-3">
+                                        <h2><b>Farm Fresh</b></h2>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <h5><b>125 Sopers</b></h5>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <h5><b>PO Box 30</b></h5>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <h5>Livingstone Drive</h5>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <h5><b>Victoria Falls</b></h5>
+                                    </div>
+                                    <div class="text-right mt-3">
+                                        <h5><b>Zimbabwe</b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+
+                    <div class="formgrid grid">
+                        <div class="field col-6">
+                            <div class="formgrid grid">
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5>Order N#:</h5>
+                                    </div>
+                                </div>
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5><b>       {{ order.id }} </b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5>Customer:</h5>
+                                    </div>
+                                </div>
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5><b>       {{ order.customerName }} </b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5>Sale Type:</h5>
+                                    </div>
+                                </div>
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5><b>       {{ order.saleType }} </b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5>Currency:</h5>
+                                    </div>
+                                </div>
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5><b>       {{ order.currency }} </b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5>Order Date:</h5>
+                                    </div>
+                                </div>
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5><b>       {{ order.creationTime  | date: 'd MMMM y' }} </b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5>Operator:</h5>
+                                    </div>
+                                </div>
+                                <div class="field col-3">
+                                    <div class="field">
+                                        <h5><b>       {{ order.userName | uppercase }} </b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr/>
+
+                    <p-table #dt [value]="order.salesOrderItems!">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <h5 class="m-0">Invoice Lines</h5>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th >Code</th>
+                                <th >Name</th>
+                                <th >Unit Price</th>
+                                <th >Quantity</th>
+                                <th >Price </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr>
+                                <td style="width:20%; min-width:10rem;">
+                                    <span class="p-column-title">Name</span>
+                                    {{item.barCode}}
+                                </td>
+                                <td style="width:30%; min-width:10rem;">
+                                    <span class="p-column-title">Name</span>
+                                    {{item.productName}}
+                                </td>
+                                <td style="width:20%; min-width:10rem;">
+                                    <span class="p-column-title">Phone</span>
+                                    {{item.unitPrice | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:20%; min-width:10rem;">
+                                    <span class="p-column-title">Phone</span>
+                                    {{item.quantity | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:10%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{item.price | currency:'USD':'symbol'}}
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <tr>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:30%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;">Total Cost:</td>
+                                <td style="width:10%; min-width:10rem;">{{order.price| currency:'USD' }}</td>
+                            </tr>
+
+                        </ng-template>
+                    </p-table>
+                    <p-table>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:30%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;">Total Amount:</td>
+                                <td style="width:10%; min-width:10rem;">{{order.price| currency:'USD' }}</td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:30%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;">Paid Amount:</td>
+                                <td style="width:10%; min-width:10rem;">{{order.paidAmount| currency:'USD' }}</td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:30%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;">Balance:</td>
+                                <td style="width:10%; min-width:10rem;">{{order.balance| currency:'USD' }}</td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body">
+                            <tr>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:30%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;">Total Amount:</td>
+                                <td style="width:10%; min-width:10rem;">{{order.price| currency:'USD' }}</td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:30%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;">Paid Amount:</td>
+                                <td style="width:10%; min-width:10rem;">{{order.paidAmount| currency:'USD' }}</td>
+                            </tr>
+                            <br>
+                            <tr>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:30%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;"></td>
+                                <td style="width:20%; min-width:10rem;">Balance:</td>
+                                <td style="width:10%; min-width:10rem;">{{order.balance| currency:'USD' }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    
+                    <hr/>
+                    <div class="col-12 text-center mt-3">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore 
+                            magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo 
+                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla 
+                            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id 
+                            est laborum.</p>
+                    </div>
+                    <div class="col-12">
+                        <button pButton pRipple label="CANCEL" icon="pi pi-times" class="p-button-text"
+                            (click)="hideDialog()"></button>
+                        <button pButton pRipple label="PRINT" icon="pi pi-print" class="p-button-text" 
+                            (click)="printInvoice()"></button>
+                    </div>
+                </ng-template>
+            </p-dialog>
+
+            <!-- pay maodal -->
+            <p-dialog [(visible)]="payModal"  [modal]="true" [style]="{width:'300px'}" class="p-fluid">
+                <ng-template pTemplate="content text-center">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="field">
+                                <label for="company">Method Of Pay</label>
+                                <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="paymentType" inputId="name"
+                                    [options]="paymentTypes" placeholder="Method Of Pay" (onChange)="selectSaleType()">
+            
+                                </p-dropdown>
+                            </div>
+                            <div class="field" *ngIf="paymentType === 'POP'">
+                                <label for="company">POP</label>
+                                <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="proofOfPayment" inputId="name"
+                                    [options]="proofOfPayments" placeholder="POP" optionLabel="reference" (onChange)=" processPop()">
+            
+                                </p-dropdown>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col-6">
+                                    <h3>Amount Due:  	</h3>
+                                </div>
+                                <div class="field col-6">
+                                    <h3><b>{{this.order.balance | currency}}</b> </h3>
+                                </div>
+                                <div class="field col-6">
+                                    <h3>Paid:</h3>
+                                </div>
+                                <div class="field col-6">
+                                    <div class="field">
+                                        <!-- <label for="description"></label> -->
+                                        <input type="number" pInputText id="description" [(ngModel)]="this.paidValue" required autofocus
+                                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !this.paidValue}" (input)="getChange($event)"/>
+                                        <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !this.paidValue">Item
+                                            quantity is
+                                            required.</small>
+                                    </div>
+                                </div>
+                                <div class="field col-6">
+                                    <h3>Change:  	</h3>
+                                </div>
+                                <div class="field col-6">
+                                    <h3><b>{{changeValue | currency}}</b> </h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Ok"
+                    (click)="savePayment()" [disabled]="paidValue === 0"></button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div>
+
+ 

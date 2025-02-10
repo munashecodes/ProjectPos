@@ -1,0 +1,225 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12">
+                    <p-table class="header-line-table" #dt [value]="productPrices" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                    [globalFilterFields]="['markUp']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,14,30]"
+                    [showCurrentPageReport]="true"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                    [rowHover]="true" dataKey="id">
+                    <ng-template pTemplate="caption">
+                        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                            <div class="col-10">
+                                <button pButton label="New" icon="pi pi-plus" class="p-button-success mr-2"
+                                (click)="create()"></button>
+                                <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+                                    (click)="deleteSelected()">
+                                </button>
+                            </div>
+                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                <i class="pi pi-search"></i>
+                                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                    class="w-full sm:w-auto" />
+                            </span>
+                        </div>
+                    </ng-template>
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th style="width: 3rem">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            
+                            <th pSortableColumn="markUp">Bar Code <p-sortIcon field="markUp"></p-sortIcon></th>
+                            <th pSortableColumn="cost">Name <p-sortIcon field="cost"></p-sortIcon></th>
+                            <th pSortableColumn="price">Cost<p-sortIcon field="price"></p-sortIcon></th>
+                            <th pSortableColumn="country">Net Price<p-sortIcon field="country"></p-sortIcon></th>
+                            <th pSortableColumn="country">Vat <p-sortIcon field="country"></p-sortIcon></th>
+                            <th pSortableColumn="country">Gross Price <p-sortIcon field="country"></p-sortIcon></th>
+                            <th></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-price>
+                        <tr>
+                            <td>
+                                <p-tableCheckbox [value]="price"></p-tableCheckbox>
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">markUp</span>
+                                {{price.barCode}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{price.name}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <span class="p-column-title">price</span>
+                                {{price.cost | currency}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">Phone</span>
+                                {{price.price | currency}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <span class="p-column-title">price</span>
+                                {{price.price}}
+                            </td>
+                            <td style="width:14%; min-width:10rem;">
+                                <span class="p-column-title">Country</span>
+                                {{price.price}}
+                            </td>
+                            <td style="width:14%; min-width:8rem;">
+                                <div class="flex">
+                                    <button pButton pRipple icon="pi pi-pencil" label="EDIT" class="p-button-success mr-2"
+                                        (click)="edit(price)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" label="DELETE" class="p-button-danger"
+                                        (click)="delete(price)"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+                
+            </div>
+
+            <!-- create modal -->
+            <p-dialog [(visible)]="createModal" [style]="{ width: '30%' }" header="Add Product Price"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+                                <div class="field col-12">
+                                    <div class="field">
+                                        <label for="company">Product</label>
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="product"
+                                                inputId="name" [options]="products" placeholder="Select Sub Category" optionLabel="name"
+                                                [filter]="true" filterBy="name"  [showClear]="true">
+                
+                                            </p-dropdown>
+                                            
+                                        
+                                    </div>
+                                    <!-- <div class="field">
+                                        <span class="p-float-label">
+                                            <input type="number" pInputText id="price" [(ngModel)]="newProductPrice.cost" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProductPrice.cost}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProductPrice.cost">Item
+                                                phone is
+                                                required.</small>
+                                            <label for="price">Cost</label>
+                                        </span>
+                                        
+                                    </div>
+                                    <div class="field">
+                                        <span class="p-float-label">
+                                            <input type="number" pInputText id="markUp" [(ngModel)]="newProductPrice.markUp" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProductPrice.markUp}" 
+                                                (input)="markUp()"/>
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProductPrice.markUp">Item
+                                                markUp is
+                                                required.</small>
+                                            <label for="markUp">Mark Up</label>
+                                        </span>
+                                    </div> -->
+                                    <div class="field">
+                                        <label for="price">Price</label>
+                                            <input type="number" pInputText id="price" [(ngModel)]="newProductPrice.price" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProductPrice.price}" />
+                                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProductPrice.price">Item
+                                                price is
+                                                required.</small>
+                                            
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                        ></button>
+                        <!-- [disabled]="!newProductPrice.markUp " -->
+                </ng-template>
+            </p-dialog> 
+
+            <!-- edit modal -->
+            <p-dialog [(visible)]="editModal" [style]="{width: '30%'}" header="Edit Product Price"
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="field">
+                                <span class="p-float-label">
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProductPrice.product"
+                                        inputId="markUp" [options]="products" placeholder="Select Sub Category" optionLabel="markUp">
+        
+                                    </p-dropdown>
+                                    <label for="company">Sub Category</label>
+                                </span>
+                            </div>
+                            <div class="field">
+                                <span class="p-float-label">
+                                    <input type="text" pInputText id="price" [(ngModel)]="newProductPrice.cost" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProductPrice.cost}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProductPrice.cost">Item
+                                        phone is
+                                        required.</small>
+                                    <label for="price">Cost</label>
+                                </span>
+                                
+                            </div>
+                            <div class="field">
+                                <span class="p-float-label">
+                                    <input type="text" pInputText id="markUp" [(ngModel)]="newProductPrice.markUp" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProductPrice.markUp}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProductPrice.markUp">Item
+                                        markUp is
+                                        required.</small>
+                                </span>
+                                <label for="markUp">Mark Up</label>
+                            </div>
+                            <div class="field">
+                                <span class="p-float-label">
+                                    <input type="text" pInputText id="price" [(ngModel)]="newProductPrice.price" required autofocus
+                                        [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProductPrice.price}" />
+                                    <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newProductPrice.price">Item
+                                        price is
+                                        required.</small>
+                                    <label for="price">Price</label>
+                                </span>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="update()"
+                        [disabled]="!newProductPrice.markUp "></button>
+                </ng-template>
+            </p-dialog> 
+
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span *ngIf="newProductPrice">Are you sure you want to delete <b>{{newProductPrice.markUp}}</b>?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="deleteModal = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="confirmDelete()"></button>
+                </ng-template>
+            </p-dialog>
+    </div>
+</div>
+

@@ -1,0 +1,919 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+				<!-- confirmation dialogue box -->
+				<p-confirmDialog #cd header="Notification">
+					<ng-template pTemplate="content">
+						<!-- confirmation message here -->
+					</ng-template>
+					<ng-template pTemplate="footer">
+						<button type="button" class="p-button-success mr-2" pButton icon="pi pi-check" label="OK" (click)="cd.accept()"></button>
+					</ng-template>
+				</p-confirmDialog>
+                <div class="col-12">
+                    <p-table #dt [value]="filteredGrvs" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['id', 'orderNumber', 'invoiceNumber']" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                        [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                        [rowHover]="true" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <div class="col-10">
+                                    <div class="grid">
+                                        <div class="col-10">
+                                            <button pButton label="NEW GRV" icon="pi pi-plus" class="p-button-success mr-2"
+                                                (click)="addItem()"></button>
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="selectedMainFilter" inputId="name"
+                                                [options]="mainFilters" placeholder="Option" (onChange)="onMainFilter()">
+                                            </p-dropdown>
+                                            <p-calendar class="p-inputtext-sm mr-2" appendTo="body" *ngIf="selectedMainFilter === 'Date'" placeholder="Date"
+                                                [(ngModel)]="date" dateFormat="d MM yy" (onSelect)="onGetByDate()"></p-calendar>
+                                            
+                                            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="onGetByDateRange()"
+                                                *ngIf="selectedMainFilter === 'Date Range'" class="p-inputtext-sm mr-2" placeholder="Range"/>
+                                        
+                                            <p-calendar [(ngModel)]="month" view="month" dateFormat="MM" [readonlyInput]="true" (onSelect)="onGetByMonth()" class="p-inputtext-sm mr-2"
+                                                *ngIf="selectedMainFilter === 'Month'" placeholder="Month"/>
+                                            <!-- <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="month" inputId="name" *ngIf="selectedMainFilter === 'Month'"
+                                                [options]="months" placeholder="Month"
+                                                (onChange)="onGetByMonth()"></p-dropdown> -->
+                                        
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="supplier" inputId="name" *ngIf="selectedMainFilter === 'Supplier'"
+                                                [options]="companies" optionLabel="name" placeholder="Supplier"
+                                                (onChange)="onGetBySupplier()"></p-dropdown>
+
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="status" inputId="name"
+                                                [options]="statusFilter" placeholder="Status" (onChange)="onFilterByStatus()">
+                                            </p-dropdown>
+                                        
+                                            <!-- <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="customer" inputId="name"*ngIf="option2 === 'Customer'"
+                                                [options]="customers" optionLabel="name" placeholder="Customer"
+                                                (onChange)="filterByCustomer()"></p-dropdown> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                        class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="name">Voucher Number <p-sortIcon field="name"></p-sortIcon></th>
+                                <th pSortableColumn="name">Supplier <p-sortIcon field="name"></p-sortIcon></th>
+                                <th pSortableColumn="name">Order Number <p-sortIcon field="name"></p-sortIcon></th>
+                                <th pSortableColumn="cell">Invoice Number <p-sortIcon field="cell"></p-sortIcon></th>
+                                <th pSortableColumn="email">Value<p-sortIcon field="email"></p-sortIcon></th>
+                                <th pSortableColumn="email">Amount Due<p-sortIcon field="email"></p-sortIcon></th>
+                                <th pSortableColumn="email">Status<p-sortIcon field="email"></p-sortIcon></th>
+                                <th pSortableColumn="country">Date <p-sortIcon field="country"></p-sortIcon></th>
+                                <th></th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-grv>
+                            <tr>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Name</span>
+                                    {{grv.id}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Name</span>
+                                    {{grv.supplierName}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Phone</span>
+                                    {{grv.orderNumber}}
+                                </td>
+                                <td style="width:14%; min-width:8rem;">
+                                    <span class="p-column-title">Email</span>
+                                    {{grv.invoiceNumber}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{grv.value | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{grv.amountDue | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span highlighted>
+                                        <mark [style.background-color]="grv.status | orderPaymentStatus" style="color: white;">
+                                            {{grv.status | uppercase }}
+                                        </mark>
+                                    </span>
+                                </td>
+                                <td style="width:14%; min-width:10rem;">
+                                    <span class="p-column-title">Country</span>
+                                    {{grv.creationTime | date: 'dd/MM/yyyy'}}
+                                </td>
+                                <td>
+                                    <div class="flex">
+                                        <div *ngIf="currentUser.role === 'Admin'">
+                                            <button pButton pRipple icon="pi pi-pencil" type="button" label="APPROVE" [disabled]="grv.isApproved"
+                                                class="p-button-success mr-2" (click)="onApprove(grv)"></button>
+                                        </div>
+                                        <button pButton pRipple icon="pi pi-pencil" type="button" label="EDIT" 
+                                            class="p-button-success mr-2" (click)="edit(grv)"></button>
+                                        <button pButton pRipple icon="pi pi-trash" class=" p-button-danger"
+                                            type="button" label="DELETE" (click)="delete(grv)"></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            
+            </div>
+
+            <!-- create grv modal -->
+            <p-dialog [(visible)]="createModal" [style]="{width: '60%'}" header="New GRV"
+            [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="name">Order Number</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.orderNumber" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.orderNumber}" 
+                                    [disabled]="newGrv.invoiceNumber! || !newGrv.invoiceNumber!">
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.orderNumber">Item
+                                    order number is
+                                    required.</small>
+                            </div>
+                            <div class="field">
+                                <label for="currency">Supplier</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.supplierName" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.supplierName}" />
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.supplierName">Item
+                                    invoice number is
+                                    required.</small>
+                            </div>
+                            <div class="field">
+                                <div>
+                                    <label for="udatedOn">Date</label>
+                                    <p-calendar appendTo="body" class="p-inputtext-sm" [(ngModel)]="newGrv.creationTime"
+                                        dateFormat="dd.mm.yy"></p-calendar>
+                                    <small class="ng-dirty ng-invalid"
+                                        *ngIf="submitted && !newGrv.creationTime">Date
+                                        is required.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="name">Invoice Number</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.invoiceNumber" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.invoiceNumber}" />
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.invoiceNumber">Item
+                                    invoice number is
+                                    required.</small>
+                            </div>
+                            
+                            <div class="field">
+                                <label for="name">Transporter</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.transpoter" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.transpoter}" />
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.transpoter">Item
+                                    transpoter is
+                                    required.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <p-tabView orientation="left">
+                        <!-- grv items -->
+                        <p-tabPanel header="GRV Items" class="line-height-3 m-0">
+                            <p-table [value]="newGrv.receivedItems!" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        
+                                        <th pSortableColumn="name">Bar Code </th>
+                                        <th pSortableColumn="name">Item Name </th>
+                                        <th pSortableColumn="cell">Ordered Qty </th>
+                                        <th pSortableColumn="email">Received Qty</th>
+                                        <th pSortableColumn="country">Units </th>
+                                        <th pSortableColumn="country">Order Price </th>
+                                        <th pSortableColumn="country">Cost </th>
+                                        <th pSortableColumn="country">Price </th>
+                                        <th></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td style="width:5%; min-width:10rem;">
+                                            <span class="p-column-title">Name</span>
+                                            {{item.barCode}} 
+                                        </td>
+                                        <td style="width:25%; min-width:10rem;">
+                                            <span class="p-column-title">Name</span>
+                                            {{item.productName}} 
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;">
+                                            <span class="p-column-title">Phone</span>
+                                            {{item.orderedQuantity}}
+                                        </td>
+                                        <td [pEditableColumn]="item.receivedQuantity" pEditableColumnField="code" style="width:10%; min-width:10rem;">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input pInputText type="text" [(ngModel)]="item.receivedQuantity" />
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{ item.receivedQuantity }}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.unit}}
+                                        </td>
+                                        <td style="width:14%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.orderPrice | currency:'USD':'symbol'}}
+                                        </td>
+                                        <td [pEditableColumn]="item.unitPrice" pEditableColumnField="code" style="width:15%; min-width:10rem;">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input pInputText type="text" [(ngModel)]="item.unitPrice">
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{ item.unitPrice | currency:'USD':'symbol'}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td style="width:14%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.price | currency:'USD':'symbol'}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                            <div class="field">
+                                <div class="formgrid grid">
+                                    <div class="col-8"></div>
+                                    <div class="col-4">
+                                        <p-table>
+                                            <ng-template pTemplate="header">
+                                                <!-- <tr>
+                                                    <th>Labor Cost:</th>
+                                                    <th>{{jobcard.laborCost | currency:'USD' }}</th>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <th>Material Cost:</th>
+                                                    <th>{{jobcard.cost | currency:'USD' }}</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Discount:</th>
+                                                    <th>{{jobcard.discount | currency:'USD' }}</th>
+                                                </tr>-->
+                                                <tr>
+                                                    <th>Total Cost:</th>
+                                                    <th>{{newGrv.value | currency:'USD' }}</th>
+                                                    <td></td>
+                                                </tr> 
+                                            </ng-template>
+                                            <ng-template pTemplate="body">
+                                                <tr>
+                                                    <td>Total Cost:</td>
+                                                    <td>{{newGrv.value | currency:'USD' }}</td>
+                                                    <td></td>
+                                                </tr>
+                                            </ng-template>
+                                        </p-table>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-tabPanel>
+                        <!-- payments -->
+                        <p-tabPanel header="Order Payments" class="line-height-3 m-0">
+                            <p-table class="header-line-table" #dt [value]="newGrv.purchaceOrderPayments!" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                                [globalFilterFields]="['productName', 'barCode', 'pluCode']" [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                                [rowHover]="true" dataKey="id">
+                                <ng-template pTemplate="caption">
+                                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                        <div class="col-3">
+                                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                                <button pButton pRipple type="button" label="ADD PAYMENT" icon="pi pi-plus" [disabled]="newGrv.isPaid"
+                                                    class="p-button-success mr-2" (click)="onAddPayment()" ></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr >
+                                        <th style="width:20%; min-width:10rem;">Pay Method</th>
+                                        <th style="width:20%; min-width:10rem;">Paid By</th>
+                                        <th style="width:20%; min-width:10rem;">Pay Date</th>
+                                        <th style="width:20%; min-width:10rem;">Order Amount</th>
+                                        <th style="width:20%; min-width:10rem;">Currency </th>
+                                        <th style="width:20%; min-width:10rem;">Rate</th>
+                                        <th style="width:20%; min-width:10rem;">Curreny Paid Amt</th>
+                                        <th style="width:20%; min-width:10rem;">Usd Paid Amt</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td style="width:10%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.methodOfPay }}
+                                        </td>
+                                        <td style="width:15%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.paidBy }}
+                                        </td>
+                                        <td style="width:15%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.creationTime | date: 'd MMM yyyy'}}
+                                        </td>
+                                        <td style="width:10%; min-width:10rem;" >
+                                            <span class="p-column-title">Name</span>
+                                            {{item.orderAmount | currency:'USD':'symbol'}} 
+                                        </td>
+                                        <td style="width:10%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.currency }}
+                                        </td>
+                                        <td style="width:10%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.exchangeRate }}
+                                        </td>
+                                        <td style="width:10%; min-width:8rem;">
+                                            <span class="p-column-title">Email</span>
+                                            {{item.paidAmount  | currency:'USD':'symbol' }}
+                                        </td>
+                                        <td style="width:10%; min-width:8rem;">
+                                            <span class="p-column-title">Email</span>
+                                            {{item.usdPaidAmount  | currency:'USD':'symbol' }}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:15%; min-width:10rem;"></th>
+                                        <th style="width:15%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;">Total Payments</th>
+                                        <th style="width:10%; min-width:10rem;" class="text-left">{{ newGrv.usdPaidAmount | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </p-tabPanel>
+                    </p-tabView>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                        <button pButton pRipple label="Process" icon="pi pi-check" class="p-button-text" (click)="process()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                        [disabled]="!newGrv.invoiceNumber"></button>
+                </ng-template>
+                
+            </p-dialog> 
+
+            <!-- edit modal -->
+            <p-dialog [(visible)]="editModal" [style]="{width: '60%'}" header="New GRV"
+            [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="formgrid grid">
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="name">Order Number</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.orderNumber" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.orderNumber}" 
+                                    [disabled]="newGrv.invoiceNumber! || !newGrv.invoiceNumber!">
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.orderNumber">Item
+                                    order number is
+                                    required.</small>
+                            </div>
+                            <div class="field">
+                                <label for="currency">Supplier</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.supplierName" required [disabled]="newGrv.invoiceNumber! || !newGrv.invoiceNumber!"
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.supplierName}" />
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.supplierName">Item
+                                    invoice number is
+                                    required.</small>
+                            </div>
+                            <div class="field">
+                                <div>
+                                    <label for="udatedOn">Date</label>
+                                    <p-calendar class="p-inputtext-sm" [(ngModel)]="newGrv.creationTime"
+                                        dateFormat="dd.mm.yy"></p-calendar>
+                                    <small class="ng-dirty ng-invalid"
+                                        *ngIf="submitted && !newGrv.creationTime">Date
+                                        is required.</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field col-6">
+                            <div class="field">
+                                <label for="name">Invoice Number</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.invoiceNumber" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.invoiceNumber}" />
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.invoiceNumber">Item
+                                    invoice number is
+                                    required.</small>
+                            </div>
+                            
+                            <div class="field">
+                                <label for="name">Transporter</label>
+                                <input type="text" pInputText id="name" [(ngModel)]="newGrv.transpoter" required autofocus
+                                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.transpoter}" />
+                                <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.transpoter">Item
+                                    transpoter is
+                                    required.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <p-tabView orientation="left">
+                        <!-- grv items -->
+                        <p-tabPanel header="GRV Items" class="line-height-3 m-0" >
+                            <p-table [value]="newGrv.receivedItems!" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th pSortableColumn="name">Bar Code </th>
+                                        <th pSortableColumn="name">Item Name </th>
+                                        <th pSortableColumn="cell">Ordered Qty </th>
+                                        <th pSortableColumn="email">Received Qty</th>
+                                        <th pSortableColumn="country">Units </th>
+                                        <th pSortableColumn="country">Order Price </th>
+                                        <th pSortableColumn="country">Cost </th>
+                                        <th pSortableColumn="country">Price </th>
+                                        <th></th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td style="width:5%; min-width:10rem;">
+                                            <span class="p-column-title">Name</span>
+                                            {{item.barCode}} 
+                                        </td>
+                                        <td style="width:25%; min-width:10rem;">
+                                            <span class="p-column-title">Name</span>
+                                            {{item.productName}} 
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;">
+                                            <span class="p-column-title">Phone</span>
+                                            {{item.orderedQuantity}}
+                                        </td>
+                                        <td [pEditableColumn]="item.receivedQuantity" pEditableColumnField="code" style="width:10%; min-width:10rem;" *ngIf="!newGrv.isApproved">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input pInputText type="text" [(ngModel)]="item.receivedQuantity" />
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{ item.receivedQuantity }}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" *ngIf="newGrv.isApproved">
+                                            <span class="p-column-title">Phone</span>
+                                            {{item.receivedQuantity}}
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.unit}}
+                                        </td>
+                                        <td style="width:14%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.orderPrice | currency:'USD':'symbol'}}
+                                        </td>
+                                        <td [pEditableColumn]="item.unitPrice" pEditableColumnField="code" style="width:15%; min-width:10rem;" *ngIf="!newGrv.isApproved">
+                                            <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                    <input pInputText type="text" [(ngModel)]="item.unitPrice">
+                                                </ng-template>
+                                                <ng-template pTemplate="output">
+                                                    {{ item.unitPrice | currency:'USD':'symbol'}}
+                                                </ng-template>
+                                            </p-cellEditor>
+                                        </td>
+                                        <td style="width:5%; min-width:10rem;" *ngIf="newGrv.isApproved">
+                                            <span class="p-column-title">Phone</span>
+                                            {{item.unitPrice | currency:'USD':'symbol'}}
+                                        </td>
+                                        <td style="width:14%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.price | currency:'USD':'symbol'}}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <th pSortableColumn="name"> </th>
+                                        <th pSortableColumn="name"> </th>
+                                        <th pSortableColumn="cell"> </th>
+                                        <th pSortableColumn="email"></th>
+                                        <th pSortableColumn="country"> </th>
+                                        <th pSortableColumn="country"></th>
+                                        <th >Totals</th>
+                                        <th class="text-left">{{(newGrv.value) | currency:'USD' }}</th>
+                                    </tr>
+            
+                                </ng-template>
+                            </p-table>
+                        </p-tabPanel>
+                        <!-- payments -->
+                        <p-tabPanel header="Order Payments" class="line-height-3 m-0">
+                            <p-table class="header-line-table" #dt [value]="newGrv.purchaceOrderPayments!" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                                [globalFilterFields]="['productName', 'barCode', 'pluCode']" [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                                [rowHover]="true" dataKey="id">
+                                <ng-template pTemplate="caption">
+                                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                        <div class="col-3">
+                                            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                                <button pButton pRipple type="button" label="ADD PAYMENT" icon="pi pi-plus" [disabled]="newGrv.isPaid"
+                                                    class="p-button-success mr-2" (click)="onAddPayment()" ></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="header">
+                                    <tr >
+                                        <th style="width:20%; min-width:10rem;">Pay Method</th>
+                                        <th style="width:20%; min-width:10rem;">Paid By</th>
+                                        <th style="width:20%; min-width:10rem;">Pay Date</th>
+                                        <th style="width:20%; min-width:10rem;">Order Amount</th>
+                                        <th style="width:20%; min-width:10rem;">Currency </th>
+                                        <th style="width:20%; min-width:10rem;">Rate</th>
+                                        <th style="width:20%; min-width:10rem;">Curreny Paid Amt</th>
+                                        <th style="width:20%; min-width:10rem;">Usd Paid Amt</th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td style="width:10%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.methodOfPay }}
+                                        </td>
+                                        <td style="width:15%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.paidBy }}
+                                        </td>
+                                        <td style="width:15%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.creationTime | date: 'd MMM yyyy'}}
+                                        </td>
+                                        <td style="width:10%; min-width:10rem;" >
+                                            <span class="p-column-title">Name</span>
+                                            {{item.orderAmount | currency:'USD':'symbol'}} 
+                                        </td>
+                                        <td style="width:10%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.currency }}
+                                        </td>
+                                        <td style="width:10%; min-width:10rem;">
+                                            <span class="p-column-title">Country</span>
+                                            {{item.exchangeRate }}
+                                        </td>
+                                        <td style="width:10%; min-width:8rem;">
+                                            <span class="p-column-title">Email</span>
+                                            {{item.paidAmount  | currency:'USD':'symbol' }}
+                                        </td>
+                                        <td style="width:10%; min-width:8rem;">
+                                            <span class="p-column-title">Email</span>
+                                            {{item.usdPaidAmount  | currency:'USD':'symbol' }}
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="footer">
+                                    <tr>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:15%; min-width:10rem;"></th>
+                                        <th style="width:15%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;"></th>
+                                        <th style="width:10%; min-width:10rem;">Total Payments</th>
+                                        <th style="width:10%; min-width:10rem;" class="text-left">{{ newGrv.usdPaidAmount | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </p-tabPanel>
+                    </p-tabView>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="CANCEL" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="PROCESS" icon="pi pi-check" class="p-button-text" 
+                        [disabled]="newGrv.isApproved" (click)="process()"></button>
+                    <button pButton pRipple label="UPDATE" icon="pi pi-check" class="p-button-text" (click)="update()"
+                        [disabled]="!newGrv.invoiceNumber"></button>
+                </ng-template>
+                
+            </p-dialog> 
+
+        <!-- approve modal -->
+        <p-dialog [(visible)]="approveModal" [style]="{width: '60%'}" header="New GRV"
+        [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="name">Order Number</label>
+                            <input type="text" pInputText id="name" [(ngModel)]="newGrv.orderNumber" required autofocus
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.orderNumber}" [disabled]="true"
+                                [disabled]="newGrv.invoiceNumber! || !newGrv.invoiceNumber!">
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.orderNumber">Item
+                                order number is
+                                required.</small>
+                        </div>
+                        <div class="field">
+                            <label for="currency">Supplier</label>
+                            <input type="text" pInputText id="name" [(ngModel)]="newGrv.supplierName" required [disabled]="newGrv.invoiceNumber! || !newGrv.invoiceNumber!"
+                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.supplierName}" [disabled]="true"/>
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.supplierName">Item
+                                invoice number is
+                                required.</small>
+                        </div>
+                        <!-- <div class="field">
+                            <div>
+                                <label for="udatedOn">Date</label>
+                                <p-calendar class="p-inputtext-sm" [(ngModel)]="newGrv.creationTime" [disabled]="true"
+                                    dateFormat="dd.mm.yy"></p-calendar>
+                                <small class="ng-dirty ng-invalid"
+                                    *ngIf="submitted && !newGrv.creationTime">Date
+                                    is required.</small>
+                            </div>
+                        </div> -->
+                        <div class="field">
+                            <label for="name">Date</label>
+                            <input type="text"  pInputText id="name" [(ngModel)]="newGrv.creationTime" required autofocus
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.creationTime}" [disabled]="true"
+                                [disabled]="newGrv.invoiceNumber! || !newGrv.invoiceNumber!">
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.creationTime">Item
+                                order number is
+                                required.</small>
+                        </div>
+                    </div>
+                    <div class="field col-6">
+                        <div class="field">
+                            <label for="name">Invoice Number</label>
+                            <input type="text" pInputText id="name" [(ngModel)]="newGrv.invoiceNumber" required autofocus 
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.invoiceNumber}" />
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.invoiceNumber">Item
+                                invoice number is
+                                required.</small>
+                        </div>
+                        
+                        <div class="field">
+                            <label for="name">Transporter</label>
+                            <input type="text" pInputText id="name" [(ngModel)]="newGrv.transpoter" required autofocus
+                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newGrv.transpoter}" />
+                            <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newGrv.transpoter">Item
+                                transpoter is
+                                required.</small>
+                        </div>
+                    </div>
+                </div>
+                <p-tabView orientation="left">
+                    <!-- grv items -->
+                    <p-tabPanel header="GRV Items" class="line-height-3 m-0">
+                        <p-table [value]="newGrv.receivedItems!" scrollDirection="both" [scrollable]="true" scrollHeight="400px" styleClass="mt-3" responsiveLayout="scroll">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th pSortableColumn="name">Bar Code </th>
+                                    <th pSortableColumn="name">Item Name </th>
+                                    <th pSortableColumn="cell">Ordered Qty </th>
+                                    <th pSortableColumn="email">Received Qty</th>
+                                    <th pSortableColumn="country">Units </th>
+                                    <th pSortableColumn="country">Order Price </th>
+                                    <th pSortableColumn="country">Cost </th>
+                                    <th pSortableColumn="country">Price </th>
+                                    <th></th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td style="width:5%; min-width:10rem;">
+                                        <span class="p-column-title">Name</span>
+                                        {{item.barCode}} 
+                                    </td>
+                                    <td style="width:25%; min-width:10rem;">
+                                        <span class="p-column-title">Name</span>
+                                        {{item.productName}} 
+                                    </td>
+                                    <td style="width:5%; min-width:10rem;">
+                                        <span class="p-column-title">Phone</span>
+                                        {{item.orderedQuantity}}
+                                    </td>
+                                    <td [pEditableColumn]="item.receivedQuantity" pEditableColumnField="code" style="width:10%; min-width:10rem;">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="text" [(ngModel)]="item.receivedQuantity" />
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.receivedQuantity }}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td style="width:5%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.unit}}
+                                    </td>
+                                    <td style="width:14%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.orderPrice | currency:'USD':'symbol'}}
+                                    </td>
+                                    <td [pEditableColumn]="item.unitPrice" pEditableColumnField="code" style="width:15%; min-width:10rem;">
+                                        <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                                <input pInputText type="text" [(ngModel)]="item.unitPrice">
+                                            </ng-template>
+                                            <ng-template pTemplate="output">
+                                                {{ item.unitPrice | currency:'USD':'symbol'}}
+                                            </ng-template>
+                                        </p-cellEditor>
+                                    </td>
+                                    <td style="width:14%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.price | currency:'USD':'symbol'}}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="footer">
+                                <tr>
+                                    <th pSortableColumn="name"> </th>
+                                    <th pSortableColumn="name"> </th>
+                                    <th pSortableColumn="cell"> </th>
+                                    <th pSortableColumn="email"></th>
+                                    <th pSortableColumn="country"> </th>
+                                    <th pSortableColumn="country"></th>
+                                    <th >Totals</th>
+                                    <th class="text-left">{{(newGrv.value) | currency:'USD' }}</th>
+                                </tr>
+        
+                            </ng-template>
+                        </p-table>
+                    </p-tabPanel>
+                    <!-- payments -->
+                    <p-tabPanel header="Order Payments" class="line-height-3 m-0">
+                        <p-table class="header-line-table" #dt [value]="newGrv.purchaceOrderPayments!" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                            [globalFilterFields]="['productName', 'barCode', 'pluCode']" [showCurrentPageReport]="true" [scrollable]="true" scrollHeight="500px" 
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                            [rowHover]="true" dataKey="id">
+                            <ng-template pTemplate="caption">
+                                <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                    <div class="col-3">
+                                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                            <button pButton pRipple type="button" label="ADD PAYMENT" icon="pi pi-plus" [disabled]="newGrv.isPaid"
+                                                class="p-button-success mr-2" (click)="onAddPayment()" ></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </ng-template>
+                            <ng-template pTemplate="header">
+                                <tr >
+                                    <th style="width:20%; min-width:10rem;">Pay Method</th>
+                                    <th style="width:20%; min-width:10rem;">Paid By</th>
+                                    <th style="width:20%; min-width:10rem;">Pay Date</th>
+                                    <th style="width:20%; min-width:10rem;">Order Amount</th>
+                                    <th style="width:20%; min-width:10rem;">Currency </th>
+                                    <th style="width:20%; min-width:10rem;">Rate</th>
+                                    <th style="width:20%; min-width:10rem;">Curreny Paid Amt</th>
+                                    <th style="width:20%; min-width:10rem;">Usd Paid Amt</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-item>
+                                <tr>
+                                    <td style="width:10%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.methodOfPay }}
+                                    </td>
+                                    <td style="width:15%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.paidBy }}
+                                    </td>
+                                    <td style="width:15%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.creationTime | date: 'd MMM yyyy'}}
+                                    </td>
+                                    <td style="width:10%; min-width:10rem;" >
+                                        <span class="p-column-title">Name</span>
+                                        {{item.orderAmount | currency:'USD':'symbol'}} 
+                                    </td>
+                                    <td style="width:10%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.currency }}
+                                    </td>
+                                    <td style="width:10%; min-width:10rem;">
+                                        <span class="p-column-title">Country</span>
+                                        {{item.exchangeRate }}
+                                    </td>
+                                    <td style="width:10%; min-width:8rem;">
+                                        <span class="p-column-title">Email</span>
+                                        {{item.paidAmount  | currency:'USD':'symbol' }}
+                                    </td>
+                                    <td style="width:10%; min-width:8rem;">
+                                        <span class="p-column-title">Email</span>
+                                        {{item.usdPaidAmount  | currency:'USD':'symbol' }}
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="footer">
+                                <tr>
+                                    <th style="width:10%; min-width:10rem;"></th>
+                                    <th style="width:15%; min-width:10rem;"></th>
+                                    <th style="width:15%; min-width:10rem;"></th>
+                                    <th style="width:10%; min-width:10rem;"></th>
+                                    <th style="width:10%; min-width:10rem;"></th>
+                                    <th style="width:10%; min-width:10rem;"></th>
+                                    <th style="width:10%; min-width:10rem;">Total Payments</th>
+                                    <th style="width:10%; min-width:10rem;" class="text-left">{{ newGrv.usdPaidAmount | currency:'USD':'symbol'}}</th>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-tabPanel>
+                </p-tabView>
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="CANCEL" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple label="PROCESS" icon="pi pi-check" class="p-button-text" 
+                    (click)="process()"></button>
+                <button pButton pRipple label="APPROVE" icon="pi pi-check" class="p-button-text" 
+                    (click)="approve()"
+                    [disabled]="!newGrv.invoiceNumber"></button>
+            </ng-template>
+            
+        </p-dialog> 
+        
+        <p-dialog [(visible)]="quantityModal" header="Select Order Number" [modal]="true" [style]="{width:'300px'}">
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <!-- <label for="company">Order Number</label> -->
+                    <hr/>
+                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="selectedOrder1" inputId="id"
+                        [options]="orders" placeholder="Select Order" optionLabel="id">
+
+                        </p-dropdown>
+                    </div>
+                </ng-template>
+                
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="quantityModal = false"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="createGrv()"></button>
+                </ng-template>
+            </p-dialog>
+
+            <!-- pay maodal -->
+            <p-dialog [(visible)]="payModal"  [modal]="true" [style]="{width:'300px'}" class="p-fluid">
+                <ng-template pTemplate="content text-center">
+                    <div class="formgrid grid">
+                        <div class="field col-12">
+                            <div class="field">
+                                <label for="company">Currency </label>
+                                <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="payment.currency" inputId="name"
+                                    [options]="currencies" placeholder="Currency" (onChange)="onSelectCurrency()">
+                                </p-dropdown>
+                            </div>
+                            <div class="field">
+                                <label for="company">Method Of Pay</label>
+                                <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="payment.methodOfPay" inputId="name"
+                                    [options]="paymentTypes" placeholder="Method Of Pay" [disabled]="!payment.currency">
+                                </p-dropdown>
+                            </div>
+                            <div class="formgrid grid">
+                                <div class="field col-6">
+                                    <h3>Amount Due:</h3>
+                                </div>
+                                <div class="field col-6">
+                                    <h3><b>{{ amountDueCurrency | currency}}</b> </h3>
+                                </div>
+                                <div class="field col-6">
+                                    <h3>Paid:</h3>
+                                </div>
+                                <div class="field col-6">
+                                    <div class="field">
+                                        <!-- <label for="description"></label> -->
+                                        <input type="number" pInputText id="description" [(ngModel)]="payment.paidAmount" required [disabled]="!payment.methodOfPay"
+                                            [ngClass]="{'ng-invalid ng-dirty' : submitted && !payment.paidAmount}"/>
+                                        <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !payment.paidAmount" >Item
+                                            quantity is
+                                            required.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Ok"
+                    (click)="conformAddPayment()" [disabled]="!payment.paidAmount"></button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div>
