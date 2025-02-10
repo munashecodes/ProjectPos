@@ -1,20 +1,30 @@
 
+using Coravel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using ProjectPos.Data.DbContexts;
 using ProjectPos.Services.AppServices;
 using ProjectPos.Services.BackgroundServices;
+using ProjectPos.Services.Helpers;
 using ProjectPos.Services.Interfaces;
 using Quartz;
-using Quartz.Spi;
+using Serilog;
 
 namespace ProjectPos.Web
 {
     public class Program
     {
         public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        { 
+            var logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.File("../logs/startup-.log",
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message}{NewLine}{Exception}"
+                    )
+                .CreateLogger();
+
+            try
+            {
+                var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddQuartz(q =>
             {
@@ -40,7 +50,7 @@ namespace ProjectPos.Web
             });
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+            builder.Logging.AddSerilog(logger);
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
             builder.Services.AddTransient<IJwtService, JwtService>();
@@ -66,6 +76,7 @@ namespace ProjectPos.Web
             builder.Services.AddTransient<IAccountService, AccountService>();
             builder.Services.AddTransient<IJournalEntryService, JournalEntryService>();
             builder.Services.AddTransient<IExpenseService, ExpenseService>();
+            builder.Services.AddScheduler();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -74,12 +85,20 @@ namespace ProjectPos.Web
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    app.UseSwagger();
-            //    app.UseSwaggerUI();
-            //}
+            var provider = app.Services;
+
+            provider.UseScheduler(schedule =>
+            {
+                schedule.Schedule<ProductInventoryStatusAsync>().EveryFifteenMinutes();
+
+            });
+
+            
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             app.UseSwagger();
             app.UseSwaggerUI();
@@ -100,6 +119,18 @@ namespace ProjectPos.Web
             app.MapControllers();
 
             app.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application startup failed");
+                throw;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+                
+            
         }
     }
 }

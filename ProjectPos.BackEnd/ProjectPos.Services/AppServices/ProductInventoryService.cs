@@ -73,11 +73,11 @@ namespace ProjectPos.Services.AppServices
             }
         }
 
-        public ServiceResponse<bool> UpdateStatus()
+        public async Task UpdateProductInventoryStatus()
         {
             try
             {
-                var products = _context.ProductInventories.ToList();
+                var products = await _context.ProductInventories.ToListAsync();
                 foreach (var product in products)
                 {
                     if (product.QuantityOnHand <= 0)
@@ -92,26 +92,13 @@ namespace ProjectPos.Services.AppServices
                         product.Status = Status.InStock;
                     }
                 }
-                
-                _context.SaveChanges();
-                return new ServiceResponse<bool>()
-                {
-                    IsSuccess = true,
-                    Message = "Product Updated",
-                    Time = DateTime.Now,
-                    
-                };
+                _logger.LogInformation("Saving Product Inventory Status Changes");
+                await _context.SaveChangesAsync();
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating status");
-                return new ServiceResponse<bool>
-                {
-                    IsSuccess = false,
-                    Message = $"Network Failed: {ex.Message}",
-                    Time = DateTime.Now,
-                };
+                _logger.LogError(ex, "Error product updating status");
             }
         }
 

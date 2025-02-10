@@ -1,6 +1,13 @@
-﻿namespace ProjectPos.Services.Helpers;
+﻿using System.Data;
+using Coravel.Invocable;
+using ProjectPos.Services.Interfaces;
 
-public class ProductInventoryStatusAsync
+namespace ProjectPos.Services.Helpers;
+
+public class ProductInventoryStatusAsync(IProductInventoryService _inventoryService) : IInvocable
 {
-    
+    public async Task Invoke()
+    {
+        await _inventoryService.UpdateProductInventoryStatus();
+    }
 }
