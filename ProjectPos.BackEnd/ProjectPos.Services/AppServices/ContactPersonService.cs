@@ -40,7 +40,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<ContactPerson, ContactPersonDto>(_person.Entity),
                     IsSuccess = true,
-                    Message = "Customer Registered Successfully",
+                    Message = "Contact Person Created Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -219,7 +219,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<ContactPerson, ContactPersonDto>(_person.Entity),
                     IsSuccess = true,
-                    Message = "Customer UpDated Successfully",
+                    Message = "Contact Person Updated Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -229,7 +229,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<ContactPersonDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Update Failed: {ex.Message}",
+                    Message = $"Contact Person Update Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }

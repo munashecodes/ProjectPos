@@ -42,7 +42,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<Payment, PaymentDto>(_payment.Entity),
                     IsSuccess = true,
-                    Message = "payment Updated Successfully",
+                    Message = "Payment created successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -52,7 +52,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<PaymentDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Failed to create payment: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -82,7 +82,7 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<PaymentDto>
                     {
                         IsSuccess = true,
-                        Message = $"payment {payment.Id} Was deleted successfuly",
+                        Message = "Payment deleted successfully",
                         Time = DateTime.Now,
                     };
                 }
@@ -110,7 +110,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _companies,
                     IsSuccess = true,
-                    Message = $"Found  Companies",
+                    Message = "Payments retrieved successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -120,7 +120,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<IEnumerable<PaymentDto>>
                 {
                     IsSuccess = false,
-                    Message = $"Network Failed: {ex.Message}",
+                    Message = $"Failed to retrieve payments: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -151,7 +151,7 @@ namespace ProjectPos.Services.AppServices
                     {
                         Data = _payment,
                         IsSuccess = true,
-                        Message = $"Sales payments",
+                        Message = "Order payments retrieved successfully",
                         Time = DateTime.Now,
                     };
                 }
@@ -242,7 +242,7 @@ namespace ProjectPos.Services.AppServices
                     {
                         Data = _mapper.Map<Payment, PaymentDto>(_payment.Entity),
                         IsSuccess = true,
-                        Message = "payment Updated Successfully",
+                        Message = "Payment updated successfully",
                         Time = DateTime.Now,
                     };
                 }
@@ -250,11 +250,11 @@ namespace ProjectPos.Services.AppServices
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while creating payment");
+                _logger.LogError(ex, "Error while updating payment");
                 return new ServiceResponse<PaymentDto>
                 {
                     IsSuccess = false,
-                    Message = $"payment Update Failed: {ex.Message}",
+                    Message = $"Failed to update payment: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }

@@ -217,7 +217,7 @@
 										</span>
 										<span class=" p-float-label">
 											<button pButton pRipple label="REMOVE" icon="pi pi-minus" 
-												class="p-button-danger  mr-2" (click)="onRemoveFromCart()" ></button>
+												class="p-button-danger  mr-2" (click)="confirmDeleteSelected()" ></button>
 										</span>
 										<span class=" p-float-label" *ngIf="isReturn === false">
 											<button pButton pRipple label="DIRECT" icon="pi pi-check" [disabled]="!newOder.currency" 

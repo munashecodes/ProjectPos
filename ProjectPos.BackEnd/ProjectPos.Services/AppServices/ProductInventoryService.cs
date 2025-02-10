@@ -55,7 +55,7 @@ namespace ProjectPos.Services.AppServices
                     {
                         Data = _mapper.Map<ProductInventory, ProductInventoryDto>(_inventory.Entity),
                         IsSuccess = true,
-                        Message = "Customer Registered Successfully",
+                        Message = "Product Added Successfully",
                         Time = DateTime.Now,
                     };
                 }
@@ -67,7 +67,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<ProductInventoryDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Product Addition Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -82,11 +82,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (inventory == null)
                 {
-                    _logger.LogError($"ProductInventory with id: {id} does not exist");
+                    _logger.LogError($"Product with id: {id} does not exist");
                     return new ServiceResponse<ProductInventoryDto>
                     {
                         IsSuccess = false,
-                        Message = "ProductInventory Not Found",
+                        Message = "Product Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -98,14 +98,14 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<ProductInventoryDto>
                     {
                         IsSuccess = true,
-                        Message = $"inventory {inventory!.Name} Was deleted successfuly",
+                        Message = $"product {inventory!.Name} Was deleted successfuly",
                         Time = DateTime.Now,
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while deleting inventory");
+                _logger.LogError(ex, "Error while deleting product");
                 return new ServiceResponse<ProductInventoryDto>
                 {
                     IsSuccess = false,
