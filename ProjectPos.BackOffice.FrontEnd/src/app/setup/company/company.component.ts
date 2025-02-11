@@ -159,9 +159,15 @@ export class CompanyComponent implements OnInit {
     this.createModal = false;
     this.editModal = false;
     this.deleteModal = false;
+    this.hideDialog();
   }
 
   hideDialog(){
+    this.street = '';
+    this.addressLine = '';
+    this.city = '';
+    this.state = '';
+    this.country = '';
     this.createModal = false;
     this.editModal = false;
     this.deleteModal = false;

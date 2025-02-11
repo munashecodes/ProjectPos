@@ -35,7 +35,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<Company, CompanyDto>(_company.Entity),
                     IsSuccess = true,
-                    Message = "Customer Registered Successfully",
+                    Message = "Company Added Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -45,7 +45,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<CompanyDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Company Addition Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -74,7 +74,7 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<CompanyDto>
                     {
                         IsSuccess = true,
-                        Message = $"company {company.Name} Was deleted successfuly",
+                        Message = $"Company - {company.Name} Was deleted successfuly",
                         Time = DateTime.Now,
                     };
                 }
@@ -132,7 +132,7 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<CompanyDto>
                     {
                         IsSuccess = false,
-                        Message = $"company {id} Was Not Found",
+                        Message = $"Company - {id} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -143,7 +143,7 @@ namespace ProjectPos.Services.AppServices
                     {
                         Data = _company,
                         IsSuccess = true,
-                        Message = $"company {company.Name} Was Found",
+                        Message = $"Company {company.Name} Was Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -213,7 +213,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<Company, CompanyDto>(_company.Entity),
                     IsSuccess = true,
-                    Message = "Customer UpDated Successfully",
+                    Message = "Company Updated Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -223,7 +223,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<CompanyDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Update Failed: {ex.Message}",
+                    Message = $"Company Update Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
