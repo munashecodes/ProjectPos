@@ -143,10 +143,10 @@ export class ContactPersonComponent implements OnInit {
       if(res.isSuccess){
 
         if(!Array.isArray(this.companies)){
-          this.companies = []
+          this.contactPersons = []
         }
         else{
-          this.companies = [...this.companies, res.data];
+          this.contactPersons = [...this.contactPersons, res.data];
         }
 
         this.messageService.add({
@@ -191,7 +191,43 @@ export class ContactPersonComponent implements OnInit {
     this.newContactPerson.deleterId = this.user.id;
     this.newContactPerson.isDeleted = true;
 
-    this.update();
+    this.contactPersonService.delete(this.newContactPerson.id!)
+    .subscribe((res) => {
+      console.log(res);
+      if(res.isSuccess){
+
+        if(!Array.isArray(this.contactPersons)){
+          this.contactPersons = []
+        }
+        else{
+          this.contactPersons = this.contactPersons.filter(x => x.id !== this.newContactPerson.id);
+        }
+
+        this.messageService.add({
+          severity:'success', 
+          summary: 'Success', 
+          detail: res.message , 
+          life: 3000
+        });
+      }
+      else{
+        this.messageService.add({
+          severity:'error', 
+          summary: 'Error', 
+          detail: res.message ,
+          life: 3000
+        });
+      }
+      
+    },
+    (error) => {
+      this.messageService.add({
+        severity:'error', 
+        summary: 'Error', 
+        detail: error.message, 
+        life: 3000
+      });
+    });
 
     this.deleteModal = false;
     this.newContactPerson = {} as ContactPersonDto;

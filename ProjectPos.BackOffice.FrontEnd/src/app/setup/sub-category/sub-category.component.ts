@@ -99,6 +99,8 @@ export class SubCategoryComponent implements OnInit {
           this.subCategories = [...this.subCategories, res.data];
         }
 
+        this.hideDialog();
+
         this.messageService.add({
           severity:'success', 
           summary: 'Success', 

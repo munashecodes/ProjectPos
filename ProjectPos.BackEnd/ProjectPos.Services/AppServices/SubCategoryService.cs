@@ -40,17 +40,17 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<SubCategory, SubCategoryDto>(_subCategory.Entity),
                     IsSuccess = true,
-                    Message = "Customer Registered Successfully",
+                    Message = "Sub Category Added Successfully",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while creating subCategory");
+                _logger.LogError(ex, "Error while creating Sub Category");
                 return new ServiceResponse<SubCategoryDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Sub Category Addition Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -64,11 +64,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (subCategory == null)
                 {
-                    _logger.LogError($"SubCategory with id: {id} does not exist");
+                    _logger.LogError($"Sub Category with id: {id} does not exist");
                     return new ServiceResponse<SubCategoryDto>
                     {
                         IsSuccess = false,
-                        Message = "SubCategory Not Found",
+                        Message = "Sub Category Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -79,14 +79,14 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<SubCategoryDto>
                     {
                         IsSuccess = true,
-                        Message = $"subCategory {subCategory.Name} Was deleted successfuly",
+                        Message = $"Sub Category {subCategory.Name} Was deleted successfuly",
                         Time = DateTime.Now,
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while deleting subCategory");
+                _logger.LogError(ex, "Error while deleting Sub Category");
                 return new ServiceResponse<SubCategoryDto>
                 {
                     IsSuccess = false,
@@ -107,13 +107,13 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _subCategories,
                     IsSuccess = true,
-                    Message = $"Found {_subCategories.Count} SubCategories",
+                    Message = $"Found {_subCategories.Count} Sub Categories",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting all companies");
+                _logger.LogError(ex, "Error while getting all sub categories");
                 return new ServiceResponse<List<SubCategoryDto>>
                 {
                     IsSuccess = false,
@@ -132,11 +132,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (subCategory == null)
                 {
-                    _logger.LogError($"SubCategory with id: {id} does not exist");
+                    _logger.LogError($"Sub Category with id: {id} does not exist");
                     return new ServiceResponse<SubCategoryDto>
                     {
                         IsSuccess = false,
-                        Message = $"subCategory {id} Was Not Found",
+                        Message = $"Sub Category {id} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -147,14 +147,14 @@ namespace ProjectPos.Services.AppServices
                     {
                         Data = _subCategory,
                         IsSuccess = true,
-                        Message = $"subCategory {subCategory.Name} Was Found",
+                        Message = $"Sub Category {subCategory.Name} Was Found",
                         Time = DateTime.Now,
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting subCategory by id");
+                _logger.LogError(ex, "Error while getting Sub Category by id");
                 return new ServiceResponse<SubCategoryDto>
                 {
                     IsSuccess = false,
@@ -174,11 +174,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (companies == null)
                 {
-                    _logger.LogError($"SubCategory with name: {name} does not exist");
+                    _logger.LogError($"Sub Category with name: {name} does not exist");
                     return new ServiceResponse<List<SubCategoryDto>>
                     {
                         IsSuccess = false,
-                        Message = $"SubCategories with name {name} Was Not Found",
+                        Message = $"Sub Categories with name {name} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -189,14 +189,14 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<List<SubCategoryDto>>
                     {
                         IsSuccess = true,
-                        Message = $"Found {_subCategories.Count} SubCategories",
+                        Message = $"Found {_subCategories.Count} Sub Categories",
                         Time = DateTime.Now,
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting subCategory by name");
+                _logger.LogError(ex, "Error while getting Sub Category by name");
                 return new ServiceResponse<List<SubCategoryDto>>
                 {
                     IsSuccess = false,
@@ -217,17 +217,17 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<SubCategory, SubCategoryDto>(_subCategory.Entity),
                     IsSuccess = true,
-                    Message = "Customer UpDated Successfully",
+                    Message = "Sub Category Updated Successfully",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while updating subCategory");
+                _logger.LogError(ex, "Error while updating Sub Category");
                 return new ServiceResponse<SubCategoryDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Update Failed: {ex.Message}",
+                    Message = $"Sub Category Update Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }

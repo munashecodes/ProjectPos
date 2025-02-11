@@ -36,21 +36,26 @@ namespace ProjectPos.Services.AppServices
                 var person = _mapper.Map<ContactPersonDto, ContactPerson>(personDto);
                 var _person = _context.ContactPersons.Add(person);
                 _context.SaveChanges();
+                var persons = _context.ContactPersons!
+                    .Include(x => x.Company)
+                    .Include(x => x.Address)
+                    .FirstOrDefault(c => c.Id == person.Id);
+                
                 return new ServiceResponse<ContactPersonDto>
                 {
-                    Data = _mapper.Map<ContactPerson, ContactPersonDto>(_person.Entity),
+                    Data = _mapper.Map<ContactPerson, ContactPersonDto>(persons),
                     IsSuccess = true,
-                    Message = "Contact Person Created Successfully",
+                    Message = $"Contact Person - {_person.Entity.FirstName} Created Successfully",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while creating person");
+                _logger.LogError(ex, "Error while creating contact person");
                 return new ServiceResponse<ContactPersonDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Contact Person Addition Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }

@@ -108,7 +108,7 @@
                             </div>
                             <div class="field">
                                 <label for="title">Title</label>
-                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.title"
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [disabled]="!newContactPerson.company" [(ngModel)]="newContactPerson.title"
                                         inputId="name" [options]="titles" placeholder="Select Title" >
         
                                     </p-dropdown>
@@ -118,7 +118,7 @@
                             </div>
                             <div class="field">
                                 <label for="firstName">First Name</label>
-                                    <input type="text" pInputText id="firstName" [(ngModel)]="newContactPerson.firstName" required autofocus
+                                    <input type="text" pInputText id="firstName" [disabled]="!newContactPerson.title" [(ngModel)]="newContactPerson.firstName" required autofocus
                                         [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.firstName}" />
                                     <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.firstName">Item
                                         firstName is
@@ -129,7 +129,7 @@
                             </div>
                             <div class="field">
                                 <label for="description">Last Name</label>
-                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.lastName" required autofocus
+                                    <input type="text" pInputText id="description" [disabled]="!newContactPerson.firstName" [(ngModel)]="newContactPerson.lastName" required autofocus
                                         [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.lastName}" />
                                     <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.lastName">Item
                                         phone is
@@ -140,7 +140,7 @@
                             </div>
                             <div class="field">
                                 <label for="description">Cell</label>
-                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.phone1" required autofocus
+                                    <input type="text" pInputText id="description" [disabled]="!newContactPerson.lastName" [(ngModel)]="newContactPerson.phone1" required autofocus
                                         [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.phone1}" />
                                     <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.phone1">Item
                                         phone is
@@ -151,7 +151,7 @@
                             </div>
                             <div class="field">
                                 <label for="title">Job Title</label>
-                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newContactPerson.jobPosition"
+                                    <p-dropdown appendTo="body" class="p-inputtext-sm" [disabled]="!newContactPerson.phone1" [(ngModel)]="newContactPerson.jobPosition"
                                         inputId="name" [options]="JobTitles" placeholder="Select Title" >
         
                                     </p-dropdown>
@@ -163,7 +163,7 @@
                         <div class="field col-6">
                             <div class="field">
                                 <label for="description">Email</label>
-                                    <input type="text" pInputText id="description" [(ngModel)]="newContactPerson.email" required autofocus
+                                    <input type="text" pInputText id="description" [disabled]="!newContactPerson.jobPosition" [(ngModel)]="newContactPerson.email" required autofocus
                                         [ngClass]="{'ng-invalid ng-dirty' : submitted && !newContactPerson.email}" />
                                     <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newContactPerson.email">Item
                                         email is
@@ -174,7 +174,7 @@
                             </div>
                             <div class="field">
                                 <label for="street">Street</label>
-                                    <input type="text" pInputText id="street" [(ngModel)]="street" required autofocus
+                                    <input type="text" pInputText id="street"  [(ngModel)]="street" required autofocus
                                         [ngClass]="{'ng-invalid ng-dirty' : submitted && !street}" />
                                     <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !street">Item
                                         email is
@@ -238,7 +238,7 @@
                 <ng-template pTemplate="footer">
                     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
                         (click)="hideDialog()"></button>
-                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                    <button pButton pRipple label="Save" [disabled]="!country" icon="pi pi-check" class="p-button-text" (click)="save()"
                         [disabled]="!country "></button>
                 </ng-template>
             </p-dialog> 

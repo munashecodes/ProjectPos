@@ -71,7 +71,7 @@
             </div>
 
             <!-- create modal -->
-            <p-dialog [(visible)]="createModal" [style]="{ width: '30%' }" header="New Sub Category"
+            <p-dialog [(visible)]="createModal" [style]="{ width: '30%' }" (onHide)="hideDialog()" header="New Sub Category"
                 [modal]="true" class="p-fluid">
                 <ng-template pTemplate="content">
                     <div class="formgrid grid">
@@ -95,8 +95,8 @@
                             <div class="field">
                                 <label for="country">Category</label>
                                 <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newSubCategory.category" inputId="name"
-                                    [options]="catedories" placeholder="Select Country">
-                                    <ng-template pTemplate="selectedCountry">
+                                    [options]="catedories" placeholder="Select Sub Category">
+                                    <ng-template pTemplate="selectedSubCategory">
                                         <span *ngIf="newSubCategory && newSubCategory.category">{{ newSubCategory.category }}
                                         </span>
                                     </ng-template>
@@ -118,7 +118,7 @@
             </p-dialog> 
 
             <!-- edit modal -->
-            <p-dialog [(visible)]="editModal" [style]="{width: '30%'}" header="Edit Sub Category"
+            <p-dialog [(visible)]="editModal" [style]="{width: '30%'}" (onHide)="hideDialog()" header="Edit Sub Category"
                 [modal]="true" class="p-fluid">
                 <ng-template pTemplate="content">
                     <div class="formgrid grid">
