@@ -253,7 +253,7 @@ export class ProductComponent implements OnInit {
           this.products = []
         }
         else{
-          this.products = [...this.products, res.data];
+          this.products = [res.data, ...this.products];
         }
 
         this.messageService.add({
