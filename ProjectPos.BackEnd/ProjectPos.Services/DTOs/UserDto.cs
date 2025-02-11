@@ -34,6 +34,7 @@ namespace ProjectPos.Services.DTOs
         public string? Password { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Role? Role { get; set; }
+        public bool IsActive { get; set; }
         public string? SupervisorCode { get; set; }
     }
 }

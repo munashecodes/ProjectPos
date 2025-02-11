@@ -76,11 +76,11 @@ namespace ProjectPos.Services.AppServices
             }
         }
 
-        public ServiceResponse<bool> Create(UserSignInDto user)
+        public ServiceResponse<UserDto> Create(UserSignInDto user)
         {
             if (_context.SystemUsers.Any(u => u.UserName == user.UserName))
             {
-                return new ServiceResponse<bool>
+                return new ServiceResponse<UserDto>
                 {
                     Time = DateTime.UtcNow,
                     Message = "User Name or Email already exists",
@@ -98,14 +98,16 @@ namespace ProjectPos.Services.AppServices
                     _user.SupervisorCodeHash = BCrypt.Net.BCrypt.HashPassword(user.SupervisorCode);
                 }
                 _user.Role = isFirstAccount ? Role.Manager : _user.Role;
-                _user.IsActive = isFirstAccount ? true : _user.IsActive;
+                _user.IsActive = isFirstAccount ? true : (user.IsActive == null)? false : user.IsActive;
+                
+                
 
-                _context.SystemUsers.Add(_user);
+                var newUser = _context.SystemUsers.Add(_user);
                 _context.SaveChanges();
 
-                return new ServiceResponse<bool>
+                return new ServiceResponse<UserDto>
                 {
-                    Data = true,
+                    Data = _mapper.Map<User, UserDto>(newUser.Entity),
                     Time = DateTime.UtcNow,
                     Message = "Account created successfully",
                     IsSuccess = true

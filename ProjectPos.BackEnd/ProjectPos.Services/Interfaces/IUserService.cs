@@ -4,7 +4,7 @@ namespace ProjectPos.Services.Interfaces
 {
     public interface IUserService
     {
-        public ServiceResponse<bool> Create(UserSignInDto user);
+        public ServiceResponse<UserDto> Create(UserSignInDto user);
         public ServiceResponse<UserDto> Update(UserDto user);
         public ServiceResponse<UserDto> Delete(int id);
         public ServiceResponse<UserDto> Activate(UserDto user);

@@ -137,6 +137,7 @@ export class ManageUsersComponent implements OnInit  {
       this.newUser.isActive = false;
     }
     this.newUser.employee = undefined
+    this.isActive = ''
 
     this.userService.create(this.newUser)
         .subscribe((res) => {
@@ -243,8 +244,8 @@ export class ManageUsersComponent implements OnInit  {
           this.users = []
         }
         else{
-          var index = this.employees.findIndex(x => x.id === this.newUser.id);
-          this.users.splice(index, 1)
+          this.users = this.users.filter(x => x.id !== this.newUser.id);
+          
         }
 
         this.messageService.add({
@@ -325,6 +326,7 @@ export class ManageUsersComponent implements OnInit  {
   hideDialog(){
     this.createModal = false;
     this.editModal = false
+    this.isActive = ''
     this.deleteModal = false;
     this.viewModal = false;
     this.newUser = {} as UserDto;
