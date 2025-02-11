@@ -75,6 +75,7 @@ export class ManageEmployeesComponent implements OnInit {
   edit(company: EmployeeDto){
     // initialize company to fill the edit form
     this.newEmployee = { ...company};
+    this.newEmployee.dob = new Date(company.dob);
     this.editModal = true;
     this.submitted = false;
   }
