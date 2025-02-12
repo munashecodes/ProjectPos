@@ -37,11 +37,14 @@ namespace ProjectPos.Services.AppServices
                 price.CreationTime = DateTime.Now;
                 var _price = _context.ProductPrices!.Add(price);
                 _context.SaveChanges();
+                var newPrice = _context.ProductPrices
+                    .Include(x => x.Product)
+                    .FirstOrDefault(p => p.Id == _price.Entity.Id);
                 return new ServiceResponse<ProductPriceDto>
                 {
-                    Data = _mapper.Map<ProductPrice, ProductPriceDto>(_price.Entity),
+                    Data = _mapper.Map<ProductPrice, ProductPriceDto>(newPrice),
                     IsSuccess = true,
-                    Message = "Customer Registered Successfully",
+                    Message = "Price Created Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -51,7 +54,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<ProductPriceDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Price Creation Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -67,11 +70,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (price == null)
                 {
-                    _logger.LogError($"ProductPrice with id: {id} does not exist");
+                    _logger.LogError($"Product Price with id: {id} does not exist");
                     return new ServiceResponse<ProductPriceDto>
                     {
                         IsSuccess = false,
-                        Message = "ProductPrice Not Found",
+                        Message = "Product Price Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -82,14 +85,14 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<ProductPriceDto>
                     {
                         IsSuccess = true,
-                        Message = $"price {price.Product!.Name} Was deleted successfuly",
+                        Message = $"Price {price.Product!.Name} Was deleted successfuly",
                         Time = DateTime.Now,
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while deleting price");
+                _logger.LogError(ex, "Error while deleting Price");
                 return new ServiceResponse<ProductPriceDto>
                 {
                     IsSuccess = false,
@@ -111,13 +114,13 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _companies,
                     IsSuccess = true,
-                    Message = $"Found {_companies.Count} ProductPrices",
+                    Message = $"Found {_companies.Count} Product Prices",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting all companies");
+                _logger.LogError(ex, "Error while getting all prices");
                 return new ServiceResponse<List<ProductPriceDto>>
                 {
                     IsSuccess = false,
@@ -144,11 +147,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (price == null)
                 {
-                    _logger.LogError($"ProductPrice with id: {id} does not exist");
+                    _logger.LogError($"Product Price with id: {id} does not exist");
                     return new ServiceResponse<ProductPriceDto>
                     {
                         IsSuccess = false,
-                        Message = $"price {id} Was Not Found",
+                        Message = $"Price {id} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -159,7 +162,7 @@ namespace ProjectPos.Services.AppServices
                     {
                         Data = _price,
                         IsSuccess = true,
-                        Message = $"price for {_price.Name} Was Found",
+                        Message = $"Price for {_price.Name} Was Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -186,11 +189,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (companies == null)
                 {
-                    _logger.LogError($"ProductPrice with name: {name} does not exist");
+                    _logger.LogError($"Product Price with name: {name} does not exist");
                     return new ServiceResponse<List<ProductPriceDto>>
                     {
                         IsSuccess = false,
-                        Message = $"ProductPrices with name {name} Was Not Found",
+                        Message = $"Product Prices with name {name} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -223,13 +226,16 @@ namespace ProjectPos.Services.AppServices
             try
             {
                 var price = _mapper.Map<ProductPriceDto, ProductPrice>(priceDto);
-                var _price = _context.ProductPrices!.Update(price);
+                var updatedPrice = _context.ProductPrices!.Update(price);
                 _context.SaveChanges();
+                var _price = _context.ProductPrices!
+                    .Include(x => x.Product)
+                    .FirstOrDefault(p => p.Id == updatedPrice.Entity.Id);
                 return new ServiceResponse<ProductPriceDto>
                 {
-                    Data = _mapper.Map<ProductPrice, ProductPriceDto>(_price.Entity),
+                    Data = _mapper.Map<ProductPrice, ProductPriceDto>(_price),
                     IsSuccess = true,
-                    Message = "Customer UpDated Successfully",
+                    Message = "Price Updated Successfully",
                     Time = DateTime.Now,
                 };
             }

@@ -33,29 +33,28 @@
                     </ng-template>
                     <ng-template pTemplate="header">
                         <tr>
-                            <th style="width: 3rem">
+                            <th style="width: 1rem">
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
                             <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
                             <th>Description</th>
                             <th pSortableColumn="subCategoryName">Sub Category <p-sortIcon field="subCategoryName"></p-sortIcon></th>
                             <th pSortableColumn="category">Category <p-sortIcon field="category"></p-sortIcon></th>
-                            <th>Cost</th>
-                            <th>Grade</th>
-                            <th>Taxable</th>
+                            
+                            <!-- <th>Taxable</th> -->
                             <th></th>
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-product>
                         <tr>
-                            <td>
+                            <td style="max-width: 1rem">
                                 <p-tableCheckbox [value]="product"></p-tableCheckbox>
                             </td>
-                            <td style="width:14%; min-width:10rem;">
+                            <td style="width:23%; min-width:10rem;">
                                 <span class="p-column-title">Phone</span>
                                 {{product.name}}
                             </td>
-                            <td style="width:14%; min-width:8rem;">
+                            <td style="width:23%; min-width:8rem;">
                                 <span class="p-column-title">description</span>
                                 {{product.description}}
                             </td>
@@ -67,22 +66,14 @@
                                 <span class="p-column-title">Phone</span>
                                 {{product.category}}
                             </td>
-                            <td style="width:14%; min-width:8rem;">
-                                <span class="p-column-title">description</span>
-                                {{product.cost | currency }}
-                            </td>
-                            <td style="width:14%; min-width:8rem;">
-                                <span class="p-column-title">description</span>
-                                {{product.grade}}
-                            </td>
-                            <td style="width:14%; min-width:8rem;" *ngIf="product.isTaxable === true">
+                            <!-- <td style="width:14%; min-width:8rem;" *ngIf="product.isTaxable === true">
                                 <span class="p-column-title">description</span>
                                 Yes
-                            </td>
-                            <td style="width:14%; min-width:8rem;" *ngIf="product.isTaxable === false">
+                            </td> -->
+                            <!-- <td style="width:14%; min-width:8rem;" *ngIf="product.isTaxable === false">
                                 <span class="p-column-title">description</span>
                                 No
-                            </td>
+                            </td> -->
                             <td style="width:14%; min-width:8rem;">
                                 <div class="flex">
                                     <button pButton pRipple icon="pi pi-pencil" label="EDIT" class="p-button-success mr-2"
@@ -185,7 +176,7 @@
                                             
                                         
                                     </div>
-                                    <div class="field" *ngIf="isFresh === true">
+                                    <!-- <div class="field" *ngIf="isFresh === true">
                                         <label for="company">Grade</label>
                                             <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProduct.grade" [disabled]="!newProduct.barCode"
                                                 inputId="name" [options]="grades" placeholder="Grade" >
@@ -193,8 +184,8 @@
                                             </p-dropdown>
                                             
                                         
-                                    </div>
-                                    <div class="field col-6">
+                                    </div> -->
+                                    <!-- <div class="field col-6">
                                         <br />
                                         <br />
                                         <div claa="field">
@@ -204,8 +195,8 @@
                                                 <label for="city1">Taxable</label>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="field col-6">
+                                    </div> -->
+                                    <!-- <div class="field col-6">
                                         <br />
                                         <br />
                                         <div claa="field">
@@ -215,7 +206,7 @@
                                                 <label for="city1">Not Taxable</label>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -226,7 +217,7 @@
                     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
                         (click)="hideDialog()"></button>
                     <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFile()"
-                        [disabled]="!newProduct.grade"></button>
+                        [disabled]="!newProduct.unit"></button>
                 </ng-template>
             </p-dialog> 
 
