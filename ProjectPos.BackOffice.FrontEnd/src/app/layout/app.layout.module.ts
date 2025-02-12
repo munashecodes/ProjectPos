@@ -71,7 +71,8 @@ import { SetupModule } from '../setup/setup.module';
 		SplitterModule,
 		PanelModule,
         AuthModule,
-        AvatarModule
+        AvatarModule,
+        BadgeModule
     ],
     exports: [AppLayoutComponent]
 })

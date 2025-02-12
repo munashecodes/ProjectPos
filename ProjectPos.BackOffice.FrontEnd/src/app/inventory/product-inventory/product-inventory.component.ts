@@ -686,7 +686,7 @@ export class ProductInventoryComponent {
           severity:'success', 
           summary: 'Success', 
           detail: res.message , 
-          life: 3000
+          life: 7000
         });
       }
       else{

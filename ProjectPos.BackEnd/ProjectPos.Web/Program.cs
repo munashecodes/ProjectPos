@@ -77,6 +77,7 @@ namespace ProjectPos.Web
             builder.Services.AddTransient<IAccountService, AccountService>();
             builder.Services.AddTransient<IJournalEntryService, JournalEntryService>();
             builder.Services.AddTransient<IExpenseService, ExpenseService>();
+            builder.Services.AddTransient<INotificationService, NotificationService>();
             builder.Services.AddScheduler();
 
             builder.Services.AddControllers();

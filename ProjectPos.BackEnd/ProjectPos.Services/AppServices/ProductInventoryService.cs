@@ -517,17 +517,17 @@ namespace ProjectPos.Services.AppServices
         {
             try
             {
-                // var filterd = inventory.Where(x => x.Quantity != 0 && x.Quantity != null).ToList();
-                //
-                // if(filterd.Count == 0)
-                // {
-                //     return new ServiceResponse<List<ProductInventoryDto>>
-                //     {
-                //         IsSuccess = false,
-                //         Message = "Inventory not UpDated Successfully",
-                //         Time = DateTime.Now,
-                //     };
-                // }
+                var filterd = inventory.Where(x => x.StockCount != 0 && x.StockCount != null).ToList();
+                
+                if(filterd.Count == 0)
+                {
+                    return new ServiceResponse<List<ProductInventoryDto>>
+                    {
+                        IsSuccess = false,
+                        Message = "Inventory not UpDated Successfully",
+                        Time = DateTime.Now,
+                    };
+                }
                 var _inventory = _mapper.Map<List<ProductInventoryDto>, List<ProductInventory>>(inventory);
                 var inv = _context.ProductInventories!
                     .Where(x => _inventory.Select(a => a.Id).Contains(x.Id))
@@ -537,7 +537,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     var _prod = inventory!
                         .FirstOrDefault(x => x.Id == prod.Id);
-                    var count = _prod!.Quantity;
+                    var count = _prod!.StockCount;
                     prod.StockCount = count == null? prod.StockCount : (prod.StockCount + count);
                     prod.SubCategoryId = _prod.SubCategoryId;
                 });

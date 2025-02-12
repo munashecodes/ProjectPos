@@ -5,7 +5,12 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MenuService } from './app.menu.service';
 import { LayoutService } from './service/app.layout.service';
+import { NotificationService } from 'src/proxy/services/notification.service';
 
+interface Notification{
+    purchaseOrder: number
+    receivingOrder: number
+}
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
     selector: '[app-menuitem]',
@@ -22,10 +27,11 @@ import { LayoutService } from './service/app.layout.service';
 			   [routerLink]="item.routerLink" routerLinkActive="active-route" [routerLinkActiveOptions]="item.routerLinkActiveOptions||{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
                [fragment]="item.fragment" [queryParamsHandling]="item.queryParamsHandling" [preserveFragment]="item.preserveFragment" 
                [skipLocationChange]="item.skipLocationChange" [replaceUrl]="item.replaceUrl" [state]="item.state" [queryParams]="item.queryParams"
-               [attr.target]="item.target" tabindex="0" pRipple>
+               [attr.target]="item.target" tabindex="0" pRipple class="menu-item">
 				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
 				<span class="layout-menuitem-text">{{item.label}}</span>
 				<i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
+                <!-- <p-badge value="3" badgeSize="xlarge" severity="success" class="badge-inline" /> -->
 			</a>
 
 			<ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
@@ -65,7 +71,9 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
 
     key: string = "";
 
-    constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService) {
+    notification: Notification = {} as Notification
+
+    constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService, private notificationService: NotificationService) {
         this.menuSourceSubscription = this.menuService.menuSource$.subscribe(value => {
             Promise.resolve(null).then(() => {
                 if (value.routeEvent) {
@@ -97,6 +105,12 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
         if (this.item.routerLink) {
             this.updateActiveStateFromRoute();
         }
+
+        this.notificationService.getStats()
+        .subscribe((res) => {
+            console.log(res);
+            this.notification = res.data
+        });
     }
 
     updateActiveStateFromRoute() {

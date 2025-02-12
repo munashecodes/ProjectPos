@@ -2,5 +2,6 @@
     <ng-container *ngFor="let item of filteredModel; let i = index;" >
         <li app-menuitem *ngIf="!item.separator" [item]="item" [index]="i" [root]="true"></li>
         <li *ngIf="item.separator" class="menu-separator" style="font-size: 12px"></li>
+        
     </ng-container>
 </ul>
