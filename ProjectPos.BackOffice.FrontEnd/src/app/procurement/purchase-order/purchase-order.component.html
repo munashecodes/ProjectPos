@@ -352,7 +352,7 @@
                 <div class="formgrid grid">
                     <div class="field col-4">
                         <label  for="currency">Department</label>
-                            <p-dropdown appendTo="body" class="p-inputtext-sm"
+                            <p-dropdown appendTo="body"  class="p-inputtext-sm"
                                 [options]="categories" placeholder="Select Item"
                                 (onChange)="filterCategories($event)">
                                 
@@ -361,14 +361,14 @@
                     <div class="field col-4">
                         <label  for="currency">Category</label>
                             <p-dropdown appendTo="body" class="p-inputtext-sm"  inputId="id"
-                                [options]="filteredCategories" placeholder="Select Item" optionLabel="name"
+                                [options]="categories" placeholder="Select Item" optionLabel="name"
                                 (onChange)="filterItems($event)">
                                 
                             </p-dropdown>
                     </div>
                     <div class="field col-4">
                         <label  for="currency">Select Stock Item</label>
-                            <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="selectedStockItem" inputId="id"
+                            <p-dropdown appendTo="body" class="p-inputtext-sm" inputId="id"
                                 [options]="filteredStockItems" placeholder="Select Item" optionLabel="name"
                                 [filter]="true" filterBy="name"  [showClear]="true" (onChange)="confirmQuantity()">
                                 

@@ -41,7 +41,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<PurchaceOrder, PurchaceOrderDto>(ord),
                     IsSuccess = true,
-                    Message = "Customer Registered Successfully",
+                    Message = "Purchase Order Added Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -51,7 +51,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<PurchaceOrderDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Purchase Order Addition Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -65,11 +65,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (order == null)
                 {
-                    _logger.LogError($"PurchaceOrder with id: {id} does not exist");
+                    _logger.LogError($"Purchace Order with id: {id} does not exist");
                     return new ServiceResponse<PurchaceOrderDto>
                     {
                         IsSuccess = false,
-                        Message = "PurchaceOrder Not Found",
+                        Message = "Purchace Order Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -80,7 +80,7 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<PurchaceOrderDto>
                     {
                         IsSuccess = true,
-                        Message = $"order {order.Company!.Name} Was deleted successfuly",
+                        Message = $"Order {order.Company!.Name} Was deleted successfuly",
                         Time = DateTime.Now,
                     };
                 }
@@ -111,7 +111,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _orders,
                     IsSuccess = true,
-                    Message = $"Found {_orders.Count} PurchaceOrders",
+                    Message = $"Found {_orders.Count} Purchace Orders",
                     Time = DateTime.Now,
                 };
             }
@@ -139,7 +139,7 @@ namespace ProjectPos.Services.AppServices
 
                 if (order == null)
                 {
-                    _logger.LogError($"PurchaceOrder with id: {id} does not exist");
+                    _logger.LogError($"Purchace Order with id: {id} does not exist");
                     return new ServiceResponse<PurchaceOrderDto>
                     {
                         IsSuccess = false,
@@ -184,11 +184,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (orders == null)
                 {
-                    _logger.LogError($"PurchaceOrder with name: {name} does not exist");
+                    _logger.LogError($"Purchace Order with name: {name} does not exist");
                     return new ServiceResponse<List<PurchaceOrderDto>>
                     {
                         IsSuccess = false,
-                        Message = $"PurchaceOrders with name {name} Was Not Found",
+                        Message = $"Purchace Order with name {name} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -227,7 +227,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<PurchaceOrder, PurchaceOrderDto>(_order.Entity),
                     IsSuccess = true,
-                    Message = "Customer UpDated Successfully",
+                    Message = "Purchase Order Updated Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -237,7 +237,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<PurchaceOrderDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Update Failed: {ex.Message}",
+                    Message = $"Purchase Order Update Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -261,13 +261,13 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _purchaceOrders,
                     IsSuccess = true,
-                    Message = $"Found {_purchaceOrders.Count} PurchaceOrders",
+                    Message = $"Found {_purchaceOrders.Count} Purchase Orders",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting all purchaceOrders");
+                _logger.LogError(ex, "Error while getting all Purchase Orders");
                 return new ServiceResponse<List<PurchaceOrderDto>>
                 {
                     IsSuccess = false,
@@ -294,13 +294,13 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _purchaceOrders,
                     IsSuccess = true,
-                    Message = $"Found {_purchaceOrders.Count} PurchaceOrders",
+                    Message = $"Found {_purchaceOrders.Count} Purchase Orders",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting all purchaceOrders");
+                _logger.LogError(ex, "Error while getting all Purchase Orders");
                 return new ServiceResponse<List<PurchaceOrderDto>>
                 {
                     IsSuccess = false,
@@ -327,13 +327,13 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _purchaceOrders,
                     IsSuccess = true,
-                    Message = $"Found {_purchaceOrders.Count} PurchaceOrders",
+                    Message = $"Found {_purchaceOrders.Count} Purchase Orders",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting all purchaceOrders");
+                _logger.LogError(ex, "Error while getting all Purchase Orders");
                 return new ServiceResponse<List<PurchaceOrderDto>>
                 {
                     IsSuccess = false,
@@ -360,13 +360,13 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _purchaceOrders,
                     IsSuccess = true,
-                    Message = $"Found {_purchaceOrders.Count} PurchaceOrders",
+                    Message = $"Found {_purchaceOrders.Count} Purchase Orders",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting all purchaceOrders");
+                _logger.LogError(ex, "Error while getting all Purchase Orders");
                 return new ServiceResponse<List<PurchaceOrderDto>>
                 {
                     IsSuccess = false,
@@ -394,13 +394,13 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _purchaceOrders,
                     IsSuccess = true,
-                    Message = $"Found {_purchaceOrders.Count} PurchaceOrders",
+                    Message = $"Found {_purchaceOrders.Count} Purchase Orders",
                     Time = DateTime.Now,
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting all purchaceOrders");
+                _logger.LogError(ex, "Error while getting all Purchase Orders");
                 return new ServiceResponse<List<PurchaceOrderDto>>
                 {
                     IsSuccess = false,

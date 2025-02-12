@@ -454,7 +454,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   edit(order: any){
     this.newOrder = {...order}
-
+    this.newOrder.eta = new Date(order.eta!);
+    this.newOrder.creationTime = new Date(order.creationTime!);
     console.log(this.newOrder)
     this.editModal = true;
     this.submitted = false;

@@ -77,7 +77,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<GoodsReceivedVoucher, GoodsReceivedVoucherDto>(_grv.Entity),
                     IsSuccess = true,
-                    Message = "Customer Registered Successfully",
+                    Message = "Goods Received Voucher Created Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -87,7 +87,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<GoodsReceivedVoucherDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Voucher Creation Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -101,11 +101,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (grv == null)
                 {
-                    _logger.LogError($"GoodsReceivedVoucher with id: {id} does not exist");
+                    _logger.LogError($"Goods Received Voucher with id: {id} does not exist");
                     return new ServiceResponse<GoodsReceivedVoucherDto>
                     {
                         IsSuccess = false,
-                        Message = "GoodsReceivedVoucher Not Found",
+                        Message = "Goods Received Voucher Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -116,7 +116,7 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<GoodsReceivedVoucherDto>
                     {
                         IsSuccess = true,
-                        Message = $"grv {grv.Supplier!.Name} Was deleted successfuly",
+                        Message = $"Goods Received Voucher - {grv.Supplier!.Name} was deleted successfuly",
                         Time = DateTime.Now,
                     };
                 }
@@ -159,7 +159,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _grvs,
                     IsSuccess = true,
-                    Message = $"Found {_grvs.Count} GoodsReceivedVouchers",
+                    Message = $"Found {_grvs.Count} Goods Received Vouchers",
                     Time = DateTime.Now,
                 };
             }
@@ -188,11 +188,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (grv == null)
                 {
-                    _logger.LogError($"GoodsReceivedVoucher with id: {id} does not exist");
+                    _logger.LogError($"Goods Received Voucher with id: {id} does not exist");
                     return new ServiceResponse<GoodsReceivedVoucherDto>
                     {
                         IsSuccess = false,
-                        Message = $"grv {id} Was Not Found",
+                        Message = $"Goods Received Voucher - {id} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -203,14 +203,14 @@ namespace ProjectPos.Services.AppServices
                     {
                         Data = _grv,
                         IsSuccess = true,
-                        Message = $"grv {grv.Supplier!.Name} Was Found",
+                        Message = $"Goods Received Voucher - {grv.Supplier!.Name} Was Found",
                         Time = DateTime.Now,
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting grv by id");
+                _logger.LogError(ex, "Error while getting Goods Received Voucher by id");
                 return new ServiceResponse<GoodsReceivedVoucherDto>
                 {
                     IsSuccess = false,
@@ -234,11 +234,11 @@ namespace ProjectPos.Services.AppServices
 
                 if (grvs == null)
                 {
-                    _logger.LogError($"GoodsReceivedVoucher with name: {name} does not exist");
+                    _logger.LogError($"Goods Received Voucher with name: {name} does not exist");
                     return new ServiceResponse<List<GoodsReceivedVoucherDto>>
                     {
                         IsSuccess = false,
-                        Message = $"GoodsReceivedVouchers with name {name} Was Not Found",
+                        Message = $"Goods Received Voucher with name {name} Was Not Found",
                         Time = DateTime.Now,
                     };
                 }
@@ -249,14 +249,14 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<List<GoodsReceivedVoucherDto>>
                     {
                         IsSuccess = true,
-                        Message = $"Found {_grvs.Count} GoodsReceivedVouchers",
+                        Message = $"Found {_grvs.Count} Goods Received Vouchers",
                         Time = DateTime.Now,
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while getting grv by name");
+                _logger.LogError(ex, "Error while getting Goods Received Voucher by name");
                 return new ServiceResponse<List<GoodsReceivedVoucherDto>>
                 {
                     IsSuccess = false,
@@ -298,7 +298,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<GoodsReceivedVoucher, GoodsReceivedVoucherDto>(grv),
                     IsSuccess = true,
-                    Message = "Customer UpDated Successfully",
+                    Message = "Goods Received Voucher Updated Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -308,7 +308,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<GoodsReceivedVoucherDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Update Failed: {ex.Message}",
+                    Message = $"Goods Received Voucher Update Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -393,7 +393,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _mapper.Map<GoodsReceivedVoucher, GoodsReceivedVoucherDto>(grv),
                     IsSuccess = true,
-                    Message = "Customer UpDated Successfully",
+                    Message = "Approved",
                     Time = DateTime.Now,
                 };
             }
@@ -403,7 +403,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<GoodsReceivedVoucherDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Update Failed: {ex.Message}",
+                    Message = $"Approval Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -436,7 +436,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _grvs,
                     IsSuccess = true,
-                    Message = $"Found {_grvs.Count} GoodsReceivedVouchers",
+                    Message = $"Found {_grvs.Count} Goods Received Vouchers",
                     Time = DateTime.Now,
                 };
             }
@@ -479,7 +479,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _grvs,
                     IsSuccess = true,
-                    Message = $"Found {_grvs.Count} GoodsReceivedVouchers",
+                    Message = $"Found {_grvs.Count} Goods Received Vouchers",
                     Time = DateTime.Now,
                 };
             }
@@ -522,7 +522,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _grvs,
                     IsSuccess = true,
-                    Message = $"Found {_grvs.Count} GoodsReceivedVouchers",
+                    Message = $"Found {_grvs.Count} Goods Received Vouchers",
                     Time = DateTime.Now,
                 };
             }
@@ -565,7 +565,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _grvs,
                     IsSuccess = true,
-                    Message = $"Found {_grvs.Count} GoodsReceivedVouchers",
+                    Message = $"Found {_grvs.Count} Goods Received Vouchers",
                     Time = DateTime.Now,
                 };
             }
@@ -609,7 +609,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _grvs,
                     IsSuccess = true,
-                    Message = $"Found {_grvs.Count} GoodsReceivedVouchers",
+                    Message = $"Found {_grvs.Count} Goods Received Vouchers",
                     Time = DateTime.Now,
                 };
             }

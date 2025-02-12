@@ -49,6 +49,9 @@ namespace ProjectPos.Services.AppServices
                 else
                 {
                     var inventory = _mapper.Map<ProductInventoryDto, ProductInventory>(inventoryDto);
+                    inventory.Status = Status.OutOfStock;
+                    inventory.QuantityOnHand = 0;
+                    inventory.QuantityOnShelf = 0;
                     var _inventory = _context.ProductInventories!.Add(inventory);
                     _context.SaveChanges();
                     
@@ -514,18 +517,18 @@ namespace ProjectPos.Services.AppServices
         {
             try
             {
-                var filterd = inventory.Where(x => x.Quantity != 0 && x.Quantity != null).ToList();
-
-                if(filterd.Count == 0)
-                {
-                    return new ServiceResponse<List<ProductInventoryDto>>
-                    {
-                        IsSuccess = false,
-                        Message = "Inventory not UpDated Successfully",
-                        Time = DateTime.Now,
-                    };
-                }
-                var _inventory = _mapper.Map<List<ProductInventoryDto>, List<ProductInventory>>(filterd);
+                // var filterd = inventory.Where(x => x.Quantity != 0 && x.Quantity != null).ToList();
+                //
+                // if(filterd.Count == 0)
+                // {
+                //     return new ServiceResponse<List<ProductInventoryDto>>
+                //     {
+                //         IsSuccess = false,
+                //         Message = "Inventory not UpDated Successfully",
+                //         Time = DateTime.Now,
+                //     };
+                // }
+                var _inventory = _mapper.Map<List<ProductInventoryDto>, List<ProductInventory>>(inventory);
                 var inv = _context.ProductInventories!
                     .Where(x => _inventory.Select(a => a.Id).Contains(x.Id))
                     .ToList();

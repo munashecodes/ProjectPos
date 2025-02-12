@@ -36,6 +36,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { TabViewModule } from 'primeng/tabview';
 import { FieldsetModule } from 'primeng/fieldset';
 import { StockMovementComponent } from './stock-movement/stock-movement.component';
+import { TagModule } from 'primeng/tag';
 
 
 @NgModule({
@@ -78,7 +79,8 @@ import { StockMovementComponent } from './stock-movement/stock-movement.componen
     AvatarModule,
     TabMenuModule,
     TabViewModule,
-    FieldsetModule
+    FieldsetModule,
+    TagModule
   ]
 })
 export class InventoryModule { }

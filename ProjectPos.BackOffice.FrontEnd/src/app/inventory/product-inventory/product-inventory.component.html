@@ -74,7 +74,7 @@
                                             
                                             <th pSortableColumn="pluCode">Bar Code <p-sortIcon field="pluCode"></p-sortIcon></th>
                                             <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-                                            <th pSortableColumn="grade">Grade <p-sortIcon field="grade"></p-sortIcon></th>
+                                            <!-- <th pSortableColumn="grade">Grade <p-sortIcon field="grade"></p-sortIcon></th> -->
                                             <th pSortableColumn="description">Qty On Hand</th>
                                             <th >Unit </th>
                                             <th >Price </th>
@@ -94,10 +94,10 @@
                                                 <span class="p-column-title">name</span>
                                                 {{product.name}}
                                             </td>
-                                            <td style="width:14%; min-width:10rem;">
+                                            <!-- <td style="width:14%; min-width:10rem;">
                                                 <span class="p-column-title">Phone</span>
                                                 {{product.grade}}
-                                            </td>
+                                            </td> -->
                                             <td style="width:14%; min-width:8rem;">
                                                 <span class="p-column-title">description</span>
                                                 {{product.quantityOnHand}}
@@ -106,14 +106,18 @@
                                                 <span class="p-column-title">Country</span>
                                                 {{product.unit}}
                                             </td>
-                                            <td style="width:14%; min-width:8rem;" *ngIf="product.productPrice">
-                                                <span class="p-column-title">description</span>
-                                                {{product.productPrice.price | currency}}
+                                            <td style="width:14%; min-width:8rem;">
+                                                <ng-container *ngIf="product.productPrice?.price > 0 || product.productPrice !== null; else noPrice">
+                                                    {{ product.productPrice?.price | currency: 'USD' }}
+                                                </ng-container>
+                                                <ng-template #noPrice>
+                                                    <p-tag icon="pi pi-exclamation-triangle" severity="warning" value="No price" />
+                                                </ng-template>
                                             </td>
-                                            <td style="width:14%; min-width:8rem;" *ngIf="!product.productPrice">
+                                            <!-- <td style="width:14%; min-width:8rem;" *ngIf="!product.productPrice">
                                                 <span class="p-column-title">description</span>
                                                 $0.00
-                                            </td>
+                                            </td> -->
                                             <td style="width:14%; min-width:10rem;">
                                                 <span [class]="'product-badge status-' + product.status.toLowerCase()">{{product.status}}</span>
                                             </td>
@@ -141,14 +145,14 @@
                                         </p-dropdown>
                                         <label for="currency">Category</label>
                                     </span>
-                                    <!-- <span class="p-float-label" *ngIf="filter !== 'ALL'">
+                                    <span class="p-float-label" *ngIf="filter !== 'ALL'">
                                         <button pButton label="UPDATE INVENTORY" icon="pi pi-plus" class="p-button-success mr-2"
                                                     (click)="updateDryInventory()" (click)="dry()" ></button>
                                     </span>
                                     <span class="p-float-label" *ngIf="filter !== 'ALL'">
                                         <button pButton label="PRINT STOCK SHEET" icon="pi pi-plus" class="p-button-success mr-2"
                                                     (click)="printStockCountSheet(!isFresh)"></button>
-                                    </span> -->
+                                    </span>
                                 </div>
                             </p-fieldset>
                             <div class="col-12">
@@ -160,8 +164,6 @@
                                     <ng-template pTemplate="caption">
                                         <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
                                             <span class="block mt-2 md:mt-0 p-input-icon-left">
-                                                <button pButton label="New" icon="pi pi-plus" class="p-button-success mr-2"
-                                                    (click)="create()"  (click)="dry()" ></button>
 
                                                 <button pButton label="CREATE HUMPER" icon="pi pi-plus" class="p-button-primary mr-2"
                                                             (click)="onAssortProduct()"></button>
@@ -217,14 +219,18 @@
                                                 <span class="p-column-title">Country</span>
                                                 {{product.unit}}
                                             </td>
-                                            <td style="width:14%; min-width:8rem;" *ngIf="product.productPrice">
-                                                <span class="p-column-title">description</span>
-                                                {{product.productPrice.price | currency}}
+                                            <td style="width:14%; min-width:8rem;">
+                                                <ng-container *ngIf="product.productPrice?.price > 0 || product.productPrice !== null; else noPrice">
+                                                    {{ product.productPrice?.price | currency: 'USD' }}
+                                                </ng-container>
+                                                <ng-template #noPrice>
+                                                    <p-tag icon="pi pi-exclamation-triangle" severity="warning" value="No price" />
+                                                </ng-template>
                                             </td>
-                                            <td style="width:14%; min-width:8rem;" *ngIf="!product.productPrice">
+                                            <!-- <td style="width:14%; min-width:8rem;" *ngIf="!product.productPrice">
                                                 <span class="p-column-title">description</span>
                                                 $0.00
-                                            </td>
+                                            </td> -->
                                             <td style="width:14%; min-width:10rem;">
                                                 <span [class]="'product-badge status-' + product.status.toLowerCase()">{{product.status}}</span>
                                             </td>
@@ -433,44 +439,44 @@
                         <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
                             <div class="field col-12">
                                 <div class="field">
-                                    <span class="p-float-label">
+                                    <label for="company">Bulk Product</label>
                                         <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="selectedProduct"
                                             inputId="name" [options]="filteredProducts" placeholder="Select Sub Category" optionLabel="name"
                                             [filter]="true" filterBy="name"  [showClear]="true">
             
                                         </p-dropdown>
-                                        <label for="company">Bulk Product</label>
-                                    </span>
+                                        
+                                   
                                 </div>
                                 <div class="field">
-                                    <span class="p-float-label">
+                                    <label for="company">Case Size</label>
                                         <input type="text" pInputText id="description" [(ngModel)]="caseSize" required autofocus
                                             [ngClass]="{'ng-invalid ng-dirty' : submitted && !caseSize}" [disabled]="!selectedProduct" />
                                         <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !caseSize">Item
                                             phone is
                                             required.</small>
-                                        <label for="company">Case Size</label>
-                                    </span>
+                                        
+                                   
                                 </div>
                                 <div class="field">
-                                    <span class="p-float-label">
+                                    <label for="company">Quantity</label>
                                         <input type="text" pInputText id="description" [(ngModel)]="quantity" required autofocus
                                             [ngClass]="{'ng-invalid ng-dirty' : submitted && !quantity}" [disabled]="!caseSize" />
                                         <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !quantity">Item
                                             phone is
                                             required.</small>
-                                        <label for="company">Quantity</label>
-                                    </span>
+                                        
+                                    
                                 </div>
                                 <div class="field">
-                                    <span class="p-float-label">
+                                    <label for="company">Unit Product</label>
                                         <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="upgradeProduct" [disabled]="!quantity"
                                             inputId="name" [options]="filteredProducts" placeholder="Select Sub Category" optionLabel="name"
                                             [filter]="true" filterBy="name"  [showClear]="true">
             
                                         </p-dropdown>
-                                        <label for="company">Unit Product</label>
-                                    </span>
+                                        
+                                    
                                 </div>
                                 
                             </div>

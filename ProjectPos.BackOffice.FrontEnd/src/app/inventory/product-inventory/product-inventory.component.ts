@@ -553,11 +553,11 @@ export class ProductInventoryComponent {
 
   //filter products by subcategory
   filterFreshProducts(){
-    this.filteredFreshInventories = this.freshProducts.filter(x => x.product?.subCategoryId === this.subCategory.id);
+    this.filteredFreshInventories = this.freshProducts.filter(x => x.subCategoryId === this.subCategory.id);
   }
 
   filterDryProducts(){
-    this.filteredDryInventories = this.dryProducts.filter(x => x.product?.subCategoryId === this.subCategory.id);
+    this.filteredDryInventories = this.dryProducts.filter(x => x.subCategoryId === this.subCategory.id);
   }
 
   fresh(){
@@ -665,7 +665,7 @@ export class ProductInventoryComponent {
     this.submitted = true;
 
     // send
-    this.inventoryService.updateRange(this.damagedProducts)
+    this.inventoryService.updateRange(this.filteredInventories)
     .subscribe((res) => {
       console.log(res);
       if(res.isSuccess){
