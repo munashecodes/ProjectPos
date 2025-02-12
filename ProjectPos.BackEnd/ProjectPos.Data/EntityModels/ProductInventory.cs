@@ -27,17 +27,20 @@ namespace ProjectPos.Data.EntityModels
         [Column(TypeName = "decimal(12, 2)")]
         public decimal? Cost { get; set; }
         [Column(TypeName = "decimal(12, 2)")]
-        public decimal? IdealQuantity { get; set; }
-        [Column(TypeName = "decimal(12, 2)")]
-        public decimal? QuantityOnHand { get; set; }
-        [Column(TypeName = "decimal(12, 2)")]
-        public decimal? QuantityOnShelf { get; set; }
+        public decimal? IdealQuantity { get; set; } = 0;
+
+        [Column(TypeName = "decimal(12, 2)")] 
+        public decimal? QuantityOnHand { get; set; } = 0;
+
+        [Column(TypeName = "decimal(12, 2)")] 
+        public decimal? QuantityOnShelf { get; set; } = 0;
         [Column(TypeName = "decimal(12, 2)")]
         public decimal? StockCount { get; set; } = 0;
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Unit? Unit { get; set; }
+
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public Status? Status { get; set; }
+        public Status? Status { get; set; } = Shared.Enums.Status.OutOfStock;
         [Column(TypeName = "decimal(12, 2)")]
         public decimal? MarkUp { get; set; }
 

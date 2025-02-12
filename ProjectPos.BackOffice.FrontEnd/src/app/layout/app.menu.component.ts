@@ -179,31 +179,31 @@ export class AppMenuComponent implements OnInit {
                 roles: ['Admin', 'Supervisor', 'Manager', 'SysAdmin', 'Accountant', 'AccountsClerk', 'FinanceManager', 'SysDeveloper', 'StockController'],
                 icon: 'pi pi-fw pi-id-card', 
                 items: [
-                    { 
-                        label: 'Sales Report', 
-                        icon: 'pi pi-fw pi-id-card', 
-                        routerLink: ['/setup/companies'] 
-                    },
-                    { 
-                        label: 'Payments Report', 
-                        icon: 'pi pi-fw pi-id-card', 
-                        routerLink: ['/setup/contact-persons'] 
-                    },
-                    { 
-                        label: 'CashUp Report', 
-                        icon: 'pi pi-fw pi-id-card', 
-                        routerLink: ['/setup/sub-categories'] 
-                    },
+                    // { 
+                    //     label: 'Sales Report', 
+                    //     icon: 'pi pi-fw pi-id-card', 
+                    //     routerLink: ['/setup/companies'] 
+                    // },
+                    // { 
+                    //     label: 'Payments Report', 
+                    //     icon: 'pi pi-fw pi-id-card', 
+                    //     routerLink: ['/setup/contact-persons'] 
+                    // },
+                    // { 
+                    //     label: 'CashUp Report', 
+                    //     icon: 'pi pi-fw pi-id-card', 
+                    //     routerLink: ['/setup/sub-categories'] 
+                    // },
                     { 
                         label: 'Stock Report', 
                         icon: 'pi pi-fw pi-id-card', 
                         routerLink: ['/reporting/stock-take'] 
-                    },
-                    { 
-                        label: 'Manage Product Prices', 
-                        icon: 'pi pi-fw pi-id-card', 
-                        routerLink: ['/setup/product-prices'] 
-                    },
+                    }
+                    // { 
+                    //     label: 'Manage Product Prices', 
+                    //     icon: 'pi pi-fw pi-id-card', 
+                    //     routerLink: ['/setup/product-prices'] 
+                    // },
                 ]
             },
             { 
@@ -242,30 +242,30 @@ export class AppMenuComponent implements OnInit {
                 icon: 'pi pi-fw pi-id-card', 
                 routerLink: ['/accounting/invoicing'] 
             },
-            { 
-                label: 'Credit Notes', 
-                roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
-                icon: 'pi pi-fw pi-id-card', 
-                routerLink: ['/accounts/credit-notes'] 
-            },
+            // { 
+            //     label: 'Credit Notes', 
+            //     roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
+            //     icon: 'pi pi-fw pi-id-card', 
+            //     routerLink: ['/accounts/credit-notes'] 
+            // },
             { 
                 label: 'Expenses', 
                 roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
                 icon: 'pi pi-fw pi-id-card', 
                 routerLink: ['/accounting/expenses'] 
-            },
-            { 
-                label: 'Deptors & Creditors', 
-                roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
-                icon: 'pi pi-fw pi-id-card', 
-                // routerLink: [] 
-            },
-            { 
-                label: 'Exception Reports', 
-                roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
-                icon: 'pi pi-fw pi-id-card', 
-                // routerLink: [] 
-            },
+            }
+            // { 
+            //     label: 'Deptors & Creditors', 
+            //     roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
+            //     icon: 'pi pi-fw pi-id-card', 
+            //     // routerLink: [] 
+            // },
+            // { 
+            //     label: 'Exception Reports', 
+            //     roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
+            //     icon: 'pi pi-fw pi-id-card', 
+            //     // routerLink: [] 
+            // },
         ];
 
         this.SetupItems = [

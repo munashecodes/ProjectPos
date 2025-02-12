@@ -16,10 +16,10 @@
                             <div class="col-10">
                                 <button pButton label="New Product" icon="pi pi-plus" class="p-button-success mr-2"
                                     (click)="createFresh()"></button>
-                                <span *ngIf="user.role !== 'StockController'">
+                                <!-- <span *ngIf="user.role !== 'StockController'">
                                     <button pButton label="Generate Inventory" icon="pi pi-plus" class="p-button-success mr-2"
                                         (click)="create()"></button>
-                                </span>
+                                </span> -->
                                 <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
                                     (click)="deleteSelected()">
                                 </button>
@@ -157,7 +157,7 @@
                                         
                                         
                                     </div>
-                                    <div class="field">
+                                    <!-- <div class="field">
                                         <label for="addressLine1">Cost</label>
                                             <input type="number" pInputText id="city" [(ngModel)]="newProduct.cost" required autofocus
                                                 [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.cost}" />
@@ -166,7 +166,7 @@
                                                 
                                         
                                         
-                                    </div>
+                                    </div> -->
                                     <div class="field">
                                         <label for="company">Unit</label>
                                             <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProduct.unit"
@@ -284,7 +284,7 @@
                                 
                                 
                             </div>
-                            <div class="field">
+                            <!-- <div class="field">
                                 <label for="addressLine1">Cost</label>
                                     <input type="number" pInputText id="city" [(ngModel)]="newProduct.cost" required autofocus
                                         [ngClass]="{'ng-invalid ng-dirty' : submitted && !newProduct.cost}" />
@@ -293,7 +293,7 @@
                                         
                                 
                                 
-                            </div>
+                            </div> -->
 
                             <div class="field">
                                 <label for="company">Unit</label>
@@ -304,7 +304,7 @@
                                     
                                 
                             </div>
-                            <div class="field">
+                            <!-- <div class="field">
                                 <span class="p-float-label" *ngIf="isFresh === true">
                                     <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="newProduct.grade"
                                         inputId="name" [options]="grades" placeholder="Grade" >
@@ -312,7 +312,7 @@
                                     </p-dropdown>
                                     <label for="company">Grade</label>
                                 </span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </ng-template>

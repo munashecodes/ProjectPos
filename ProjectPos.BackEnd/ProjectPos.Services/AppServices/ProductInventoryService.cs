@@ -51,9 +51,13 @@ namespace ProjectPos.Services.AppServices
                     var inventory = _mapper.Map<ProductInventoryDto, ProductInventory>(inventoryDto);
                     var _inventory = _context.ProductInventories!.Add(inventory);
                     _context.SaveChanges();
+                    
+                    var product =_context.ProductInventories!
+                        .Include(x => x!.SubCategory)
+                        .FirstOrDefault(p => p.Id == _inventory.Entity.Id);
                     return new ServiceResponse<ProductInventoryDto>
                     {
-                        Data = _mapper.Map<ProductInventory, ProductInventoryDto>(_inventory.Entity),
+                        Data = _mapper.Map<ProductInventory, ProductInventoryDto>(product),
                         IsSuccess = true,
                         Message = "Product Added Successfully",
                         Time = DateTime.Now,
@@ -127,7 +131,7 @@ namespace ProjectPos.Services.AppServices
                     return new ServiceResponse<ProductInventoryDto>
                     {
                         IsSuccess = true,
-                        Message = $"product {inventory!.Name} Was deleted successfuly",
+                        Message = $"Product {inventory!.Name} was deleted successfully",
                         Time = DateTime.Now,
                     };
                 }
@@ -220,7 +224,7 @@ namespace ProjectPos.Services.AppServices
                 {
                     Data = _inventories,
                     IsSuccess = true,
-                    Message = $"Found  ProductInventories",
+                    Message = $"Found {_inventories.Count} Products",
                     Time = DateTime.Now,
                 };
             }
@@ -481,11 +485,15 @@ namespace ProjectPos.Services.AppServices
                     inventory.Status = inventory.QuantityOnHand <= 0 ? Status.OutOfStock : inventory.QuantityOnHand > inventory.IdealQuantity ? Status.InStock : Status.LowStock;
                     var _inventory = _context.ProductInventories!.Update(inventory);
                     _context.SaveChanges();
+                    
+                    var product = _context.ProductInventories!
+                        .Include(pi => pi.SubCategory)
+                        .FirstOrDefault(x => x.Id == _inventory.Entity.Id);
                     return new ServiceResponse<ProductInventoryDto>
                     {
-                        Data = _mapper.Map<ProductInventory, ProductInventoryDto>(_inventory.Entity),
+                        Data = _mapper.Map<ProductInventory, ProductInventoryDto>(product),
                         IsSuccess = true,
-                        Message = "Customer UpDated Successfully",
+                        Message = "Product Updated Successfully",
                         Time = DateTime.Now,
                     };
                 }

@@ -355,9 +355,8 @@ export class ProductComponent implements OnInit {
         }
         else{
           var index = this.products.findIndex(x => x.id === this.newProduct.id);
-          this.products.splice(index, 1);
 
-          this.products = [...this.products, res.data];
+          this.products[index] = res.data;
         }
 
         this.messageService.add({
