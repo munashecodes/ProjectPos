@@ -131,7 +131,10 @@ public class PaySlipService : IPaySlipService
                 var relevantDeductions = employee.Deductions
                     .Where(d => d.DeductionDate.Date >= startDate.Date && d.DeductionDate.Date <= endDate.Date && d.IsApproved == true)
                     .ToList();
-
+                var currencyRate = await _context.ExchangeRates
+                    .Where(er => er.Currency == employee.SalaryStructure.Currency)
+                    .OrderByDescending(er => er.DateEffected) 
+                    .FirstOrDefaultAsync();
                 var paySlip = CalculateEmployeePaySlip(
                     employee, 
                     payRollCycle.Id, 
@@ -140,7 +143,8 @@ public class PaySlipService : IPaySlipService
                     userId,
                     relevantAttendance,
                     relevantOvertimeRecords,
-                    relevantDeductions);
+                    relevantDeductions,
+                    currencyRate.BaseToRate);
                     
                 paySlips.Add(paySlip);
             }
@@ -148,11 +152,18 @@ public class PaySlipService : IPaySlipService
             // Update payroll cycle
             payRollCycle.PaySlips = paySlips;
             payRollCycle.IsClosed = true;
+            payRollCycle.TotalAllowance = paySlips.Sum(ps => ps.HousingAllowance + ps.TransportAllowance + ps.OtherAllowance);
+            payRollCycle.TotalBasic = paySlips.Sum(ps => ps.BasicSalary);
+            payRollCycle.TotalTax = paySlips.Sum(ps => (ps.Tax ?? 0));
+            payRollCycle.TotalOtherDeduction = paySlips.Sum(ps =>(ps.TotalDeduction ?? 0));
+            payRollCycle.TotalGrossSalary = paySlips.Sum(ps => (ps.GrossSalary ?? 0));
+            payRollCycle.TotalNetSalary = paySlips.Sum(ps => (ps.TotalNetSalary ?? 0));
+            payRollCycle.TotalPensionDeduction = paySlips.Sum(ps => (ps.PensionDeduction ?? 0));
             payRollCycle.EndDate = new DateTime(currentDate.Year, currentDate.Month, 26);
             payRollCycle.LastModificationTime = currentDate;
             payRollCycle.LastModifierUserId = userId;
 
-            _context.PayRollCycles!.AddAsync(payRollCycle);
+            await _context.PayRollCycles!.AddAsync(payRollCycle);
             await _context.SaveChangesAsync();
 
             var mappedResult = _mapper.Map<PayRollCycleDto>(payRollCycle);
@@ -192,6 +203,13 @@ public class PaySlipService : IPaySlipService
                 CreationTime = currentDate,
                 CreatorId = userId,
                 IsClosed = false,
+                TotalAllowance = 0.0m,
+                TotalGrossSalary = 0.0m,
+                TotalPensionDeduction = 0.0m,
+                TotalBasic = 0.0m,
+                TotalNetSalary = 0.0m,
+                TotalTax = 0.0m,
+                TotalOtherDeduction = 0.0m,
                 PayRollStatus = PayRollStatus.Pending
             };
 
@@ -215,7 +233,8 @@ public class PaySlipService : IPaySlipService
         int userId,
         List<Attendance> attendances,
         List<OvertimeRecord> overtimeRecords,
-        List<EmployeeDeduction> deductions)
+        List<EmployeeDeduction> deductions,
+        decimal baseToRate)
     {
         var salaryStructure = employee.SalaryStructure!;
 
@@ -224,11 +243,12 @@ public class PaySlipService : IPaySlipService
 
         var workDays = CalculateWorkDays(attendances, startDate, endDate);
         var overtimeHours = overtimeRecords.Sum(o => o.Hours);
-        
+        var salary = salaryStructure.BasicSalary / baseToRate;
         // Calculate earnings
-        decimal basicSalary = CalculateProRatedSalary(salaryStructure.BasicSalary, workDays.ActualDays, workDays.RequiredDays);
-        decimal overtimePay = CalculateOvertimePay(salaryStructure.BasicSalary, overtimeHours);
+        decimal basicSalary = CalculateProRatedSalary(salary, workDays.ActualDays, workDays.RequiredDays);
+        decimal overtimePay = CalculateOvertimePay(overtimeRecords);
         decimal allowances = CalculateAllowances(salaryStructure, workDays.ActualDays, workDays.RequiredDays);
+        decimal benefits = CalculateAllowances(salaryStructure, workDays.ActualDays, workDays.RequiredDays);
 
         // Calculate deductions
         decimal taxDeduction = CalculateTax(basicSalary + overtimePay + allowances);
@@ -298,16 +318,22 @@ public class PaySlipService : IPaySlipService
                        o.IsApproved)
             .SumAsync(o => o.Hours);
     }
+    
 
     private decimal CalculateProRatedSalary(decimal fullSalary, int actualDays, int requiredDays)
     {
-        return (fullSalary / requiredDays) * actualDays;
+        return ((fullSalary) / requiredDays) * actualDays;
     }
 
-    private decimal CalculateOvertimePay(decimal basicSalary, decimal overtimeHours)
+    private decimal CalculateOvertimePay(List<OvertimeRecord> overtimeRecords)
     {
-        decimal hourlyRate = (basicSalary / 22) / 8; // Assuming 22 working days and 8 hours per day
-        return hourlyRate * overtimeHours * 1.5m; // 1.5 times regular rate for overtime
+        var total = 0.0m;
+        foreach (var item in overtimeRecords)
+        {
+            var record = (decimal)item.Rate * item.Hours;
+            total += record;
+        }
+        return total;
     }
 
     private decimal CalculateAllowances(SalaryStructure salaryStructure, int actualDays, int requiredDays)

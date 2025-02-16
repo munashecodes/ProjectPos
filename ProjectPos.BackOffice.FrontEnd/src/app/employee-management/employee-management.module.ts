@@ -38,6 +38,7 @@ import { ManagePayrollComponent } from './manage-payroll/manage-payroll.componen
 import { ManageOvertimeComponent } from './manage-overtime/manage-overtime.component';
 import { ManageAttendanceComponent } from './manage-attendance/manage-attendance.component';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { MonthNamePipe } from 'src/proxy/pipes/month-name.pipe';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
     ManagePayrollComponent,
     ManageOvertimeComponent,
     ManageAttendanceComponent,
+    MonthNamePipe
   ],
   imports: [
     CommonModule,

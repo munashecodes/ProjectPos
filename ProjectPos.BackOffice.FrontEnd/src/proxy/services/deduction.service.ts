@@ -58,9 +58,10 @@ export class DeductionService {
     }
   
     getByDateRangeAndEmployeeIdAsync(
+      employeeId: number,
       startDate: Date,
-      endDate: Date,
-      employeeId: number
+      endDate: Date
+      
     ) {
       const model: EmployeeDateQuery = {
         employeeId: employeeId,

@@ -112,6 +112,25 @@ export class ManageSalaryStructureComponent implements OnInit {
     this.dialogVisible = true;
   }
 
+  serializeAmounts() {
+    this.newSalaryStructure.aidsLevyDeduction = this.newSalaryStructure.aidsLevyDeduction || 0;
+    this.newSalaryStructure.taxDeduction = this.newSalaryStructure.taxDeduction || 0;
+    this.newSalaryStructure.pensionDeduction = this.newSalaryStructure.pensionDeduction || 0;
+    this.newSalaryStructure.otherDeduction = this.newSalaryStructure.otherDeduction || 0;
+    this.newSalaryStructure.housingAllowance = this.newSalaryStructure.housingAllowance || 0;
+    this.newSalaryStructure.transportAllowance = this.newSalaryStructure.transportAllowance || 0;
+    this.newSalaryStructure.otherAllowance = this.newSalaryStructure.otherAllowance || 0;
+    this.newSalaryStructure.medicalBenefit = this.newSalaryStructure.medicalBenefit || 0;
+    this.newSalaryStructure.pensionBenefit = this.newSalaryStructure.pensionBenefit || 0;
+    this.newSalaryStructure.otherBenefit = this.newSalaryStructure.otherBenefit || 0;
+    this.newSalaryStructure.overtimeHours = this.newSalaryStructure.overtimeHours || 0;
+    this.newSalaryStructure.overtimeRate = this.newSalaryStructure.overtimeRate || 0;
+    this.newSalaryStructure.overtimeTotal = this.newSalaryStructure.overtimeTotal || 0;
+    this.newSalaryStructure.hourlyRate = this.newSalaryStructure.hourlyRate || 0;
+    this.newSalaryStructure.hoursWorked = this.newSalaryStructure.hoursWorked || 0;
+    this.newSalaryStructure.taxableIncome = this.newSalaryStructure.taxableIncome || 0;
+  }
+
   edit(salaryStructure: SalaryStructureDto) {
     this.newSalaryStructure = { ...salaryStructure };
     this.editModal = true;
@@ -135,6 +154,8 @@ export class ManageSalaryStructureComponent implements OnInit {
       });
       return;
     }
+
+    this.serializeAmounts();
 
     this.salaryStructureService.createAsync(this.newSalaryStructure)
       .subscribe(res => {
@@ -171,6 +192,8 @@ export class ManageSalaryStructureComponent implements OnInit {
       });
       return;
     }
+
+    this.serializeAmounts();
 
     this.salaryStructureService.updateAsync(this.newSalaryStructure)
       .subscribe(res => {

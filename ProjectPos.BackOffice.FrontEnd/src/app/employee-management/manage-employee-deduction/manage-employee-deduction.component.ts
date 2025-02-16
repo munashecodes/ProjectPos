@@ -56,8 +56,8 @@ export class ManageEmployeeDeductionComponent implements OnInit {
   }
 
   loadDeductions() {
-    const startDate = new Date(new Date(this.startDate).getTime() + (2 * 60 * 60 * 1000)).toUTCString();
-    const endDate = new Date(new Date(this.endDate).getTime() + (2 * 60 * 60 * 1000)).toUTCString();
+    const startDate = new Date(new Date(this.startDate).getTime() + (2 * 60 * 60 * 1000))
+    const endDate = new Date(new Date(this.endDate).getTime() + (2 * 60 * 60 * 1000))
     this.deductionService.getByDateRangeAsync(startDate, endDate)
       .subscribe(res => {
         if (res.isSuccess) {
@@ -76,7 +76,7 @@ export class ManageEmployeeDeductionComponent implements OnInit {
   loadDeductionsByDateRange() {
     if (this.startDate && this.endDate) {
       if (this.selectedEmployee) {
-        this.deductionService.getByEmployeeAndDateRangeAsync(this.selectedEmployee.id!, this.startDate, this.endDate)
+        this.deductionService.getByDateRangeAndEmployeeIdAsync(this.selectedEmployee.id!, this.startDate, this.endDate)
           .subscribe(res => {
             if (res.isSuccess) {
               this.deductions = res.data;
@@ -90,8 +90,8 @@ export class ManageEmployeeDeductionComponent implements OnInit {
             }
           });
       } else {
-        const startDate = new Date(new Date(this.startDate).getTime() + (2 * 60 * 60 * 1000)).toUTCString();
-        const endDate = new Date(new Date(this.endDate).getTime() + (2 * 60 * 60 * 1000)).toUTCString();
+        const startDate = new Date(new Date(this.startDate).getTime() + (2 * 60 * 60 * 1000))
+        const endDate = new Date(new Date(this.endDate).getTime() + (2 * 60 * 60 * 1000))
         this.deductionService.getByDateRangeAsync(startDate, endDate)
           .subscribe(res => {
             if (res.isSuccess) {

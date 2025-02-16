@@ -44,7 +44,7 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-cycle>
                             <tr>
-                                <td>{{cycle.month}}</td>
+                                <td>{{cycle.month | monthName}}</td>
                                 <td>{{cycle.year}}</td>
                                 <td>{{cycle.startDate | date}}</td>
                                 <td>{{cycle.endDate | date}}</td>
@@ -72,7 +72,7 @@
 
             <!-- Payslips Dialog -->
             <p-dialog [(visible)]="payslipDialog" [style]="{width: '90%'}"
-                [header]="'Payslips for ' + selectedCycle?.month + '/' + selectedCycle?.year"
+                [header]="'Payslips for ' + getMonthName(selectedCycle?.month!) + '/' + selectedCycle?.year"
                 [modal]="true" class="p-fluid">
                 <p-table [value]="paySlips" responsiveLayout="scroll"
                     [globalFilterFields]="['employeeName']">
@@ -93,7 +93,7 @@
                         <tr>
                             <td>{{payslip.employeeName}} {{payslip.employeeSurname}}</td>
                             <td>{{payslip.basicSalary | currency}}</td>
-                            <td>{{payslip.allowance | currency}}</td>
+                            <td>{{(payslip.allowance || 0) | currency}}</td>
                             <td>{{payslip.grossSalary | currency}}</td>
                             <td>{{payslip.totalDeduction | currency}}</td>
                             <td>{{payslip.totalNetSalary | currency}}</td>
@@ -119,7 +119,7 @@
                             <td>{{calculateTotals().allowance | currency}}</td>
                             <td>{{calculateTotals().grossSalary | currency}}</td>
                             <td>{{calculateTotals().totalDeduction | currency}}</td>
-                            <td>{{calculateTotals().netSalary | currency}}</td>
+                            <td>{{calculateTotals().totalNetSalary | currency}}</td>
                             <td colspan="3"></td>
                         </tr>
                     </ng-template>

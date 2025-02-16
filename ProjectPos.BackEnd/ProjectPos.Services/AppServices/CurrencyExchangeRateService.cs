@@ -30,7 +30,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<ExchangeRateDto>
                 {
                     Data = _mapper.Map<ExchangeRate, ExchangeRateDto>(res.Entity),
-                    Message = "ExchangeRate Created Successfully",
+                    Message = "Exchange Rate Created Successfully",
                     Time = DateTime.Now,
                     IsSuccess = true
                 };

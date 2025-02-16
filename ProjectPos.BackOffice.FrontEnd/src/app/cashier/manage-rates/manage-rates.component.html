@@ -101,9 +101,9 @@
                                         
                                     </div> -->
                                     <div class="field">
-                                        <span class="p-float-label">
+                                        <label for="country">Currency</label>
                                             <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newRate.currency" inputId="name"
-                                                [options]="currencies" placeholder="Select Country">
+                                                [options]="currencies" placeholder="Select Currency">
                                                 <ng-template pTemplate="selectedCountry">
                                                     <span *ngIf="newRate && newRate.currency">{{ newRate.currency }}
                                                     </span>
@@ -112,19 +112,17 @@
                                                     <span>{{ option }}</span>
                                                 </ng-template>
                                             </p-dropdown>
-                                            <label for="country">Currency</label>
-                                        </span>
+                                            
                                         
                                     </div>
                                     <div class="field">
-                                        <span class="p-float-label">
+                                        <label for="price">Base To Rate</label>
                                             <input type="number" pInputText id="price" [(ngModel)]="newRate.baseToRate" required autofocus
                                                 [ngClass]="{'ng-invalid ng-dirty' : submitted && !newRate.baseToRate}" />
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newRate.baseToRate">Item
                                                 phone is
                                                 required.</small>
-                                            <label for="price">Base To Rate</label>
-                                        </span>
+                                            
                                         
                                     </div>
                                     <!-- <div class="field">

@@ -170,7 +170,7 @@ export class ManagePayrollComponent implements OnInit {
         allowance: (totals.allowance || 0) + (payslip.allowance || 0),
         grossSalary: (totals.grossSalary || 0) + (payslip.grossSalary || 0),
         totalDeduction: (totals.totalDeduction || 0) + (payslip.totalDeduction || 0),
-        netSalary: (totals.netSalary || 0) + (payslip.netSalary || 0)
+        totalNetSalary: (totals.totalNetSalary || 0) + (payslip.totalNetSalary || 0)
       };
     }, {} as Partial<PaySlipDto>);
   }
@@ -183,7 +183,29 @@ export class ManagePayrollComponent implements OnInit {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
-  getStatusSeverity(status: PayRollStatus): string {
+  getMonthName(month: number): string | null {
+    const monthNames: string[] = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ];
+
+    if (month < 1 || month > 12 || isNaN(month)) {
+        return null; // or throw an error if you prefer
+    }
+    return monthNames[month - 1]; // month - 1 because array is 0-indexed
+}
+
+  getStatusSeverity(status: string): string {
     switch (status) {
       case PayRollStatus.Pending:
         return 'warning';
