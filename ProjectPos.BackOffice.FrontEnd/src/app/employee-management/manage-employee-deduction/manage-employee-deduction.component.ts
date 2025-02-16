@@ -147,8 +147,7 @@ export class ManageEmployeeDeductionComponent implements OnInit {
     this.deductionService.createAsync(this.newDeduction)
       .subscribe(res => {
         if (res.isSuccess) {
-          this.deductions.push(res.data);
-          this.deductions = [...this.deductions];
+          this.deductions = [...this.deductions, res.data];
           this.messageService.add({
             severity: 'success',
             summary: 'Success',

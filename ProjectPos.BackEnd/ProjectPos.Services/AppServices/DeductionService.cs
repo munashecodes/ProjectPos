@@ -36,10 +36,10 @@ public class DeductionService : IDeductionService
             
             var response =  await _context.EmployeeDeductions.
                 Include(x => x.Employee)
-                .FirstOrDefaultAsync(x => x.EmployeeId == newDeduction.Entity.Id);
+                .FirstOrDefaultAsync(x => x.Id == newDeduction.Entity.Id);
 
             var mappedResult = _mapper.Map<EmployeeDeductionDto>(response);
-            return ServiceResponse<EmployeeDeductionDto>.Success(mappedResult, "EmployeeDeduction record created successfully");
+            return ServiceResponse<EmployeeDeductionDto>.Success(mappedResult, "Employee Deduction record created successfully");
         }
         catch (Exception ex)
         {
@@ -64,7 +64,7 @@ public class DeductionService : IDeductionService
             await _context.SaveChangesAsync();
             var response =  await _context.EmployeeDeductions.
                 Include(x => x.Employee)
-                .FirstOrDefaultAsync(x => x.EmployeeId == existing.Entity.Id);
+                .FirstOrDefaultAsync(x => x.Id == existing.Entity.Id);
 
             var mappedResult = _mapper.Map<EmployeeDeductionDto>(existingRecord);
             return ServiceResponse<EmployeeDeductionDto>.Success(mappedResult, "EmployeeDeduction record updated successfully");

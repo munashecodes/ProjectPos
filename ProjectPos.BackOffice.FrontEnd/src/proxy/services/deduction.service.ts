@@ -4,6 +4,17 @@ import { environment } from 'src/environments/environment';
 import { EmployeeDeductionDto } from '../interfaces/employee-deduction-dto';
 import { ServiceResponse } from '../interfaces/service-response';
 
+interface DateQuery {
+  startDate: Date;
+  endDate: Date;
+}
+
+interface EmployeeDateQuery {
+  employeeId: number;
+  startDate: Date;
+  endDate: Date;
+}
+
 const url = environment.apiUrl;
 const headers: HttpHeaders = new HttpHeaders()
   .set('Content-Type', 'application/json, charset=utf-8');
@@ -33,17 +44,37 @@ export class DeductionService {
     return this.http.get<ServiceResponse<EmployeeDeductionDto[]>>(`${url}/deduction/getByEmployeeId/${employeeId}`);
   }
 
-  getByDateRangeAsync(startDate: string, endDate: string) {
-    return this.http.get<ServiceResponse<EmployeeDeductionDto[]>>(
-        `${url}/deduction/getByDateRange?startDate=${startDate}&endDate=${endDate}`
-    );
-  }
-
-  getByEmployeeAndDateRangeAsync(employeeId: number, startDate: Date, endDate: Date) {
-    return this.http.get<ServiceResponse<EmployeeDeductionDto[]>>(
-      `${url}/deduction/getByEmployeeAndDateRange/${employeeId}?startDate=${startDate}&endDate=${endDate}`
-    );
-  }
+  getByDateRangeAsync(startDate: Date, endDate: Date) {
+      var model: DateQuery = {
+        startDate: startDate,
+        endDate: endDate,
+      };
+      var body = JSON.stringify(model);
+      return this.http.post<ServiceResponse<EmployeeDeductionDto[]>>(
+        `${url}/deduction/getByDateRange`,
+        body,
+        { headers }
+      );
+    }
+  
+    getByDateRangeAndEmployeeIdAsync(
+      startDate: Date,
+      endDate: Date,
+      employeeId: number
+    ) {
+      const model: EmployeeDateQuery = {
+        employeeId: employeeId,
+        startDate: startDate,
+        endDate: endDate,
+      };
+  
+      var body = JSON.stringify(model);
+      return this.http.post<ServiceResponse<EmployeeDeductionDto[]>>(
+        `${url}/deduction/getByDateRangeAndEmployeeId`,
+        body,
+        { headers }
+      );
+    }
 
   approveAsync(id: number) {
     return this.http.put<ServiceResponse<EmployeeDeductionDto>>(`${url}/deduction/approve/${id}`, null);

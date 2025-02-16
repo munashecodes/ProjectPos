@@ -41,20 +41,17 @@ public class DeductionController : Controller
         return Ok(result);
     }
 
-    [HttpGet("api/deduction/getByDateRange")]
-    public async Task<ActionResult> GetByDateRange([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+    [HttpPost("api/deduction/getByDateRange")]
+    public async Task<ActionResult> GetByDateRange([FromBody] OvertimeController.DateQuery model)
     {
-        var result = await _service.GetByDateRangeAsync(startDate, endDate);
+        var result = await _service.GetByDateRangeAsync(model.StartDate, model.EndDate);
         return Ok(result);
     }
 
-    [HttpGet("api/deduction/getByEmployeeAndDateRange/{employeeId:int}")]
-    public async Task<ActionResult> GetByEmployeeAndDateRange(
-        int employeeId,
-        [FromQuery] DateTime startDate,
-        [FromQuery] DateTime endDate)
+    [HttpPost("api/deduction/getByDateRangeAndEmployeeId")]
+    public async Task<ActionResult> GetByEmployeeAndDateRange( [FromBody] OvertimeController.EmployeeDateQuery model)
     {
-        var result = await _service.GetByEmployeeAndDateRangeAsync(employeeId, startDate, endDate);
+        var result = await _service.GetByEmployeeAndDateRangeAsync(model.EmployeeId, model.StartDate, model.EndDate);
         return Ok(result);
     }
 
