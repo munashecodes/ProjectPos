@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectPos.Data.DbContexts;
 
@@ -11,9 +12,11 @@ using ProjectPos.Data.DbContexts;
 namespace ProjectPos.Data.Migrations
 {
     [DbContext(typeof(ProjectPosDbContext))]
-    partial class ProjectPosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250216074136_addedFieldsInOvertimeRecordsTable")]
+    partial class addedFieldsInOvertimeRecordsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1552,9 +1555,6 @@ namespace ProjectPos.Data.Migrations
                         .HasColumnType("decimal(65,30)");
 
                     b.Property<bool>("IsApproved")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("IsPostedToJournal")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Notes")

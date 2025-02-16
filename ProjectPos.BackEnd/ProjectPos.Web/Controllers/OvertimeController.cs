@@ -48,20 +48,17 @@ public class OvertimeController : Controller
         return Ok(result);
     }
 
-    [HttpGet("api/overtime/getByDateRange")]
-    public async Task<ActionResult> GetByDateRange([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+    [HttpPost("api/overtime/getByDateRange")]
+    public async Task<ActionResult> GetByDateRange([FromBody] DateQuery model)
     {
-        var result = await _service.GetByDateRangeAsync(startDate, endDate);
+        var result = await _service.GetByDateRangeAsync(model.StartDate, model.EndDate);
         return Ok(result);
     }
 
-    [HttpGet("api/overtime/getByDateRangeAndEmployeeId/{employeeId:int}")]
-    public async Task<ActionResult> GetByEmployeeAndDateRange(
-        int employeeId,
-        [FromQuery] DateTime startDate,
-        [FromQuery] DateTime endDate)
+    [HttpPost("api/overtime/getByDateRangeAndEmployeeId")]
+    public async Task<ActionResult> GetByEmployeeAndDateRange( [FromBody] EmployeeDateQuery model)
     {
-        var result = await _service.GetByEmployeeAndDateRangeAsync(employeeId, startDate, endDate);
+        var result = await _service.GetByEmployeeAndDateRangeAsync(model.EmployeeId, model.StartDate, model.EndDate);
         return Ok(result);
     }
 
@@ -77,5 +74,18 @@ public class OvertimeController : Controller
     {
         var result = await _service.DeleteAsync(id);
         return Ok(result);
+    }
+
+    public class DateQuery
+    {
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
+    
+    public class EmployeeDateQuery
+    {
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int EmployeeId { get; set; }
     }
 }

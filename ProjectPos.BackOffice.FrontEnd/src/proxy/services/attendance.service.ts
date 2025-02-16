@@ -5,6 +5,16 @@ import { AttendanceDto } from '../interfaces/attendance-dto';
 import { Observable } from 'rxjs';
 import { ServiceResponse } from '../interfaces/service-response';
 
+interface DateQuery {
+  startDate: Date;
+  endDate: Date;
+}
+
+interface EmployeeDateQuery {
+  employeeId: number;
+  startDate: Date;
+  endDate: Date;
+}
 const url = environment.apiUrl;
 const headers: HttpHeaders = new HttpHeaders()
   .set('Content-Type', 'application/json, charset=utf-8');
@@ -24,16 +34,25 @@ export class AttendanceService {
     return this.http.get<AttendanceDto>(`${url}/attendance/getById/${id}`);
   }
 
-  //get all attendance by by date range
   getByDateRangeAsync(startDate: Date, endDate: Date) {
-    return this.http.get<ServiceResponse<AttendanceDto[]>>(`${url}/attendance/getByDateRange?startDate=${startDate}&endDate=${endDate}`);
-  }
-
-  //get all attendance by date range and employee id
-  getByDateRangeAndEmployeeIdAsync(startDate: Date, endDate: Date, employeeId: number) {
-    return this.http.get<ServiceResponse<AttendanceDto[]>>(`${url}/attendance/getByDateRangeAndEmployeeId/${employeeId}?startDate=${startDate}&endDate=${endDate}`);
-  }
-
+      var model: DateQuery = {
+        startDate: startDate,
+        endDate: endDate
+      };
+      var body = JSON.stringify(model);
+      return this.http.post<ServiceResponse<AttendanceDto[]>>(`${url}/attendance/getByDateRange`, body, {headers});
+    }
+  
+    getByDateRangeAndEmployeeIdAsync(startDate: Date, endDate: Date, employeeId: number) {
+      const model: EmployeeDateQuery = {
+        employeeId: employeeId,
+        startDate: startDate,
+        endDate: endDate
+      };
+  
+      var body = JSON.stringify(model);
+      return this.http.post<ServiceResponse<AttendanceDto[]>>(`${url}/attendance/getByDateRangeAndEmployeeId`, body, {headers});
+    }
   getByEmployeeIdAsync(employeeId: number) {
     return this.http.get<ServiceResponse<AttendanceDto[]>>(`${url}/attendance/getByEmployeeId/${employeeId}`);
   }

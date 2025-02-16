@@ -2,7 +2,8 @@ export interface OvertimeRecordDto {
     id?: number;
     employeeId?: number;
     employeeName?: string;
-    date?: Date;
+    rate?: number;
+    date?: any;
     hours?: number;
     amount?: number;
     isApproved?: boolean;

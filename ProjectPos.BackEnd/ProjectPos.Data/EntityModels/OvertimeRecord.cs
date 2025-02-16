@@ -11,6 +11,9 @@ public class OvertimeRecord: BasicAggregateRoot<int>
     public bool IsApproved { get; set; }
     public int? ApprovedById { get; set; }
     public string? Notes { get; set; }
+    public decimal? Rate { get; set; }
+    public decimal? Amount { get; set; }
+    public bool IsPostedToJournal { get; set; } = false;
 
     [ForeignKey("EmployeeId")]
     public virtual Employee? Employee { get; set; }

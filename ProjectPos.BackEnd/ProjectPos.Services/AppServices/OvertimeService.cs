@@ -31,10 +31,15 @@ public class OvertimeService : IOvertimeService
             var overtime = _mapper.Map<OvertimeRecord>(overtimeDto);
             overtime.IsApproved = false; // New records are not approved by default
             
-            await _context.OvertimeRecords.AddAsync(overtime);
+            var newRecord  = await _context.OvertimeRecords.AddAsync(overtime);
             await _context.SaveChangesAsync();
 
-            var mappedResult = _mapper.Map<OvertimeRecordDto>(overtime);
+            var response = await _context.OvertimeRecords
+                .Include(or => or.Employee)
+                .ThenInclude(e => e.SalaryStructure)
+                .FirstOrDefaultAsync(or => or.Id == newRecord.Entity.Id);
+
+            var mappedResult = _mapper.Map<OvertimeRecordDto>(response);
             return ServiceResponse<OvertimeRecordDto>.Success(mappedResult, "Overtime record created successfully");
         }
         catch (Exception ex)
@@ -57,10 +62,15 @@ public class OvertimeService : IOvertimeService
             _mapper.Map(overtimeDto, existingRecord);
             existingRecord.IsApproved = isApproved;
 
-            _context.OvertimeRecords.Update(existingRecord);
+            var existing = _context.OvertimeRecords.Update(existingRecord);
             await _context.SaveChangesAsync();
 
-            var mappedResult = _mapper.Map<OvertimeRecordDto>(existingRecord);
+            var response = await _context.OvertimeRecords
+                .Include(or => or.Employee)
+                .ThenInclude(e => e.SalaryStructure)
+                .FirstOrDefaultAsync(or => or.Id == existing.Entity.Id);
+
+            var mappedResult = _mapper.Map<OvertimeRecordDto>(response);
             return ServiceResponse<OvertimeRecordDto>.Success(mappedResult, "Overtime record updated successfully");
         }
         catch (Exception ex)
@@ -192,8 +202,14 @@ public class OvertimeService : IOvertimeService
             overtime.IsApproved = true;
             overtime.ApprovedById = userId;
             await _context.SaveChangesAsync();
+            
 
-            var mappedResult = _mapper.Map<OvertimeRecordDto>(overtime);
+            var response = await _context.OvertimeRecords
+                .Include(or => or.Employee)
+                .ThenInclude(e => e.SalaryStructure)
+                .FirstOrDefaultAsync(or => or.Id == id);
+
+            var mappedResult = _mapper.Map<OvertimeRecordDto>(response);
             return ServiceResponse<OvertimeRecordDto>.Success(mappedResult, "Overtime record approved successfully");
         }
         catch (Exception ex)

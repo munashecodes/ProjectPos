@@ -44,12 +44,12 @@ export class ManageOvertimeComponent implements OnInit {
       .subscribe(res => {
         if (res.isSuccess) {
           this.employees = res.data;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: res.message,
-            life: 3000
-          });
+          // this.messageService.add({
+          //   severity: 'success',
+          //   summary: 'Success',
+          //   detail: res.message,
+          //   life: 3000
+          // });
         } else {
           this.messageService.add({
             severity: 'error',
@@ -73,12 +73,12 @@ export class ManageOvertimeComponent implements OnInit {
       .subscribe(res => {
         if (res.isSuccess) {
           this.overtimeRecords = res.data;
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: res.message,
-            life: 3000
-          });
+          // this.messageService.add({
+          //   severity: 'success',
+          //   summary: 'Success',
+          //   detail: res.message,
+          //   life: 3000
+          // });
         } else {
           this.messageService.add({
             severity: 'error',
@@ -104,12 +104,12 @@ export class ManageOvertimeComponent implements OnInit {
           .subscribe(res => {
             if (res.isSuccess) {
               this.overtimeRecords = res.data;
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: res.message,
-                life: 3000
-              });
+              // this.messageService.add({
+              //   severity: 'success',
+              //   summary: 'Success',
+              //   detail: res.message,
+              //   life: 3000
+              // });
             } else {
               this.messageService.add({
                 severity: 'error',
@@ -152,6 +152,7 @@ export class ManageOvertimeComponent implements OnInit {
 
   edit(overtime: OvertimeRecordDto) {
     this.newOvertime = { ...overtime };
+    this.newOvertime.date = new Date(this.newOvertime.date);
     this.editModal = true;
     this.dialogVisible = true;
     this.submitted = false;
@@ -165,7 +166,7 @@ export class ManageOvertimeComponent implements OnInit {
   save() {
     this.submitted = true;
 
-    if (!this.newOvertime.employeeId || !this.newOvertime.date || !this.newOvertime.hours) {
+    if (!this.newOvertime.employeeId || !this.newOvertime.date || !this.newOvertime.hours || !this.newOvertime.rate) {
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -174,6 +175,12 @@ export class ManageOvertimeComponent implements OnInit {
       });
       return;
     }
+
+    
+
+    this.newOvertime.amount = this.newOvertime.hours * this.newOvertime.rate;
+
+    this.newOvertime.date = new Date(this.newOvertime.date.getTime() + (2 * 60 * 60 * 1000)).toISOString();
 
     this.overtimeService.createAsync(this.newOvertime)
       .subscribe(res => {
