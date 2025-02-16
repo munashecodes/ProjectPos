@@ -181,7 +181,8 @@ public class SalaryStructureService : ISalaryStructureService
         {
             var salaryStructures = await _context.SalaryStructures
                 .Include(s => s.Employee)
-                .FirstOrDefaultAsync(s => s.EmployeeId == employeeId);
+                .Where(s => s.EmployeeId == employeeId)
+                .ToListAsync();
 
             // if salaryStructures is null or empty
             if (salaryStructures == null)

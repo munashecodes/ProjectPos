@@ -56,6 +56,39 @@ export class ManageSalaryStructureComponent implements OnInit {
       });
   }
 
+  loadSalaryStructureByEmployee() {
+    if(this.selectedEmployee?.id == null) {
+      this.loadSalaryStructures()
+    } else {
+    this.salaryStructureService.getByEmployeeIdAsync(this.selectedEmployee.id)
+      .subscribe(res => {
+        if (res.isSuccess) {
+          this.salaryStructures = res.data
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: res.message,
+            life: 3000
+          });
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: res.message,
+            life: 3000
+          });
+        }
+      }, error => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.message,
+          life: 3000
+        });
+      });
+    }
+  }
+
   loadSalaryStructures() {
     this.salaryStructureService.getAllAsync()
       .subscribe(res => {

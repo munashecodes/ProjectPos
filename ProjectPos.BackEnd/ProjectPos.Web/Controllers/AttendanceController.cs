@@ -48,14 +48,14 @@ public class AttendanceController : Controller
         return Ok(result);
     }
 
-    [HttpPost("api/overtime/getByDateRange")]
+    [HttpPost("api/attendance/getByDateRange")]
     public async Task<ActionResult> GetByDateRange([FromBody] OvertimeController.DateQuery model)
     {
         var result = await _service.GetByDateRangeAsync(model.StartDate, model.EndDate);
         return Ok(result);
     }
 
-    [HttpPost("api/overtime/getByDateRangeAndEmployeeId")]
+    [HttpPost("api/attendance/getByDateRangeAndEmployeeId")]
     public async Task<ActionResult> GetByEmployeeAndDateRange( [FromBody] OvertimeController.EmployeeDateQuery model)
     {
         var result = await _service.GetByEmployeeAndDateRangeAsync(model.EmployeeId, model.StartDate, model.EndDate);
