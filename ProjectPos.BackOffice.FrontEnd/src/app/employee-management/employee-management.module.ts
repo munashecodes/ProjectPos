@@ -29,11 +29,26 @@ import { DashboardsRoutingModule } from '../demo/components/dashboard/dashboard-
 import { CrudRoutingModule } from '../demo/components/pages/crud/crud-routing.module';
 import { EmployeeManagementRoutingModule } from './employee-management-routing.module';
 import { ManageEmployeesComponent } from './manage-employees/manage-employees.component';
+import { ManageEmployeeDetailsComponent } from './manage-employee-details/manage-employee-details.component';
+import { TagModule } from 'primeng/tag';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { ManageSalaryStructureComponent } from './manage-salary-structure/manage-salary-structure.component';
+import { ManageEmployeeDeductionComponent } from './manage-employee-deduction/manage-employee-deduction.component';
+import { ManagePayrollComponent } from './manage-payroll/manage-payroll.component';
+import { ManageOvertimeComponent } from './manage-overtime/manage-overtime.component';
+import { ManageAttendanceComponent } from './manage-attendance/manage-attendance.component';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 
 @NgModule({
   declarations: [
-    ManageEmployeesComponent
+    ManageEmployeesComponent,
+    ManageEmployeeDetailsComponent,
+    ManageEmployeeDeductionComponent,
+    ManageSalaryStructureComponent,
+    ManagePayrollComponent,
+    ManageOvertimeComponent,
+    ManageAttendanceComponent,
   ],
   imports: [
     CommonModule,
@@ -65,7 +80,10 @@ import { ManageEmployeesComponent } from './manage-employees/manage-employees.co
     ReactiveFormsModule,
     MultiSelectModule,
     MessageModule,
-    
+    TagModule,
+    InputSwitchModule,
+    DialogModule,
+    SelectButtonModule
   ]
 })
 export class EmployeeManagementModule { }

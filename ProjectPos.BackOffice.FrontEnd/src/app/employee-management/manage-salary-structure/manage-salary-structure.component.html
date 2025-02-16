@@ -1,0 +1,210 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12">
+                    <button pButton label="New Salary Structure" icon="pi pi-plus" class="p-button-success mr-2"
+                        (click)="create()"></button>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="col-12 md:col-12 lg:col-12">
+                    <div class="p-fluid grid">
+                        <div class="field col-12 md:col-3">
+                            <div class="field">
+                                <label>Employee</label>
+                                <p-dropdown [options]="employees" [(ngModel)]="selectedEmployee" optionLabel="name"
+                                    [showClear]="true" placeholder="Select Employee">
+                                </p-dropdown>
+                                
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <p-table #dt [value]="salaryStructures" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['employeeName','currency']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                        [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [rowHover]="true" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <h5 class="m-0">Manage Salary Structures</h5>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)"
+                                        placeholder="Search..." class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="employeeName">Employee <p-sortIcon field="employeeName"></p-sortIcon></th>
+                                <th pSortableColumn="currency">Currency <p-sortIcon field="currency"></p-sortIcon></th>
+                                <th pSortableColumn="basicSalary">Basic Salary <p-sortIcon field="basicSalary"></p-sortIcon></th>
+                                <th>Total Allowances</th>
+                                <th>Total Benefits</th>
+                                <th>Total Deductions</th>
+                                <th pSortableColumn="netSalary">Net Salary <p-sortIcon field="netSalary"></p-sortIcon></th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-salary>
+                            <tr>
+                                <td>{{salary.employeeName}}</td>
+                                <td>{{salary.currency}}</td>
+                                <td>{{salary.basicSalary | currency}}</td>
+                                <td>{{calculateTotalAllowances(salary) | currency}}</td>
+                                <td>{{calculateTotalBenefits(salary) | currency}}</td>
+                                <td>{{calculateTotalDeductions(salary) | currency}}</td>
+                                <td>{{salary.netSalary | currency}}</td>
+                                <td>
+                                    <button pButton pRipple icon="pi pi-pencil" 
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="edit(salary)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" 
+                                        class="p-button-rounded p-button-danger"
+                                        (click)="delete(salary)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <!-- Create/Edit Modal -->
+            <p-dialog [(visible)]="dialogVisible" [style]="{width: '650px'}"
+                [header]="createModal ? 'New Salary Structure' : 'Edit Salary Structure'" [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="grid">
+                        <div class="col-12 md:col-6">
+                            <div class="field">
+                                <label for="employee">Employee</label>
+                                <p-dropdown [options]="employees" [(ngModel)]="newSalaryStructure.employeeId" 
+                                    optionLabel="name" optionValue="id" [required]="true" 
+                                    placeholder="Select Employee">
+                                </p-dropdown>
+                            </div>
+                            <div class="field">
+                                <label for="currency">Currency</label>
+                                <p-dropdown [options]="currencies" [(ngModel)]="newSalaryStructure.currency" 
+                                    [required]="true" placeholder="Select Currency">
+                                </p-dropdown>
+                            </div>
+                            <div class="field">
+                                <label for="basicSalary">Basic Salary</label>
+                                <p-inputNumber [(ngModel)]="newSalaryStructure.basicSalary" mode="currency" 
+                                    currency="USD" [required]="true" [minFractionDigits]="2">
+                                </p-inputNumber>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6">
+                            <div class="field">
+                                <label>Allowances</label>
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">Housing</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.housingAllowance" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                                <div class="p-inputgroup mt-2">
+                                    <span class="p-inputgroup-addon">Transport</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.transportAllowance" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                                <div class="p-inputgroup mt-2">
+                                    <span class="p-inputgroup-addon">Other</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.otherAllowance" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6">
+                            <div class="field">
+                                <label>Benefits</label>
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">Medical</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.medicalBenefit" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                                <div class="p-inputgroup mt-2">
+                                    <span class="p-inputgroup-addon">Pension</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.pensionBenefit" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                                <div class="p-inputgroup mt-2">
+                                    <span class="p-inputgroup-addon">Other</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.otherBenefit" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 md:col-6">
+                            <div class="field">
+                                <label>Deductions</label>
+                                <div class="p-inputgroup">
+                                    <span class="p-inputgroup-addon">Tax</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.taxDeduction" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                                <div class="p-inputgroup mt-2">
+                                    <span class="p-inputgroup-addon">Pension</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.pensionDeduction" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                                <div class="p-inputgroup mt-2">
+                                    <span class="p-inputgroup-addon">AIDS Levy</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.aidsLevyDeduction" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                                <div class="p-inputgroup mt-2">
+                                    <span class="p-inputgroup-addon">Other</span>
+                                    <p-inputNumber [(ngModel)]="newSalaryStructure.otherDeduction" mode="currency" 
+                                        currency="USD" [minFractionDigits]="2">
+                                    </p-inputNumber>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="field">
+                                <label for="notes">Notes</label>
+                                <textarea pInputTextarea [(ngModel)]="newSalaryStructure.notes" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple [label]="createModal ? 'Save' : 'Update'" icon="pi pi-check" class="p-button-text"
+                        (click)="createModal ? save() : update()"></button>
+                </ng-template>
+            </p-dialog>
+
+            <!-- Delete Confirmation -->
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span>Are you sure you want to delete this salary structure?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="confirmDelete()"></button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div> 

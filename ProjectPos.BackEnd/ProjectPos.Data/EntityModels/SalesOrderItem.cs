@@ -17,6 +17,7 @@ namespace ProjectPos.Data.EntityModels
         public decimal? UnitPrice { get; set; }
         [Column(TypeName = "decimal(12, 2)")]
         public decimal? Price { get; set; }
+        public bool IsPostedToJournal { get; set; } = false;
 
         [ForeignKey("ProductId")]
         public ProductInventory? Product { get; set; }

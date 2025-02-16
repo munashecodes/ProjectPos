@@ -11,6 +11,6 @@ public class NotificationController(INotificationService _notificationService) :
     [HttpGet]
     public async Task<ActionResult<ServiceResponse<NotificationDto>>> GetNotifications()
     {
-        return Ok(_notificationService.GetPurchaseOrderPending());
+        return Ok(await _notificationService.GetPurchaseOrderPending());
     }
 }

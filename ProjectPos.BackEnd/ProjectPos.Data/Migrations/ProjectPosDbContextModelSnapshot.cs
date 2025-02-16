@@ -130,7 +130,7 @@ namespace ProjectPos.Data.Migrations
                     b.Property<int?>("AccountType")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Balance")
+                    b.Property<decimal>("Balance")
                         .HasColumnType("decimal(12, 2)");
 
                     b.Property<int?>("Code")
@@ -664,6 +664,33 @@ namespace ProjectPos.Data.Migrations
                     b.ToTable("Addresses");
                 });
 
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPresent")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Attendances");
+                });
+
             modelBuilder.Entity("ProjectPos.Data.EntityModels.CashUp", b =>
                 {
                     b.Property<int>("Id")
@@ -993,6 +1020,112 @@ namespace ProjectPos.Data.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.EmployeeDeduction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<DateTime>("DeductionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("EmployeeDeductions");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.EmployeeDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Bank")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("BankAccountNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DeleterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Department")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmploymentType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime>("JoiningDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("LastModifierUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Position")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("SalaryType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TerminationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("DeleterId");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
+                    b.HasIndex("LastModifierUserId");
+
+                    b.ToTable("EmployeeDetails");
+                });
+
             modelBuilder.Entity("ProjectPos.Data.EntityModels.ExchangeRate", b =>
                 {
                     b.Property<int>("Id")
@@ -1088,6 +1221,9 @@ namespace ProjectPos.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsPostedToJournal")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime(6)");
 
@@ -1120,6 +1256,30 @@ namespace ProjectPos.Data.Migrations
                     b.HasIndex("LastModifierUserId");
 
                     b.ToTable("Expenses");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.FinancialAccountSnapShot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("ClosingBalance")
+                        .HasColumnType("decimal(12, 2)");
+
+                    b.Property<int?>("FinancialAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SnapShotDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinancialAccountId");
+
+                    b.ToTable("FinancialAccountSnapShots");
                 });
 
             modelBuilder.Entity("ProjectPos.Data.EntityModels.GoodsReceivedVoucher", b =>
@@ -1155,6 +1315,9 @@ namespace ProjectPos.Data.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsPaid")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsPostedToJournal")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("LastModificationTime")
@@ -1365,6 +1528,244 @@ namespace ProjectPos.Data.Migrations
                     b.ToTable("JournalEntryLines");
                 });
 
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.OvertimeRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ApprovedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Hours")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("OvertimeRecords");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.PayRollCycle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DeleterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("LastModifierUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PayRollStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<decimal>("TotalAllowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TotalBasic")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TotalGrossSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TotalNetSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TotalOtherDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TotalPensionDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TotalTax")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("DeleterId");
+
+                    b.HasIndex("LastModifierUserId");
+
+                    b.ToTable("PayRollCycles");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.PaySlip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Allowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int?>("ApprovedBy")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("BasicSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DeleterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("GrossSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("HousingAllowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsPostedToJournal")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("LastModifierUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("NetSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OtherAllowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OtherDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OvertimeHours")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OvertimePay")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("PayRollCycleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PensionDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("Tax")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("TillShortageDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("TotalDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("TotalEarning")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("TotalNetSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TransportAllowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("WorkedDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedBy");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("DeleterId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("LastModifierUserId");
+
+                    b.HasIndex("PayRollCycleId");
+
+                    b.ToTable("PaySlips");
+                });
+
             modelBuilder.Entity("ProjectPos.Data.EntityModels.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -1398,6 +1799,9 @@ namespace ProjectPos.Data.Migrations
                         .HasColumnType("decimal(12, 2)");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsPostedToJournal")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("LastModificationTime")
@@ -1905,7 +2309,7 @@ namespace ProjectPos.Data.Migrations
                     b.ToTable("PurchaceOrderLines");
                 });
 
-            modelBuilder.Entity("ProjectPos.Data.EntityModels.PurchaceOrderPayments", b =>
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.PurchaceOrderPayment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1938,6 +2342,9 @@ namespace ProjectPos.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsPostedToJournal")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("LastModificationTime")
@@ -1978,6 +2385,112 @@ namespace ProjectPos.Data.Migrations
                     b.HasIndex("LastModifierUserId");
 
                     b.ToTable("PurchaceOrderPayments");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.SalaryStructure", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AidsLevyDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("BasicSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DeleterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("HourlyRate")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("HoursWorked")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("HousingAllowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("LastModifierUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MedicalBenefit")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("NetSalary")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("OtherAllowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OtherBenefit")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OtherDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OvertimeHours")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OvertimeRate")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("OvertimeTotal")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("PensionBenefit")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("PensionDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TaxDeduction")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TaxableIncome")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal>("TransportAllowance")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("DeleterId");
+
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
+
+                    b.HasIndex("LastModifierUserId");
+
+                    b.ToTable("SalaryStructures");
                 });
 
             modelBuilder.Entity("ProjectPos.Data.EntityModels.SalesOrder", b =>
@@ -2062,6 +2575,9 @@ namespace ProjectPos.Data.Migrations
 
                     b.Property<string>("BarCode")
                         .HasColumnType("longtext");
+
+                    b.Property<bool>("IsPostedToJournal")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("OrderNumber")
                         .HasColumnType("int");
@@ -2321,7 +2837,8 @@ namespace ProjectPos.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmployeeId");
+                    b.HasIndex("EmployeeId")
+                        .IsUnique();
 
                     b.ToTable("SystemUsers");
                 });
@@ -2373,6 +2890,17 @@ namespace ProjectPos.Data.Migrations
                     b.Navigation("Creator");
 
                     b.Navigation("Deleter");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.Attendance", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.Employee", "Employee")
+                        .WithMany("Attendances")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("ProjectPos.Data.EntityModels.CashUp", b =>
@@ -2513,6 +3041,46 @@ namespace ProjectPos.Data.Migrations
                     b.Navigation("LastModifierUser");
                 });
 
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.EmployeeDeduction", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.Employee", "Employee")
+                        .WithMany("Deductions")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.EmployeeDetails", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Deleter")
+                        .WithMany()
+                        .HasForeignKey("DeleterId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.Employee", "Employee")
+                        .WithOne("EmployeeDetails")
+                        .HasForeignKey("ProjectPos.Data.EntityModels.EmployeeDetails", "EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "LastModifierUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifierUserId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Deleter");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("LastModifierUser");
+                });
+
             modelBuilder.Entity("ProjectPos.Data.EntityModels.ExchangeRate", b =>
                 {
                     b.HasOne("ProjectPos.Data.EntityModels.User", "Creator")
@@ -2579,6 +3147,15 @@ namespace ProjectPos.Data.Migrations
                     b.Navigation("Deleter");
 
                     b.Navigation("LastModifierUser");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.FinancialAccountSnapShot", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.Account", "FinancialAccount")
+                        .WithMany()
+                        .HasForeignKey("FinancialAccountId");
+
+                    b.Navigation("FinancialAccount");
                 });
 
             modelBuilder.Entity("ProjectPos.Data.EntityModels.GoodsReceivedVoucher", b =>
@@ -2686,6 +3263,87 @@ namespace ProjectPos.Data.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("JournalEntry");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.OvertimeRecord", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.Employee", "Employee")
+                        .WithMany("OvertimeRecords")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.PayRollCycle", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Deleter")
+                        .WithMany()
+                        .HasForeignKey("DeleterId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "LastModifierUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifierUserId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Deleter");
+
+                    b.Navigation("LastModifierUser");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.PaySlip", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "User")
+                        .WithMany()
+                        .HasForeignKey("ApprovedBy");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Deleter")
+                        .WithMany()
+                        .HasForeignKey("DeleterId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.Employee", "Employee")
+                        .WithMany("PaySlips")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "LastModifierUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifierUserId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.PayRollCycle", "PayRollCycle")
+                        .WithMany("PaySlips")
+                        .HasForeignKey("PayRollCycleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Deleter");
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("LastModifierUser");
+
+                    b.Navigation("PayRollCycle");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ProjectPos.Data.EntityModels.Payment", b =>
@@ -2918,7 +3576,7 @@ namespace ProjectPos.Data.Migrations
                     b.Navigation("PurchaceOrder");
                 });
 
-            modelBuilder.Entity("ProjectPos.Data.EntityModels.PurchaceOrderPayments", b =>
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.PurchaceOrderPayment", b =>
                 {
                     b.HasOne("ProjectPos.Data.EntityModels.User", "Creator")
                         .WithMany()
@@ -2942,6 +3600,35 @@ namespace ProjectPos.Data.Migrations
                     b.Navigation("Creator");
 
                     b.Navigation("Deleter");
+
+                    b.Navigation("LastModifierUser");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.SalaryStructure", b =>
+                {
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "Deleter")
+                        .WithMany()
+                        .HasForeignKey("DeleterId");
+
+                    b.HasOne("ProjectPos.Data.EntityModels.Employee", "Employee")
+                        .WithOne("SalaryStructure")
+                        .HasForeignKey("ProjectPos.Data.EntityModels.SalaryStructure", "EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjectPos.Data.EntityModels.User", "LastModifierUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifierUserId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Deleter");
+
+                    b.Navigation("Employee");
 
                     b.Navigation("LastModifierUser");
                 });
@@ -3078,8 +3765,8 @@ namespace ProjectPos.Data.Migrations
             modelBuilder.Entity("ProjectPos.Data.EntityModels.User", b =>
                 {
                     b.HasOne("ProjectPos.Data.EntityModels.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId");
+                        .WithOne("User")
+                        .HasForeignKey("ProjectPos.Data.EntityModels.User", "EmployeeId");
 
                     b.Navigation("Employee");
                 });
@@ -3110,6 +3797,23 @@ namespace ProjectPos.Data.Migrations
                     b.Navigation("ContactPersons");
                 });
 
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.Employee", b =>
+                {
+                    b.Navigation("Attendances");
+
+                    b.Navigation("Deductions");
+
+                    b.Navigation("EmployeeDetails");
+
+                    b.Navigation("OvertimeRecords");
+
+                    b.Navigation("PaySlips");
+
+                    b.Navigation("SalaryStructure");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ProjectPos.Data.EntityModels.GoodsReceivedVoucher", b =>
                 {
                     b.Navigation("PurchaceOrderPayments");
@@ -3120,6 +3824,11 @@ namespace ProjectPos.Data.Migrations
             modelBuilder.Entity("ProjectPos.Data.EntityModels.JournalEntry", b =>
                 {
                     b.Navigation("JournalEntryLines");
+                });
+
+            modelBuilder.Entity("ProjectPos.Data.EntityModels.PayRollCycle", b =>
+                {
+                    b.Navigation("PaySlips");
                 });
 
             modelBuilder.Entity("ProjectPos.Data.EntityModels.ProductInventory", b =>

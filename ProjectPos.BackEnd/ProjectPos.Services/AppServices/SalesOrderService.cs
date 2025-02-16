@@ -583,17 +583,26 @@ namespace ProjectPos.Services.AppServices
         {
             try
             {
+                
                 var order = _context.SalesOrders!
                     .Include(o => o.Customer!)
                         .ThenInclude(c => c.Address)
                     .Include(x => x.SalesOrderItems!)
                         .ThenInclude(x => x.Product!)
                     .Include(x => x.Payments)
-                    .FirstOrDefault(x => x.Id == id && x.CreationTime.Date == DateTime.Today);
+                    .FirstOrDefault(x => x.Id == id);
 
                 //var order = orders.FirstOrDefault(x => x.Id == id);
-
-                if (order == null)
+                if (order.CreationTime < DateTime.Today)
+                {
+                    return new ServiceResponse<SalesOrderDto>
+                    {
+                        IsSuccess = false,
+                        Message = $"Return period closed",
+                        Time = DateTime.Now,
+                    };
+                }
+                else if (order == null)
                 {
                     _logger.LogError($"SalesOrder with id: {id} does not exist");
                     return new ServiceResponse<SalesOrderDto>
@@ -940,8 +949,10 @@ namespace ProjectPos.Services.AppServices
         {
             try
             {
+                
                 var ord = _mapper.Map<SalesOrderDto, SalesOrder>(order);
                 var _order = _context.SalesOrders!.Update(ord);
+                
                 _context.SaveChanges();
                 return new ServiceResponse<SalesOrderDto>
                 {
@@ -962,6 +973,22 @@ namespace ProjectPos.Services.AppServices
                 };
             }
         }
+
+        // public void AdjustStockOnUpdate(SalesOrderDto order, SalesOrder salesOrder)
+        // {
+        //     Dictionary<int, int> inventories = [];
+        //     foreach (var item in salesOrder.SalesOrderItems)
+        //     {
+        //         if (item.ProductId is not null && !inventories.ContainsKey((int)item.ProductId))
+        //         {
+        //             var quantityChange = order.SalesOrderItems.FirstOrDefault(x => x.ProductId == item.ProductId)!.Quantity;
+        //             var newQuantityChange = (item.Quantity == quantityChange) ? 0 : ;
+        //             inventories.Add((int)item.ProductId);
+        //         }
+        //         
+        //     }
+        //     
+        // }
 
 
         // Helper method to adjust account balance

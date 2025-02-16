@@ -182,8 +182,8 @@
                                     <div class="field">
                                         <div class="flex flex-column gap-2">
                                             <label for="addressLine1">Address Line 1</label>
-                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" />
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address.addressLine1" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.addressLine1}" />
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
                                                 required.</small>
                                                 
@@ -193,8 +193,8 @@
                                     <div class="field">
                                         <div class="flex flex-column gap-2">
                                             <label for="addressLine1">Address Line 2</label>
-                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" [disabled]="!newEmployee.name || newEmployee.name"/>
+                                            <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address.addressLine1" required autofocus
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.addressLine1}" [disabled]="!newEmployee.name || newEmployee.name"/>
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
                                                 required.</small>
                                                 
@@ -205,7 +205,7 @@
                                         <div class="flex flex-column gap-2">
                                             <label for="city">City</label>
                                             <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.city" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.city}" />
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.city}" />
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.city">city is
                                                 required.</small>
                                                 
@@ -217,7 +217,7 @@
                                         <div class="flex flex-column gap-2">
                                             <label for="state">State</label>
                                             <input type="text" pInputText id="state" [(ngModel)]="newEmployee.address!.state" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.state}" />
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.state}" />
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.state">Item
                                                 idealPortions is
                                                 required.</small>
@@ -232,7 +232,7 @@
                                             <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newEmployee.address!.country" inputId="name"
                                                 [options]="countries" placeholder="Select Country">
                                                 <ng-template pTemplate="selectedCountry">
-                                                    <span *ngIf="newEmployee && newEmployee.address!.country">{{ newEmployee.address.country }}
+                                                    <span *ngIf="newEmployee && newEmployee.address!.country">{{ newEmployee.address!.country }}
                                                     </span>
                                                 </ng-template>
                                                 <ng-template let-option pTemplate="item">
@@ -253,13 +253,13 @@
                 <ng-template pTemplate="footer">
                     <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
                         (click)="hideDialog()"></button>
-                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="save()"
+                    <button pButton pRipple label="Update" icon="pi pi-check" class="p-button-text" (click)="save()"
                         [disabled]="!newEmployee.name "></button>
                 </ng-template>
             </p-dialog> 
 
             <!-- edit modal -->
-            <p-dialog [(visible)]="editModal" [style]="{width: '40%'}" header="New Stock Item"
+            <p-dialog [(visible)]="editModal" [style]="{width: '40%'}" header="Edit Employee"
                 [modal]="true" class="p-fluid">
                 <ng-template pTemplate="content">
                     <div class="formgrid grid">
@@ -353,7 +353,7 @@
                                         <div class="flex flex-column gap-2">
                                             <label for="addressLine1">Address Line 1</label>
                                             <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" />
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.addressLine1}" />
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
                                                 required.</small>
                                                 
@@ -364,7 +364,7 @@
                                         <div class="flex flex-column gap-2">
                                             <label for="addressLine1">Address Line 2</label>
                                             <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.addressLine1" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.addressLine1}" [disabled]="!newEmployee.name || newEmployee.name"/>
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.addressLine1}" [disabled]="!newEmployee.name || newEmployee.name"/>
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.addressLine1">address! line is
                                                 required.</small>
                                                 
@@ -375,7 +375,7 @@
                                         <div class="flex flex-column gap-2">
                                             <label for="city">City</label>
                                             <input type="text" pInputText id="city" [(ngModel)]="newEmployee.address!.city" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.city}" />
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.city}" />
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.city">city is
                                                 required.</small>
                                                 
@@ -387,7 +387,7 @@
                                         <div class="flex flex-column gap-2">
                                             <label for="state">State</label>
                                             <input type="text" pInputText id="state" [(ngModel)]="newEmployee.address!.state" required autofocus
-                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address.state}" />
+                                                [ngClass]="{'ng-invalid ng-dirty' : submitted && !newEmployee.address!.state}" />
                                             <small class="ng-dirty ng-invalid" style="color:red" *ngIf="submitted && !newEmployee.address!.state">Item
                                                 idealPortions is
                                                 required.</small>
@@ -402,7 +402,7 @@
                                             <p-dropdown class="p-inputtext-sm" appendTo="body" [(ngModel)]="newEmployee.address!.country" inputId="name"
                                                 [options]="countries" placeholder="Select Country">
                                                 <ng-template pTemplate="selectedCountry">
-                                                    <span *ngIf="newEmployee && newEmployee.address!.country">{{ newEmployee.address.country }}
+                                                    <span *ngIf="newEmployee && newEmployee.address!.country">{{ newEmployee.address!.country }}
                                                     </span>
                                                 </ng-template>
                                                 <ng-template let-option pTemplate="item">

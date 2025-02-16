@@ -66,6 +66,7 @@ namespace ProjectPos.Web
             builder.Services.AddTransient<IProofOfPaymentService, ProofOfPaymentService>();
             builder.Services.AddTransient<ISubCategoryService, SubCategoryService>();
             builder.Services.AddTransient<IEmployeeService, EmployeeService>();
+            builder.Services.AddTransient<IEmployeeDetailsService, EmployeeDetailsService>();
             builder.Services.AddTransient<IPaymentService, PaymentService>();
             builder.Services.AddTransient<ISalesOrderService, SalesOrderService>();
             builder.Services.AddTransient<ICashUpService, CashUpService>();
@@ -78,6 +79,11 @@ namespace ProjectPos.Web
             builder.Services.AddTransient<IJournalEntryService, JournalEntryService>();
             builder.Services.AddTransient<IExpenseService, ExpenseService>();
             builder.Services.AddTransient<INotificationService, NotificationService>();
+            builder.Services.AddTransient<ISalaryStructureService, SalaryStructureService>();
+            builder.Services.AddTransient<IDeductionService, DeductionService>();
+            builder.Services.AddTransient<IAttendanceService, AttendanceService>();
+            builder.Services.AddTransient<IOvertimeService, OvertimeService>();
+            builder.Services.AddTransient<IPaySlipService, PaySlipService>();
             builder.Services.AddScheduler();
 
             builder.Services.AddControllers();

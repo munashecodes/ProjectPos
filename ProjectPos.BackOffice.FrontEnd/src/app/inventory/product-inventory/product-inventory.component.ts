@@ -487,7 +487,7 @@ export class ProductInventoryComponent {
     }
     let pdf = new jspdf('p', 'pt', 'a4');
     pdf.setFontSize(16);
-    pdf.text('Andile Fresh Farm Produce', 10, 15);
+    pdf.text('T&T SOLA', 10, 15);
 
     pdf.setFontSize(14);
     pdf.text('Stock Count Sheet ' + this.subCategory.name?.toUpperCase(), 10, 30);

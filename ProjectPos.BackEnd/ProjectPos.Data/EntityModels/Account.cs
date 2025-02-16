@@ -16,7 +16,7 @@ namespace ProjectPos.Data.EntityModels
         public string? Name { get; set; }
         public string? Description { get; set; }
         [Column(TypeName = "decimal(12, 2)")]
-        public decimal? Balance { get; set; }
+        public decimal Balance { get; set; } = 0;
         public AccountType? AccountType { get; set; }
         public int? AccountCategoryId { get; set; }
 

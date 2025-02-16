@@ -3,6 +3,8 @@ import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
 import { UserDto } from 'src/proxy/interfaces/user-dto';
+import { NotificationService } from 'src/proxy/services/notification.service';
+import { NotificationDataService } from './service/notification-data.service';
 
 @Component({
     selector: 'app-menu',
@@ -34,10 +36,24 @@ export class AppMenuComponent implements OnInit {
 
     role: any;
 
-    constructor(public layoutService: LayoutService) { }
+    constructor(
+        public layoutService: LayoutService, 
+        private notificationService: NotificationService,
+        private notificationDataService: NotificationDataService
+    ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.user = JSON.parse(sessionStorage.getItem('loggedUser') || '{}');
+
+        try {
+            const res = await this.notificationService.getStats().toPromise();
+            console.log(res);
+            this.notificationDataService.notification = res.data;
+            
+        } catch (error) {
+            console.log(error)
+            
+        }
 
         this.model = [
             {
@@ -65,6 +81,54 @@ export class AppMenuComponent implements OnInit {
                                 icon: 'pi pi-fw pi-id-card', 
                                 routerLink: ['/employee-management/manage-employees'] 
                             },
+                            { 
+                                label: 'Manage Employee Details', 
+                                icon: 'pi pi-fw pi-id-card', 
+                                routerLink: ['/employee-management/manage-employee-details'] 
+                            },
+                        ]
+                    },
+                    { 
+                        label: 'Salary Management', 
+                        icon: 'pi pi-fw pi-eye', 
+                        items: [
+                            { 
+                                label: 'Manage Deductions', 
+                                icon: 'pi pi-fw pi-id-card', 
+                                routerLink: ['/employee-management/manage-deductions'] 
+                            },
+                            { 
+                                label: 'Manage Salary Structure', 
+                                icon: 'pi pi-fw pi-id-card', 
+                                routerLink: ['/employee-management/manage-salary-structure'] 
+                            },
+                        ]
+                    },
+                    { 
+                        label: 'Pay Roll', 
+                        icon: 'pi pi-fw pi-eye', 
+                        items: [
+                            { 
+                                label: 'Manage Payroll', 
+                                icon: 'pi pi-fw pi-id-card', 
+                                routerLink: ['/employee-management/manage-payroll'] 
+                            }
+                        ]
+                    },
+                    { 
+                        label: 'Attendance', 
+                        icon: 'pi pi-fw pi-eye', 
+                        items: [
+                            { 
+                                label: 'Manage Attendance', 
+                                icon: 'pi pi-fw pi-id-card', 
+                                routerLink: ['/employee-management/manage-attendance'] 
+                            },
+                            { 
+                                label: 'Manage Overtime', 
+                                icon: 'pi pi-fw pi-id-card', 
+                                routerLink: ['/employee-management/manage-overtime'] 
+                            }
                         ]
                     },
                 ]
@@ -219,13 +283,15 @@ export class AppMenuComponent implements OnInit {
                 label: 'Purchacing', 
                 roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'StockController', 'ReceivingClerk'],
                 icon: 'pi pi-fw pi-id-card', 
-                routerLink: ['/procurement/orders'] 
+                routerLink: ['/procurement/orders'] ,
+                pendingCount: this.notificationDataService.notification.purchaseOrder
             },
             { 
                 label: 'Receiving', 
                 roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'ReceivingClerk'],
                 icon: 'pi pi-fw pi-id-card', 
-                routerLink: ['/procurement/grvs'] 
+                routerLink: ['/procurement/grvs'],
+                pendingCount: this.notificationDataService.notification.receivingOrder
             },
         ];
 
@@ -349,5 +415,9 @@ export class AppMenuComponent implements OnInit {
                 }
             });
         });
+    }
+
+    onLaunch() {
+
     }
 }

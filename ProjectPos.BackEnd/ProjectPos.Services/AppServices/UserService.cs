@@ -89,6 +89,9 @@ namespace ProjectPos.Services.AppServices
             }
             else
             {
+                user.Employee = new EmployeeDto();
+                user.Employee.Name = user.FirstName;
+                user.Employee.Surname = user.LastName;
                 var _user = _mapper.Map<UserSignInDto, User>(user);
                 var isFirstAccount = _context.SystemUsers.Count() == 0;
 

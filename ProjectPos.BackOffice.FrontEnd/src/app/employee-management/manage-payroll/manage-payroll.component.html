@@ -1,0 +1,163 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12 md:col-6">
+                    <button pButton label="Generate Payroll" icon="pi pi-plus" 
+                        class="p-button-success mr-2" (click)="generatePayroll()">
+                    </button>
+                </div>
+                <div class="col-12 md:col-6 text-right">
+                    <p-dropdown [options]="years" [(ngModel)]="selectedYear" 
+                        (onChange)="onYearChange()" placeholder="Select Year">
+                    </p-dropdown>
+                </div>
+
+                <!-- Payroll Cycles Table -->
+                <div class="col-12">
+                    <p-table #dt [value]="payrollCycles" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['month','year','payRollStatus']" [paginator]="true" 
+                        [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" 
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [rowHover]="true" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <h5 class="m-0">Manage Payroll</h5>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)"
+                                        placeholder="Search..." class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Month</th>
+                                <th>Year</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-cycle>
+                            <tr>
+                                <td>{{cycle.month}}</td>
+                                <td>{{cycle.year}}</td>
+                                <td>{{cycle.startDate | date}}</td>
+                                <td>{{cycle.endDate | date}}</td>
+                                <td>
+                                    <p-tag [value]="cycle.payRollStatus" 
+                                        [severity]="getStatusSeverity(cycle.payRollStatus)">
+                                    </p-tag>
+                                </td>
+                                <td>
+                                    <button pButton pRipple icon="pi pi-eye" 
+                                        class="p-button-rounded p-button-info mr-2"
+                                        (click)="viewPayslips(cycle)">
+                                    </button>
+                                    <button pButton pRipple icon="pi pi-check" 
+                                        class="p-button-rounded p-button-success"
+                                        [disabled]="cycle.payRollStatus !== payrollStatus.Pending"
+                                        (click)="approvePayroll(cycle)">
+                                    </button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <!-- Payslips Dialog -->
+            <p-dialog [(visible)]="payslipDialog" [style]="{width: '90%'}"
+                [header]="'Payslips for ' + selectedCycle?.month + '/' + selectedCycle?.year"
+                [modal]="true" class="p-fluid">
+                <p-table [value]="paySlips" responsiveLayout="scroll"
+                    [globalFilterFields]="['employeeName']">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Employee</th>
+                            <th>Basic Salary</th>
+                            <th>Allowances</th>
+                            <th>Gross Salary</th>
+                            <th>Deductions</th>
+                            <th>Net Salary</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-payslip>
+                        <tr>
+                            <td>{{payslip.employeeName}} {{payslip.employeeSurname}}</td>
+                            <td>{{payslip.basicSalary | currency}}</td>
+                            <td>{{payslip.allowance | currency}}</td>
+                            <td>{{payslip.grossSalary | currency}}</td>
+                            <td>{{payslip.totalDeduction | currency}}</td>
+                            <td>{{payslip.totalNetSalary | currency}}</td>
+                            <td>{{payslip.paymentMethod}}</td>
+                            <td>
+                                <p-tag [value]="payslip.isPaid ? 'Paid' : 'Pending'" 
+                                    [severity]="payslip.isPaid ? 'success' : 'warning'">
+                                </p-tag>
+                            </td>
+                            <td>
+                                <button pButton pRipple icon="pi pi-pencil" 
+                                    class="p-button-rounded p-button-success mr-2"
+                                    [disabled]="payslip.isPaid"
+                                    (click)="editPayslip(payslip)">
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                        <tr>
+                            <td><strong>Totals</strong></td>
+                            <td>{{calculateTotals().basicSalary | currency}}</td>
+                            <td>{{calculateTotals().allowance | currency}}</td>
+                            <td>{{calculateTotals().grossSalary | currency}}</td>
+                            <td>{{calculateTotals().totalDeduction | currency}}</td>
+                            <td>{{calculateTotals().netSalary | currency}}</td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </p-dialog>
+
+            <!-- Edit Payslip Dialog -->
+            <p-dialog [(visible)]="editDialog" [style]="{width: '450px'}"
+                header="Edit Payslip" [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="field">
+                        <label>Basic Salary</label>
+                        <p-inputNumber [(ngModel)]="selectedPayslip!.basicSalary" 
+                            mode="currency" currency="USD" [minFractionDigits]="2">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field">
+                        <label>Allowance</label>
+                        <p-inputNumber [(ngModel)]="selectedPayslip!.allowance" 
+                            mode="currency" currency="USD" [minFractionDigits]="2">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field">
+                        <label>Payment Method</label>
+                        <p-dropdown [options]="paymentMethods" 
+                            [(ngModel)]="selectedPayslip!.paymentMethod">
+                        </p-dropdown>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" 
+                        class="p-button-text" (click)="editDialog = false">
+                    </button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" 
+                        class="p-button-text" (click)="savePayslip()">
+                    </button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div> 

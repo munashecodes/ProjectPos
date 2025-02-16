@@ -34,5 +34,6 @@ namespace ProjectPos.Data.EntityModels
         public Company? Company { get; set; }
         [ForeignKey("ApprovedById")]
         public User? ApprovedBy { get; set; }
+        public bool IsPostedToJournal { get; set; } = false;
     }
 }

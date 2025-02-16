@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjectPos.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -175,6 +175,24 @@ namespace ProjectPos.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Attendances",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsPresent = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Notes = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Attendances", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "CashUps",
                 columns: table => new
                 {
@@ -313,6 +331,60 @@ namespace ProjectPos.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "EmployeeDeductions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    DeductionDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Reason = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Notes = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeDeductions", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    Department = table.Column<int>(type: "int", nullable: false),
+                    Position = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmploymentType = table.Column<int>(type: "int", nullable: false),
+                    Bank = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BankAccountNumber = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SalaryType = table.Column<int>(type: "int", nullable: false),
+                    JoiningDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    TerminationDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeleterId = table.Column<int>(type: "int", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    LastModifierUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeDetails", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -364,10 +436,10 @@ namespace ProjectPos.Data.Migrations
                     Role = table.Column<int>(type: "int", nullable: true),
                     JwtToken = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
                     IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     SupervisorCodeHash = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    EmployeeId = table.Column<int>(type: "int", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -557,6 +629,85 @@ namespace ProjectPos.Data.Migrations
                         principalTable: "SystemUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "OvertimeRecords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Hours = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ApprovedById = table.Column<int>(type: "int", nullable: true),
+                    Notes = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OvertimeRecords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OvertimeRecords_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OvertimeRecords_SystemUsers_ApprovedById",
+                        column: x => x.ApprovedById,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "PayRollCycles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Month = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TotalGrossSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TotalTax = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TotalPensionDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TotalOtherDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TotalAllowance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TotalBasic = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TotalNetSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    PayRollStatus = table.Column<int>(type: "int", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeleterId = table.Column<int>(type: "int", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    LastModifierUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PayRollCycles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PayRollCycles_SystemUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PayRollCycles_SystemUsers_DeleterId",
+                        column: x => x.DeleterId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PayRollCycles_SystemUsers_LastModifierUserId",
+                        column: x => x.LastModifierUserId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -817,6 +968,69 @@ namespace ProjectPos.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "SalaryStructures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    Currency = table.Column<int>(type: "int", nullable: false),
+                    BasicSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    HousingAllowance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TransportAllowance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OtherAllowance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    MedicalBenefit = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    PensionBenefit = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OtherBenefit = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TaxDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    PensionDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    AidsLevyDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OtherDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OvertimeRate = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OvertimeHours = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OvertimeTotal = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    HourlyRate = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    HoursWorked = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TaxableIncome = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    NetSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Notes = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreationTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeleterId = table.Column<int>(type: "int", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    LastModifierUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SalaryStructures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SalaryStructures_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SalaryStructures_SystemUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SalaryStructures_SystemUsers_DeleterId",
+                        column: x => x.DeleterId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SalaryStructures_SystemUsers_LastModifierUserId",
+                        column: x => x.LastModifierUserId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "SalesOrders",
                 columns: table => new
                 {
@@ -975,6 +1189,84 @@ namespace ProjectPos.Data.Migrations
                         name: "FK_JournalEntryLines_JournalEntries_JournalEntryId",
                         column: x => x.JournalEntryId,
                         principalTable: "JournalEntries",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "PaySlips",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    Month = table.Column<int>(type: "int", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    PayRollCycleId = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
+                    BasicSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    Allowance = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    TillShortageDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    GrossSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    NetSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    Tax = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    TotalEarning = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    PensionDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    TotalDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    TotalNetSalary = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    IsPaid = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsApproved = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ApprovedBy = table.Column<int>(type: "int", nullable: true),
+                    IsPostedToJournal = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    OvertimePay = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    HousingAllowance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    TransportAllowance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OtherAllowance = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    OtherDeduction = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    WorkedDays = table.Column<int>(type: "int", nullable: false),
+                    OvertimeHours = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DeletionTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DeleterId = table.Column<int>(type: "int", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    LastModifierUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaySlips", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaySlips_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PaySlips_PayRollCycles_PayRollCycleId",
+                        column: x => x.PayRollCycleId,
+                        principalTable: "PayRollCycles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PaySlips_SystemUsers_ApprovedBy",
+                        column: x => x.ApprovedBy,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PaySlips_SystemUsers_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PaySlips_SystemUsers_DeleterId",
+                        column: x => x.DeleterId,
+                        principalTable: "SystemUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PaySlips_SystemUsers_LastModifierUserId",
+                        column: x => x.LastModifierUserId,
+                        principalTable: "SystemUsers",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -1472,6 +1764,11 @@ namespace ProjectPos.Data.Migrations
                 column: "DeleterId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Attendances_EmployeeId",
+                table: "Attendances",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CashUps_CreatorId",
                 table: "CashUps",
                 column: "CreatorId");
@@ -1541,6 +1838,32 @@ namespace ProjectPos.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_DayEndSalesSummaries_LastModifierUserId",
                 table: "DayEndSalesSummaries",
+                column: "LastModifierUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeDeductions_EmployeeId",
+                table: "EmployeeDeductions",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeDetails_CreatorId",
+                table: "EmployeeDetails",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeDetails_DeleterId",
+                table: "EmployeeDetails",
+                column: "DeleterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeDetails_EmployeeId",
+                table: "EmployeeDetails",
+                column: "EmployeeId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeDetails_LastModifierUserId",
+                table: "EmployeeDetails",
                 column: "LastModifierUserId");
 
             migrationBuilder.CreateIndex(
@@ -1680,6 +2003,16 @@ namespace ProjectPos.Data.Migrations
                 column: "JournalEntryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OvertimeRecords_ApprovedById",
+                table: "OvertimeRecords",
+                column: "ApprovedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OvertimeRecords_EmployeeId",
+                table: "OvertimeRecords",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payments_CreatorId",
                 table: "Payments",
                 column: "CreatorId");
@@ -1698,6 +2031,51 @@ namespace ProjectPos.Data.Migrations
                 name: "IX_Payments_SalesOrderId",
                 table: "Payments",
                 column: "SalesOrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PayRollCycles_CreatorId",
+                table: "PayRollCycles",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PayRollCycles_DeleterId",
+                table: "PayRollCycles",
+                column: "DeleterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PayRollCycles_LastModifierUserId",
+                table: "PayRollCycles",
+                column: "LastModifierUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaySlips_ApprovedBy",
+                table: "PaySlips",
+                column: "ApprovedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaySlips_CreatorId",
+                table: "PaySlips",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaySlips_DeleterId",
+                table: "PaySlips",
+                column: "DeleterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaySlips_EmployeeId",
+                table: "PaySlips",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaySlips_LastModifierUserId",
+                table: "PaySlips",
+                column: "LastModifierUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaySlips_PayRollCycleId",
+                table: "PaySlips",
+                column: "PayRollCycleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductInventories_CreatorId",
@@ -1850,6 +2228,27 @@ namespace ProjectPos.Data.Migrations
                 column: "SupplierId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SalaryStructures_CreatorId",
+                table: "SalaryStructures",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalaryStructures_DeleterId",
+                table: "SalaryStructures",
+                column: "DeleterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalaryStructures_EmployeeId",
+                table: "SalaryStructures",
+                column: "EmployeeId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalaryStructures_LastModifierUserId",
+                table: "SalaryStructures",
+                column: "LastModifierUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SalesOrderItems_OrderNumber",
                 table: "SalesOrderItems",
                 column: "OrderNumber");
@@ -1937,7 +2336,8 @@ namespace ProjectPos.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_SystemUsers_EmployeeId",
                 table: "SystemUsers",
-                column: "EmployeeId");
+                column: "EmployeeId",
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_AccessLogs_SystemUsers_UserId",
@@ -1977,6 +2377,14 @@ namespace ProjectPos.Data.Migrations
                 principalTable: "SystemUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Attendances_Employees_EmployeeId",
+                table: "Attendances",
+                column: "EmployeeId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_CashUps_SystemUsers_CreatorId",
@@ -2066,6 +2474,43 @@ namespace ProjectPos.Data.Migrations
                 onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_EmployeeDeductions_Employees_EmployeeId",
+                table: "EmployeeDeductions",
+                column: "EmployeeId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EmployeeDetails_Employees_EmployeeId",
+                table: "EmployeeDetails",
+                column: "EmployeeId",
+                principalTable: "Employees",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EmployeeDetails_SystemUsers_CreatorId",
+                table: "EmployeeDetails",
+                column: "CreatorId",
+                principalTable: "SystemUsers",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EmployeeDetails_SystemUsers_DeleterId",
+                table: "EmployeeDetails",
+                column: "DeleterId",
+                principalTable: "SystemUsers",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_EmployeeDetails_SystemUsers_LastModifierUserId",
+                table: "EmployeeDetails",
+                column: "LastModifierUserId",
+                principalTable: "SystemUsers",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Employees_SystemUsers_CreatorId",
                 table: "Employees",
                 column: "CreatorId",
@@ -2109,6 +2554,9 @@ namespace ProjectPos.Data.Migrations
                 name: "AccessLogs");
 
             migrationBuilder.DropTable(
+                name: "Attendances");
+
+            migrationBuilder.DropTable(
                 name: "CashUps");
 
             migrationBuilder.DropTable(
@@ -2116,6 +2564,12 @@ namespace ProjectPos.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "DayEndSalesSummaries");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeDeductions");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeDetails");
 
             migrationBuilder.DropTable(
                 name: "ExchangeRates");
@@ -2133,7 +2587,13 @@ namespace ProjectPos.Data.Migrations
                 name: "JournalEntryLines");
 
             migrationBuilder.DropTable(
+                name: "OvertimeRecords");
+
+            migrationBuilder.DropTable(
                 name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "PaySlips");
 
             migrationBuilder.DropTable(
                 name: "ProductInventorySnapshots");
@@ -2154,6 +2614,9 @@ namespace ProjectPos.Data.Migrations
                 name: "PurchaceOrderPayments");
 
             migrationBuilder.DropTable(
+                name: "SalaryStructures");
+
+            migrationBuilder.DropTable(
                 name: "SalesOrderItems");
 
             migrationBuilder.DropTable(
@@ -2170,6 +2633,9 @@ namespace ProjectPos.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "JournalEntries");
+
+            migrationBuilder.DropTable(
+                name: "PayRollCycles");
 
             migrationBuilder.DropTable(
                 name: "PurchaceInvoices");

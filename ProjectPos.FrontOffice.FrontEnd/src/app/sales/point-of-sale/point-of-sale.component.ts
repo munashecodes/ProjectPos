@@ -198,6 +198,10 @@ export class PointOfSaleComponent implements OnInit {
 
     image: any;
 
+    returnQuantity: number = 0
+
+    returnQuantityModal: boolean = false
+
     searchText: string = '';
 
     voidModal = false;
@@ -718,6 +722,7 @@ export class PointOfSaleComponent implements OnInit {
   
     confirmDeleteSelected() {
       this.isRemoved = true;
+      this.returnQuantityModal = false
       this.rate = this.rates.find(x => x.currency === this.currency)!;
       let eRate = this.rate === undefined ? 1 : this.rate.exchangeRate?.baseToRate;
 
@@ -731,12 +736,12 @@ export class PointOfSaleComponent implements OnInit {
           productId: product!.productId,
           productName: product!.productName,
           barCode: product!.barCode,
-          quantity: -product!.quantity!,
-          unitPrice: -product!.unitPrice!,
-          currencyUnitPrice: -product!.currencyUnitPrice!,
-          price: -product!.price!,
-          currencyPrice: -product!.currencyPrice!,
-          vat: -product!.vat!,
+          quantity: -this.returnQuantity,
+          unitPrice: -(product!.unitPrice! * this.returnQuantity),
+          currencyUnitPrice: product!.currencyUnitPrice!,
+          price: -(product!.unitPrice! * this.returnQuantity),
+          currencyPrice: -(product!.currencyUnitPrice! * this.returnQuantity),
+          vat: -(product!.vat! * this.returnQuantity),
           vatPercentage: -product!.vatPercentage!,
           unit: product!.unit,
           rowIndex: this.rowIndex += 1
@@ -744,9 +749,10 @@ export class PointOfSaleComponent implements OnInit {
 
         //add void product to sales order items after index
         this.newOder.salesOrderItems?.splice(index + 1, 0, voidProd);
-
-        this.newOder.price! -= Number(product!.price!.toFixed(2));
-        this.newOder.vat! -= Number(product!.vat!.toFixed(2));
+        console.log("Price--",this.newOder.price)
+        this.newOder.price! -= (Number(product!.unitPrice!.toFixed(2)) * this.returnQuantity);
+        this.newOder.vat! -= (Number(product!.vat!.toFixed(2)) * this.returnQuantity);
+        console.log("Price",this.newOder.price)
 
         // this.price! -= (product.price! * eRate!);
         // this.vat! -= product.vat!;
@@ -767,6 +773,11 @@ export class PointOfSaleComponent implements OnInit {
         detail: 'Products Deleted', 
         life: 3000 
       });
+      this.returnQuantity = 0
+    }
+
+    onRemoveQuantity(){
+      this.returnQuantityModal = true
     }
 
     onQuantityChange(){

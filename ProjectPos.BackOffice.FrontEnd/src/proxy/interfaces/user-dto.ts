@@ -19,7 +19,8 @@ export interface UserDto extends EntityDto<number> {
 
 export interface UserSignInDto extends EntityDto<number> {
     userName?: string;
-    fullName?: string;
+    firstName?: string;
+    lastName?:string
     password?: string;
     role?: Role;
     supervisorCode?: string

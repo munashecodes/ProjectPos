@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ProjectPos.Data.EntityModels
 {
-    public class PurchaceOrderPayments : FullAuditedAggregateRoot<int>
+    public class PurchaceOrderPayment : FullAuditedAggregateRoot<int>
     {
         public int? GoodsReceivedVoucherId { get; set; }
         [Column(TypeName = "decimal(12, 2)")]
@@ -29,6 +29,7 @@ namespace ProjectPos.Data.EntityModels
         public Currency? Currency { get; set; }
         public SaleType? MethodOfPay { get; set; }
         public DateTime OrderDate { get; set; }
+        public bool IsPostedToJournal { get; set; } = false;
 
         //foreign keys
         [ForeignKey("GoodsReceivedVoucherId")]

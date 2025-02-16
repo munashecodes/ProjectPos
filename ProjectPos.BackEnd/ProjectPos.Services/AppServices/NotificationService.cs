@@ -17,7 +17,7 @@ public class NotificationService(ProjectPosDbContext _context, ILogger<Notificat
             var response = new NotificationDto
             {
                 PurchaseOrder = pendingOrders.Count,
-                ReceivingOrder = pendingReceiving.Count(),
+                ReceivingOrder = pendingReceiving.Count,
 
             };
             return new ServiceResponse<NotificationDto>

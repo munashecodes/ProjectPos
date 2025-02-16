@@ -3,6 +3,7 @@ import jspdf from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { NotificationDataService } from 'src/app/layout/service/notification-data.service';
 import { Category } from 'src/proxy/enums/category';
 import { Country } from 'src/proxy/enums/country';
 import { OrderReceivedStatus } from 'src/proxy/enums/order-received-status';
@@ -85,6 +86,8 @@ export class PurchaseOrderComponent implements OnInit {
 
   orderValue = 0;
 
+  processOrder: boolean = false
+
   totalPrice = 0;
 
   createOrderModal = false;
@@ -123,7 +126,8 @@ export class PurchaseOrderComponent implements OnInit {
     private messageService: MessageService,
     private companyService: CompanyService,
     private productService: ProductInventoryService,
-    private categoryService: SubCategoryService
+    private categoryService: SubCategoryService,
+    private notificationDataService: NotificationDataService
   ){}
 
   ngOnInit(): void {
@@ -242,21 +246,18 @@ export class PurchaseOrderComponent implements OnInit {
 
     //shearwate logo
     pdf.setFontSize(8);
-    pdf.addImage('assets/demo/images/logos/FARM-LOGO.png\n', 'PNG', 5, 5, 25, 15);
-    
-    //shearwater address
-    pdf.text('Andile Fresh Farm Produce | Post Office Box 000'
-      +'\n0 Magwaza Complex | Mkhosana Main\nVictoria Falls | Zimbabwe\n+263 000 0000 00 | example@email.com'
-      +'\nVat No 0000000 | BP No 0000000\nwww.andilefreshfarm.com', 5, 25);
+
+      pdf.text('T&T Solar | Post Office Box 642'
+        +'\nChinotimba\nVictoria Falls | Zimbabwe\n+263 783 134 362 | ', 5, 25, { align: 'center' });
 
     pdf.setFontSize(12);
     pdf.text( "PURCHACE ORDER", 100, 45, { align: 'center' });
 
     pdf.setFontSize(8);
     pdf.text('Order Date:            ' + new Date(order.creationTime!).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) 
-        +  '\n Order No:               ' + order.id 
-        +  '\n Suplier Name:         ' + order.supplierName 
-        +  '\n Order Number:  ' + order.id, 5, 50);
+        +  '\nOrder No:               ' + order.id 
+        +  '\nSuplier Name:         ' + order.supplierName 
+        +  '\nOrder Number:  ' + order.id, 5, 50);
 
     // pdf.text(order.supplierName 
     //     +  '\n' + order.sup!.address!.street + ' ' + order.customer!.address!.addressLine1 
@@ -341,6 +342,7 @@ export class PurchaseOrderComponent implements OnInit {
 
   process(){
     this.newOrder.invoiceValue = 0;
+    this.processOrder = true
     this.newOrder.purchaceOrderItems?.forEach(item => {
       item.price = item.quantity! * item.unitPrice!;
       this.newOrder.invoiceValue! += item.price;
@@ -486,7 +488,7 @@ export class PurchaseOrderComponent implements OnInit {
     .subscribe((res) => {
       console.log(res);
       if(res.isSuccess){
-        
+        this.notificationDataService.notification.purchaseOrder += 1;
         if(!Array.isArray(this.orders)){
           this.orders = []
           this.orders = [...this.orders, res!.data];
@@ -533,7 +535,7 @@ export class PurchaseOrderComponent implements OnInit {
     .subscribe((res) => {
       console.log(res);
       if(res.isSuccess){
-
+        this.notificationDataService.notification.purchaseOrder -= 1;
         if (!Array.isArray(this.orders)) {
           this.orders = [];
         }

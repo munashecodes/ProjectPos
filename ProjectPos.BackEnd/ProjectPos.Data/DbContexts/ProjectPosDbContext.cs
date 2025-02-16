@@ -19,6 +19,13 @@ namespace ProjectPos.Data.DbContexts
 
         //create tables
         public virtual DbSet<Account> Accounts { get; set; }
+        public virtual DbSet<PayRollCycle> PayRollCycles { get; set; }
+        public virtual DbSet<PaySlip> PaySlips { get; set; }
+        public virtual DbSet<SalaryStructure> SalaryStructures { get; set; }
+        public virtual DbSet<Attendance> Attendances { get; set; }
+        public virtual DbSet<OvertimeRecord> OvertimeRecords { get; set; }
+        public virtual DbSet<EmployeeDeduction> EmployeeDeductions { get; set; }
+        public virtual DbSet<EmployeeDetails> EmployeeDetails { get; set; }
         public virtual DbSet<AccountCategory> AccountCategories { get; set; }
         public virtual DbSet<JournalEntry> JournalEntries { get; set; }
         public virtual DbSet<JournalEntryLine> JournalEntryLines { get; set; }
@@ -30,6 +37,8 @@ namespace ProjectPos.Data.DbContexts
         public virtual DbSet<Employee>? Employees { get; set; }
         public virtual DbSet<ExchangeRate> ExchangeRates { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
+        
+        public virtual DbSet<FinancialAccountSnapShot>? FinancialAccountSnapShots { get; set; }
         public virtual DbSet<ProductInventory>? ProductInventories { get; set; }
         public virtual DbSet<ProductPrice>? ProductPrices { get; set; }
         public virtual DbSet<ProofOfPayment>? ProofOfPayments { get; set; }
@@ -39,6 +48,7 @@ namespace ProjectPos.Data.DbContexts
         public virtual DbSet<Company>? Companies { get; set; }
         public virtual DbSet<ContactPerson>? ContactPersons { get; set; }
         public virtual DbSet<GoodsReceivedVoucher>? GoodsReceivedVouchers { get; set; }
+        public virtual DbSet<PurchaceOrderPayment> PurchaceOrderPayments { get; set; }
         public virtual DbSet<GoodsReceivedVoucherLine>? GoodsReceivedVoucherLines { get; set; }
         public virtual DbSet<ProductInventorySnapshot>? ProductInventorySnapshots { get; set; }
         public virtual DbSet<InventorySnapShotLog>? InventorySnapShotLogs { get; set; }
@@ -448,7 +458,7 @@ namespace ProjectPos.Data.DbContexts
             ConfigureAuditedEntity<ProofOfPayment>(modelBuilder);
             ConfigureAuditedEntity<PurchaceOrder>(modelBuilder);
             ConfigureAuditedEntity<SalesOrder>(modelBuilder);
-            ConfigureAuditedEntity<PurchaceOrderPayments>(modelBuilder);
+            ConfigureAuditedEntity<PurchaceOrderPayment>(modelBuilder);
             ConfigureAuditedEntity<StockMovement>(modelBuilder);
             ConfigureAuditedEntity<StockMovementLog>(modelBuilder);
             ConfigureAuditedEntity<StockTakeLog>(modelBuilder);

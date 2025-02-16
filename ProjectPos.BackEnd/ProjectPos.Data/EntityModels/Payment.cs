@@ -34,6 +34,7 @@ namespace ProjectPos.Data.EntityModels
         public SaleType? MethodOfPay { get; set; }
         public DateTime OrderDate { get; set; }
         public int? ProofOfPaymentId { get; set; }
+        public bool IsPostedToJournal { get; set; } = false;
 
         //foreign keys
         [ForeignKey("SalesOrderId")]

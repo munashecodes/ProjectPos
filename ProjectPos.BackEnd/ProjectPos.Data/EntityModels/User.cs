@@ -18,12 +18,13 @@ namespace ProjectPos.Data.EntityModels
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Role? Role { get; set; }
         public string? JwtToken { get; set; }
+        public int? EmployeeId { get; set; }
         public bool IsActive { get; set; }
         public string? SupervisorCodeHash { get; set; }
 
         public ICollection<AccessLog>? AccessLogs { get; set; }
         public ICollection<CashUp>? CashUps { get; set; }
-
+        [ForeignKey("EmployeeId")]
         public Employee? Employee { get; set; }
 
     }

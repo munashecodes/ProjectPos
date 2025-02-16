@@ -216,32 +216,32 @@
 											</p-dropdown>
 										</span>
 										<span class=" p-float-label">
-											<button pButton pRipple label="REMOVE" icon="pi pi-minus" 
-												class="p-button-danger  mr-2" (click)="confirmDeleteSelected()" ></button>
+											<button [disabled]="selectedOrderItems.length != 1" pButton pRipple label="REMOVE" icon="pi pi-minus" 
+												class="p-button-danger mr-2" (click)="onRemoveQuantity()" ></button>
 										</span>
 										<span class=" p-float-label" *ngIf="isReturn === false">
 											<button pButton pRipple label="DIRECT" icon="pi pi-check" [disabled]="!newOder.currency" 
-												class="p-button-success  mr-2" (click)="directSale(1)" [disabled]="isReturn" ></button>
+												class="p-button-success mr-2" (click)="directSale(1)" [disabled]="isReturn" ></button>
 										</span>
 										<span class=" p-float-label" *ngIf="isReturn === true && isRemoved">
 											<button pButton pRipple label="CONFIRM RETURN" icon="pi pi-check" [disabled]="!newOder.currency"
-												class="p-button-success  mr-2" (click)="update()" ></button>
+												class="p-button-success mr-2" (click)="update()" ></button>
 										</span>
 										<span class=" p-float-label" *ngIf="isReturn === false">
 											<button pButton pRipple label="COMPANY" icon="pi pi-check"
-												class="p-button-primary  mr-2" (click)="create()" ></button>
+												class="p-button-primary mr-2" (click)="create()" ></button>
 										</span>
 										<span class=" p-float-label" *ngIf="isReturn === false">
 											<button pButton pRipple label="QUOTATION" icon="pi pi-check"
-												class="p-button-primary  mr-2" (click)="createQuot()" ></button>
+												class="p-button-primary mr-2" (click)="createQuot()" ></button>
 										</span>
 										<span class=" p-float-label" *ngIf="isReturn === false">
 											<button pButton pRipple label="RETURN" icon="pi pi-times" 
-												class="p-button-danger  mr-2" (click)="onReturn()" ></button>
+												class="p-button-danger mr-2" (click)="onReturn()" ></button>
 										</span>
 										<span class=" p-float-label" *ngIf="isReturn === true">
 											<button pButton pRipple label="CANCEL" icon="pi pi-times" 
-												class="p-button-danger  mr-2" (click)="hideDialog()" ></button>
+												class="p-button-danger mr-2" (click)="hideDialog()" ></button>
 										</span>
 									</div>
 								</div>
@@ -474,6 +474,23 @@
                     (click)="returnModal = false" (click)="this.receiptNumber = 0"></button>
                 <button pButton pRipple icon="pi pi-check" class="button" style="background-color: rgb(5, 154, 5);" label="Get Receipt"
                     (click)="onConfirmReturn()"></button>
+            </ng-template>
+        </p-dialog>
+
+		<!-- return number modal --> 
+        <p-dialog [(visible)]="returnQuantityModal" header="Enter Quantity " [modal]="true" [style]="{width:'500px'}" class="p-fluid">
+			<ng-template pTemplate="content">
+				<div class="field col-12">
+					<input type="number" pInputText id="description" [(ngModel)]="returnQuantity" required autofocus
+						[ngClass]="{'ng-invalid ng-dirty' : submitted && !returnQuantity}" />
+				</div>
+			</ng-template>
+            
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="button" style="background-color: red;" label="Cancel"
+                    (click)="returnModal = false" (click)="this.returnQuantity = 0"></button>
+                <button pButton pRipple icon="pi pi-check" [disabled]="!returnQuantity || (returnQuantity === 0) || (returnQuantity > selectedOrderItems[0].quantity!)" class="button" style="background-color: rgb(5, 154, 5);" label="Remove"
+                    (click)="confirmDeleteSelected()"></button>
             </ng-template>
         </p-dialog>
 	</div>

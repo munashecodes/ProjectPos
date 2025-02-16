@@ -1,0 +1,154 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12">
+                    <button pButton label="New Employee Details" icon="pi pi-plus" 
+                        class="p-button-success mr-2" (click)="create()">
+                    </button>
+                </div>
+
+                <div class="col-12">
+                    <p-table #dt [value]="employeeDetails" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['employeeId','department','position']" [paginator]="true" 
+                        [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true" 
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [rowHover]="true" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <h5 class="m-0">Manage Employee Details</h5>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)"
+                                        placeholder="Search..." class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Employee</th>
+                                <th>Department</th>
+                                <th>Position</th>
+                                <th>Employment Type</th>
+                                <th>Bank</th>
+                                <th>Account Number</th>
+                                <th>Salary Type</th>
+                                <th>Joining Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-details>
+                            <tr>
+                                <td>{{details.employeeId}}</td>
+                                <td>{{details.department}}</td>
+                                <td>{{details.position}}</td>
+                                <td>{{details.employmentType}}</td>
+                                <td>{{details.bank}}</td>
+                                <td>{{details.bankAccountNumber}}</td>
+                                <td>{{details.salaryType}}</td>
+                                <td>{{details.joiningDate | date}}</td>
+                                <td>
+                                    <p-tag [value]="details.isActive ? 'Active' : 'Inactive'"
+                                        [severity]="details.isActive ? 'success' : 'danger'">
+                                    </p-tag>
+                                </td>
+                                <td>
+                                    <button pButton pRipple icon="pi pi-pencil" 
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="edit(details)">
+                                    </button>
+                                    <button pButton pRipple icon="pi pi-trash" 
+                                        class="p-button-rounded p-button-danger"
+                                        (click)="delete(details)">
+                                    </button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <!-- Create/Edit Dialog -->
+            <p-dialog [(visible)]="dialogVisible" [style]="{width: '450px'}"
+                [header]="createModal ? 'New Employee Details' : 'Edit Employee Details'" 
+                [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="field">
+                        <label for="employee">Employee</label>
+                        <p-dropdown [options]="employees" [(ngModel)]="newEmployeeDetails.employeeId" 
+                            optionLabel="name" optionValue="id" [required]="true" 
+                            placeholder="Select Employee">
+                        </p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label for="department">Department</label>
+                        <p-dropdown [options]="departments" [(ngModel)]="newEmployeeDetails.department"
+                            [required]="true" placeholder="Select Department">
+                        </p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label for="position">Position</label>
+                        <input type="text" pInputText [(ngModel)]="newEmployeeDetails.position" />
+                    </div>
+                    <div class="field">
+                        <label for="employmentType">Employment Type</label>
+                        <p-dropdown [options]="employmentTypes | keyvalue" optionLabel="value" optionValue="key" [(ngModel)]="newEmployeeDetails.employmentType"
+                            [required]="true" placeholder="Select Employment Type">
+                        </p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label for="bank">Bank</label>
+                        <input type="text" pInputText [(ngModel)]="newEmployeeDetails.bank" />
+                    </div>
+                    <div class="field">
+                        <label for="accountNumber">Account Number</label>
+                        <input type="text" pInputText [(ngModel)]="newEmployeeDetails.bankAccountNumber" />
+                    </div>
+                    <div class="field">
+                        <label for="salaryType">Salary Type</label>
+                        <p-dropdown [options]="salaryTypes" [(ngModel)]="newEmployeeDetails.salaryType" [appendTo]="'body'"
+                            [required]="true" placeholder="Select Salary Type">
+                        </p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label for="joiningDate">Joining Date</label>
+                        <p-calendar [(ngModel)]="newEmployeeDetails.joiningDate" [appendTo]="'body'"
+                            [showIcon]="true" [required]="true">
+                        </p-calendar>
+                    </div>
+                    <div class="field">
+                        <label for="isActive">Status</label>
+                        <p-inputSwitch [(ngModel)]="newEmployeeDetails.isActive"></p-inputSwitch>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" 
+                        class="p-button-text" (click)="hideDialog()">
+                    </button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" 
+                        class="p-button-text" (click)="createModal ? save() : update()">
+                    </button>
+                </ng-template>
+            </p-dialog>
+
+            <!-- Delete Confirmation -->
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span>Are you sure you want to delete this employee details record?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" 
+                        label="No" (click)="hideDialog()">
+                    </button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" 
+                        label="Yes" (click)="confirmDelete()">
+                    </button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div> 

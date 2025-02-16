@@ -32,67 +32,67 @@ namespace ProjectPos.Services.AppServices
         }
 
         public async Task<ServiceResponse<JournalEntryDto>> CreateAsync(JournalEntryDto item)
+{
+    try
+    {
+        var journalEntry = _mapper.Map<JournalEntry>(item);
+        //get the accounts from the db
+        journalEntry.JournalEntryLines!.ForEach(async jel =>
         {
-            try
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == jel.AccountId);
+            if (account == null)
+                throw new Exception($"Account with ID {jel.AccountId} not found.");
+
+            // Adjust balance based on account type and journal entry type
+            switch (account.AccountType)
             {
-                var journalEntry = _mapper.Map<JournalEntry>(item);
-                //get the accounts from the db
-                journalEntry.JournalEntryLines!.ForEach(async jel =>
-                {
-                    var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == jel.AccountId);
-                    if (account == null)
-                        throw new Exception($"Account with ID {jel.AccountId} not found.");
+                case AccountType.Assets:
+                case AccountType.Expense:
+                    account.Balance = (decimal)(jel.Type == JournalEntryType.Debit
+                        ? account.Balance + jel.Amount
+                        : account.Balance - jel.Amount);
+                    break;
 
-                    // Adjust balance based on account type and journal entry type
-                    switch (account.AccountType)
-                    {
-                        case AccountType.Assets:
-                        case AccountType.Expense:
-                            account.Balance = jel.Type == JournalEntryType.Debit
-                                ? account.Balance + jel.Amount
-                                : account.Balance - jel.Amount;
-                            break;
+                case AccountType.Liability:
+                case AccountType.Equity:
+                case AccountType.Revenue:
+                case AccountType.Income:
+                    account.Balance = (decimal)(jel.Type == JournalEntryType.Credit
+                        ? account.Balance + jel.Amount
+                        : account.Balance - jel.Amount);
+                    break;
 
-                        case AccountType.Liability:
-                        case AccountType.Equity:
-                        case AccountType.Revenue:
-                        case AccountType.Income:
-                            account.Balance = jel.Type == JournalEntryType.Credit
-                                ? account.Balance + jel.Amount
-                                : account.Balance - jel.Amount;
-                            break;
-
-                        default:
-                            throw new Exception($"Unhandled account type: {account.AccountType}");
-                    }
-
-                    //update account balance
-                    _context.Accounts.Update(account);
-
-                });
-
-                await _context.JournalEntries.AddAsync(journalEntry);
-                await _context.SaveChangesAsync();
-
-                return new ServiceResponse<JournalEntryDto>
-                {
-                    IsSuccess = true,
-                    Data = _mapper.Map<JournalEntryDto>(journalEntry),
-                    Message = "Journal Entry created successfully",
-                    Time = DateTime.UtcNow
-                };
+                default:
+                    throw new Exception($"Unhandled account type: {account.AccountType}");
             }
-            catch (Exception ex)
-            {
-                //log error here
-                _logger.LogError(ex, ex.Message);
-                return new ServiceResponse<JournalEntryDto>
-                {
-                    IsSuccess = false,
-                    Message = ex.Message
-                };
-            }
-        }
+
+            //update account balance
+            _context.Accounts.Update(account);
+
+        });
+
+        await _context.JournalEntries.AddAsync(journalEntry);
+        await _context.SaveChangesAsync();
+
+        return new ServiceResponse<JournalEntryDto>
+        {
+            IsSuccess = true,
+            Data = _mapper.Map<JournalEntryDto>(journalEntry),
+            Message = "Journal Entry created successfully",
+            Time = DateTime.UtcNow
+        };
+    }
+    catch (Exception ex)
+    {
+        //log error here
+        _logger.LogError(ex, ex.Message);
+        return new ServiceResponse<JournalEntryDto>
+        {
+            IsSuccess = false,
+            Message = ex.Message
+        };
+    }
+}
 
         public Task<ServiceResponse<JournalEntryDto>> DeleteAsync(int id, int userId)
         {

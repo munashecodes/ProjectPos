@@ -10,10 +10,13 @@
 
                 <div>
                     <label for="email1" class="block text-900 text-xl font-medium mb-2">User Name</label>
-                    <input id="email1" type="text" [(ngModel)]="newUser.userName" placeholder="User Name" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
+                    <input id="email1" type="text" [required]="!newUser.userName" [(ngModel)]="newUser.userName" placeholder="User Name" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
 
-                    <label for="email1" class="block text-900 text-xl font-medium mb-2">Full Name</label>
-                    <input id="email1" type="text" [(ngModel)]="newUser.fullName" placeholder="Full Name" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
+                    <label for="email1" class="block text-900 text-xl font-medium mb-2">First Name</label>
+                    <input id="email1" type="text" [required]="!newUser.firstName" [(ngModel)]="newUser.firstName" placeholder="First Name" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
+
+                    <label for="email1" class="block text-900 text-xl font-medium mb-2">Last Name</label>
+                    <input id="email1" type="text" [required]="!newUser.lastName" [(ngModel)]="newUser.lastName" placeholder="Last Name" pInputText class="w-full md:w-30rem mb-5" style="padding:1rem">
 
                     <label for="password1" class="block text-900 font-medium text-xl mb-2">Password</label>
                     <p-password id="password1" [(ngModel)]="newUser.password" placeholder="Password" [toggleMask]="true" styleClass="mb-5" inputStyleClass="w-full p-3 md:w-30rem"></p-password>

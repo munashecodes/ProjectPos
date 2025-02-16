@@ -36,11 +36,32 @@ namespace ProjectPos.Web
             CreateMap<StockMovementDto, StockMovement>();
 
             //add purchase order payments mapping
-            CreateMap<PurchaceOrderPayments, PurchaceOrderPaymentsDto>();
-            CreateMap<PurchaceOrderPaymentsDto, PurchaceOrderPayments>();
+            CreateMap<PurchaceOrderPayment, PurchaceOrderPaymentsDto>();
+            CreateMap<PurchaceOrderPaymentsDto, PurchaceOrderPayment>();
 
             CreateMap<StockTakeLog, StockTakeLogDto>();
             CreateMap<StockTakeLogDto, StockTakeLog>();
+
+            CreateMap<EmployeeDetailsDto, EmployeeDetails>();
+            CreateMap<EmployeeDetails, EmployeeDetailsDto>();
+            
+            CreateMap<SalaryStructureDto, SalaryStructure>();
+            CreateMap<SalaryStructure, SalaryStructureDto>();
+
+            CreateMap<EmployeeDeductionDto, EmployeeDeduction>();
+            CreateMap<EmployeeDeduction, EmployeeDeductionDto>();
+            
+            CreateMap<AttendanceDto, Attendance>();
+            CreateMap<Attendance, AttendanceDto>();
+
+            CreateMap<OvertimeRecordDto, OvertimeRecord>();
+            CreateMap<OvertimeRecord, OvertimeRecordDto>();
+
+            CreateMap<PaySlipDto, PaySlip>();
+            CreateMap<PaySlip, PaySlipDto>();
+
+            CreateMap<PayRollCycleDto, PayRollCycle>();
+            CreateMap<PayRollCycle, PayRollCycleDto>();
 
             CreateMap<AccessLog, AccessLogDto>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User!.UserName));

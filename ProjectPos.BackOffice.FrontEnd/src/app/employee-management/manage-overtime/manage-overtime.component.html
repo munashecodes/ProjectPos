@@ -1,0 +1,149 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+                <div class="col-12">
+                    <button pButton label="New Overtime" icon="pi pi-plus" class="p-button-success mr-2"
+                        (click)="create()"></button>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="col-12 md:col-12 lg:col-12">
+                    <div class="p-fluid grid">
+                        <div class="field col-12 md:col-3">
+                            <span class="p-float-label">
+                                <p-dropdown [options]="employees" [(ngModel)]="selectedEmployee" optionLabel="name"
+                                    [showClear]="true" placeholder="Select Employee">
+                                </p-dropdown>
+                                <label>Employee</label>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-3">
+                            <span class="p-float-label">
+                                <p-calendar [(ngModel)]="startDate" [showIcon]="true"></p-calendar>
+                                <label>Start Date</label>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-3">
+                            <span class="p-float-label">
+                                <p-calendar [(ngModel)]="endDate" [showIcon]="true"></p-calendar>
+                                <label>End Date</label>
+                            </span>
+                        </div>
+                        <div class="field col-12 md:col-3">
+                            <button pButton label="Search" icon="pi pi-search" (click)="loadOvertimeByDateRange()"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <p-table #dt [value]="overtimeRecords" [columns]="cols" responsiveLayout="scroll" [rows]="10"
+                        [globalFilterFields]="['employeeName','date']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                        [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                        [rowHover]="true" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <h5 class="m-0">Manage Overtime Records</h5>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)"
+                                        placeholder="Search..." class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th pSortableColumn="employeeName">Employee <p-sortIcon field="employeeName"></p-sortIcon></th>
+                                <th pSortableColumn="date">Date <p-sortIcon field="date"></p-sortIcon></th>
+                                <th pSortableColumn="hours">Hours <p-sortIcon field="hours"></p-sortIcon></th>
+                                <th pSortableColumn="rate">Rate <p-sortIcon field="rate"></p-sortIcon></th>
+                                <th pSortableColumn="amount">Amount <p-sortIcon field="amount"></p-sortIcon></th>
+                                <th pSortableColumn="isApproved">Status <p-sortIcon field="isApproved"></p-sortIcon></th>
+                                <th pSortableColumn="notes">Notes <p-sortIcon field="notes"></p-sortIcon></th>
+                                <th>Actions</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-overtime>
+                            <tr>
+                                <td>{{overtime.employeeName}}</td>
+                                <td>{{overtime.date | date:'mediumDate'}}</td>
+                                <td>{{overtime.hours}}</td>
+                                <td>{{overtime.rate | currency}}</td>
+                                <td>{{overtime.rate * overtime.hours | currency}}</td>
+                                <td>
+                                    <span [class]="overtime.isApproved ? 'badge badge-success' : 'badge badge-warning'">
+                                        {{overtime.isApproved ? 'Approved' : 'Pending'}}
+                                    </span>
+                                </td>
+                                <td>{{overtime.notes}}</td>
+                                <td>
+                                    <button pButton pRipple icon="pi pi-pencil" 
+                                        class="p-button-rounded p-button-success mr-2"
+                                        (click)="edit(overtime)"></button>
+                                    <button pButton pRipple icon="pi pi-trash" 
+                                        class="p-button-rounded p-button-danger mr-2"
+                                        (click)="delete(overtime)"></button>
+                                    <button *ngIf="!overtime.isApproved" pButton pRipple icon="pi pi-check" 
+                                        class="p-button-rounded p-button-info"
+                                        (click)="approve(overtime, 1)"></button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+
+            <!-- Create/Edit Modal -->
+            <p-dialog [(visible)]="dialogVisible" [style]="{width: '450px'}"
+                [header]="createModal ? 'New Overtime Record' : 'Edit Overtime Record'" [modal]="true" class="p-fluid">
+                <ng-template pTemplate="content">
+                    <div class="field">
+                        <label for="employee">Employee</label>
+                        <p-dropdown [options]="employees" [(ngModel)]="newOvertime.employeeId" optionLabel="name" optionValue="id"
+                            [required]="true" placeholder="Select Employee">
+                        </p-dropdown>
+                    </div>
+                    <div class="field">
+                        <label for="date">Date</label>
+                        <p-calendar [(ngModel)]="newOvertime.date" [required]="true" [showIcon]="true"></p-calendar>
+                    </div>
+                    <div class="field">
+                        <label for="hours">Hours</label>
+                        <p-inputNumber [(ngModel)]="newOvertime.hours" [required]="true" [min]="0" [max]="24"></p-inputNumber>
+                    </div>
+                    <!-- <div class="field">
+                        <label for="rate">Rate</label>
+                        <p-inputNumber [(ngModel)]="newOvertime.rate" mode="currency" currency="USD" 
+                            [minFractionDigits]="2"></p-inputNumber>
+                    </div> -->
+                    <div class="field">
+                        <label for="notes">Notes</label>
+                        <textarea pInputTextarea [(ngModel)]="newOvertime.notes" rows="3"></textarea>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"
+                        (click)="createModal ? save() : update()"></button>
+                </ng-template>
+            </p-dialog>
+
+            <!-- Delete Confirmation -->
+            <p-dialog [(visible)]="deleteModal" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+                <div class="flex align-items-center justify-content-center">
+                    <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                    <span>Are you sure you want to delete this overtime record?</span>
+                </div>
+                <ng-template pTemplate="footer">
+                    <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                        (click)="hideDialog()"></button>
+                    <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"
+                        (click)="confirmDelete()"></button>
+                </ng-template>
+            </p-dialog>
+        </div>
+    </div>
+</div> 

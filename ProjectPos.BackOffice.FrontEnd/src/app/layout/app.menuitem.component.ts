@@ -7,10 +7,7 @@ import { MenuService } from './app.menu.service';
 import { LayoutService } from './service/app.layout.service';
 import { NotificationService } from 'src/proxy/services/notification.service';
 
-interface Notification{
-    purchaseOrder: number
-    receivingOrder: number
-}
+
 @Component({
     // eslint-disable-next-line @angular-eslint/component-selector
     selector: '[app-menuitem]',
@@ -27,11 +24,11 @@ interface Notification{
 			   [routerLink]="item.routerLink" routerLinkActive="active-route" [routerLinkActiveOptions]="item.routerLinkActiveOptions||{ paths: 'exact', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }"
                [fragment]="item.fragment" [queryParamsHandling]="item.queryParamsHandling" [preserveFragment]="item.preserveFragment" 
                [skipLocationChange]="item.skipLocationChange" [replaceUrl]="item.replaceUrl" [state]="item.state" [queryParams]="item.queryParams"
-               [attr.target]="item.target" tabindex="0" pRipple class="menu-item">
+               [attr.target]="item.target" tabindex="0" pRipple >
 				<i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
 				<span class="layout-menuitem-text">{{item.label}}</span>
 				<i class="pi pi-fw pi-angle-down layout-submenu-toggler" *ngIf="item.items"></i>
-                <!-- <p-badge value="3" badgeSize="xlarge" severity="success" class="badge-inline" /> -->
+                <p-badge *ngIf="item.pendingCount > 0" [value]="item.pendingCount" badgeSize="xlarge" severity="success" class="badge-inline"></p-badge>
 			</a>
 
 			<ul *ngIf="item.items && item.visible !== false" [@children]="submenuAnimation">
@@ -71,7 +68,6 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
 
     key: string = "";
 
-    notification: Notification = {} as Notification
 
     constructor(public layoutService: LayoutService, private cd: ChangeDetectorRef, public router: Router, private menuService: MenuService, private notificationService: NotificationService) {
         this.menuSourceSubscription = this.menuService.menuSource$.subscribe(value => {
@@ -106,11 +102,7 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
             this.updateActiveStateFromRoute();
         }
 
-        this.notificationService.getStats()
-        .subscribe((res) => {
-            console.log(res);
-            this.notification = res.data
-        });
+        
     }
 
     updateActiveStateFromRoute() {

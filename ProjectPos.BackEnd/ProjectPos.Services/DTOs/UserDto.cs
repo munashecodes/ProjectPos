@@ -2,6 +2,7 @@
 using ProjectPos.Data.Shared.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -29,12 +30,19 @@ namespace ProjectPos.Services.DTOs
 
     public class UserSignInDto : EntityDto<int>
     {
-        public string? UserName { get; set; }
-        public string? FullName { get; set; }
+
+        [Required]
+        public string UserName { get; set; }
+        [Required]
+        public string FirstName{ get; set; }
+        [Required]
+        public string LastName{ get; set; }
         public string? Password { get; set; }
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public Role? Role { get; set; }
         public bool IsActive { get; set; }
         public string? SupervisorCode { get; set; }
+
+        public EmployeeDto? Employee{get;set;}
     }
 }

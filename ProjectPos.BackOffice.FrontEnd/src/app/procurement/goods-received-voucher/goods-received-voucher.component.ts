@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { NotificationDataService } from 'src/app/layout/service/notification-data.service';
 import { Country } from 'src/proxy/enums/country';
 import { Currency } from 'src/proxy/enums/currency';
 import { OrderPayStatus } from 'src/proxy/enums/order-pay-status';
@@ -139,7 +140,8 @@ export class GoodsReceivedVoucherComponent implements OnInit {
     private companyService: CompanyService,
     private grvService: GoodsReceivedVoucherService,
     private ratesService: ExchangeRateService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private notificationDataService: NotificationDataService
   ) { }
 
   ngOnInit() {
@@ -416,7 +418,7 @@ export class GoodsReceivedVoucherComponent implements OnInit {
     .subscribe((res) => {
       console.log(res);
       if(res.isSuccess){
-        
+        this.notificationDataService.notification.receivingOrder += 1;
         if(!Array.isArray(this.grvs)){
           this.grvs = []
         }
@@ -488,7 +490,7 @@ export class GoodsReceivedVoucherComponent implements OnInit {
     .subscribe((res) => {
       console.log(res);
       if(res.isSuccess){
-        
+        this.notificationDataService.notification.receivingOrder -= 1;
         if (!Array.isArray(this.grvs)) {
           this.grvs = [];
         }

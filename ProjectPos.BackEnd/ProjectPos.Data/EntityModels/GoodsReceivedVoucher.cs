@@ -24,6 +24,7 @@ namespace ProjectPos.Data.EntityModels
         public OrderPaymentStatus? Status { get; set; }
         public bool IsPaid { get; set; } = false;
         public bool IsApproved { get; set; } = false;
+        public bool IsPostedToJournal { get; set; } = false;
 
         //foreign Keys
         [ForeignKey("OrderNumber")]
@@ -34,6 +35,6 @@ namespace ProjectPos.Data.EntityModels
 
         //dependent entities
         public List<GoodsReceivedVoucherLine>? ReceivedItems { get; set; }
-        public List<PurchaceOrderPayments>? PurchaceOrderPayments { get; set; }
+        public List<PurchaceOrderPayment>? PurchaceOrderPayments { get; set; }
     }
 }
