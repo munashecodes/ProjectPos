@@ -84,6 +84,8 @@ namespace ProjectPos.Web
             builder.Services.AddTransient<IAttendanceService, AttendanceService>();
             builder.Services.AddTransient<IOvertimeService, OvertimeService>();
             builder.Services.AddTransient<IPaySlipService, PaySlipService>();
+            builder.Services.AddTransient<ITrialBalanceService, TrialBalanceService>();
+            builder.Services.AddTransient<IGoodsReceivedVoucherLineService, GoodsReceivedVoucherLineService>();
             builder.Services.AddScheduler();
 
             builder.Services.AddControllers();

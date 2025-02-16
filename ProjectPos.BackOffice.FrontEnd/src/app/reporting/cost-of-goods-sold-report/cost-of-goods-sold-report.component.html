@@ -1,0 +1,133 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <div class="grid">
+				<!-- confirmation dialogue box -->
+				<p-confirmDialog #cd header="Notification">
+					<ng-template pTemplate="content">
+						<!-- confirmation message here -->
+					</ng-template>
+					<ng-template pTemplate="footer">
+						<button type="button" class="p-button-success mr-2" pButton icon="pi pi-check" label="OK" (click)="cd.accept()"></button>
+					</ng-template>
+				</p-confirmDialog>
+                <div class="col-12">
+                    <p-table #dt [value]="filteredProducts" [columns]="cols" responsiveLayout="scroll" [rows]="10" [scrollable]="true" [scrollHeight]="'500px'"
+                        [globalFilterFields]="['barCode', 'productName']" 
+                        [showCurrentPageReport]="true"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" selectionMode="multiple"
+                        [rowHover]="true" dataKey="id">
+                        <ng-template pTemplate="caption">
+                            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                                <div class="col-10">
+                                    <div class="grid">
+                                        <div class="col-10">
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="option" inputId="name"
+                                                [options]="filterOptions" placeholder="Option" (onChange)="onMainFilter()">
+                                            </p-dropdown>
+                                            <p-calendar class="p-inputtext-sm mr-2" appendTo="body" *ngIf="option === 'Date'" placeholder="Date"
+                                                [(ngModel)]="date" dateFormat="d MM yy" (onSelect)="getDateSales()"></p-calendar>
+                                            
+                                            <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true" (onSelect)="getDateRangeSales()"
+                                                *ngIf="option === 'Date Range'" class="p-inputtext-sm mr-2" placeholder="Range"/>
+                                        
+                                            <p-calendar [(ngModel)]="month" view="month" dateFormat="MM" [readonlyInput]="true" (onSelect)="getMonthSales()" class="p-inputtext-sm mr-2"
+                                                *ngIf="option === 'Month'" placeholder="Month"/>
+
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="department" inputId="name" 
+                                                [options]="departments" placeholder="Department"
+                                                (onChange)="filterByDepartment()" [showClear]="true" (onClear)="onClearFilter()"></p-dropdown>
+
+                                            <p-dropdown appendTo="body" class="p-inputtext-sm mr-2" [(ngModel)]="subCat" inputId="name" 
+                                                [options]="filteredSubCategories" optionLabel="name" placeholder="Category"
+                                                (onChange)="filterByCategory()" [showClear]="true" (onClear)="onClearFilter()"></p-dropdown>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="block mt-2 md:mt-0 p-input-icon-left">
+                                    <i class="pi pi-search"></i>
+                                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."
+                                        class="w-full sm:w-auto" />
+                                </span>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            <tr >
+                                <th style="width:20%; min-width:10rem;">Code</th>
+                                <th pSortableColumn="productName" style="width:40%; min-width:10rem;">Name<p-sortIcon field="productName"></p-sortIcon></th>
+                                <th style="width:20%; min-width:10rem;">Unit Pice</th>
+                                <th style="width:20%; min-width:10rem;">Opening Qty</th>
+                                <th pSortableColumn="quantity" style="width:20%; min-width:10rem;">Purchaced Qty<p-sortIcon field="quantity"></p-sortIcon></th>
+                                <th style="width:20%; min-width:10rem;">Closing Qty</th>
+                                <th style="width:20%; min-width:10rem;">Opening Cost</th>
+                                <th pSortableColumn="price" style="width:20%; min-width:10rem;">Purchaced Cost<p-sortIcon field="price"></p-sortIcon></th>
+                                <th style="width:20%; min-width:10rem;">Closing Cost</th>
+                                <th style="width:20%; min-width:10rem;">Balance</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item>
+                            <tr>
+                                <td style="width:10%; min-width:10rem;" >
+                                    <span class="p-column-title">Name</span>
+                                    {{item.barCode}} 
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">productName</span>
+                                    {{item.productName }}
+                                </td>
+                                <td style="width:15%; min-width:8rem;">
+                                    <span class="p-column-title">Email</span>
+                                    {{item.unitCost  | currency:'USD':'symbol' }}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">quantity</span>
+                                    {{item.openingQuantity }}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">quantity</span>
+                                    {{item.quantity }}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">quantity</span>
+                                    {{item.closingQuantity }}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">price</span>
+                                    {{item.openingStock | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">price</span>
+                                    {{item.totalCost | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">price</span>
+                                    {{item.closingStock | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">price</span>
+                                    {{item.closingStock + item.totalCost - item.closingStock | currency:'USD':'symbol'}}
+                                </td>
+                                
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer" >
+                            <tr style="font-size: larger;">
+                                <th colspan="3" class="text-left">Total Purchaces</th>
+                                <th class="text-left">{{openingCount.toFixed(2) }}</th>
+                                <th class="text-left">{{totalCount.toFixed(2) }}</th>
+                                <th class="text-left">{{openingCount.toFixed(2) }}</th>
+                                <th class="text-left">{{(openingCost) | currency:'USD' }}</th>
+                                <th class="text-left">{{(totalSales) | currency:'USD' }}</th>
+                                <th class="text-left">{{(closingCost) | currency:'USD' }}</th>
+                                <th class="text-left">{{(balance) | currency:'USD' }}</th>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</div>

@@ -153,7 +153,7 @@ export class CashierReportsComponent implements OnInit {
       this.users = res.data;
     })
 
-    this.salesOrderService.getAllItems()
+    this.salesOrderService.getTodaySales(0)
     .subscribe(res => {
       console.log(res)
       this.products = res.data;

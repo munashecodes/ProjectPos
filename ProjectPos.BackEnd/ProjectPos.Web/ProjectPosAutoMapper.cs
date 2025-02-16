@@ -45,20 +45,30 @@ namespace ProjectPos.Web
             CreateMap<EmployeeDetailsDto, EmployeeDetails>();
             CreateMap<EmployeeDetails, EmployeeDetailsDto>();
             
+            CreateMap<SalaryStructure, SalaryStructureDto>()
+                .ForMember(des => des.EmployeeName, opt => opt.MapFrom(src => src.Employee!.Name))
+                .ForMember(des => des.EmployeeSurname, opt => opt.MapFrom(src => src.Employee!.Surname));
             CreateMap<SalaryStructureDto, SalaryStructure>();
-            CreateMap<SalaryStructure, SalaryStructureDto>();
 
-            CreateMap<EmployeeDeductionDto, EmployeeDeduction>();
-            CreateMap<EmployeeDeduction, EmployeeDeductionDto>();
             
+            CreateMap<Attendance, AttendanceDto>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee!.Name));
             CreateMap<AttendanceDto, Attendance>();
-            CreateMap<Attendance, AttendanceDto>();
 
+            CreateMap<EmployeeDeduction, EmployeeDeductionDto>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee!.Name));
+            CreateMap<EmployeeDeductionDto, EmployeeDeduction>();
+
+            //add mapping for overtime
+            CreateMap<OvertimeRecord, OvertimeRecordDto>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee!.Name))
+                .ForMember(dest => dest.Rate, opt => opt.MapFrom(src => src.Employee!.SalaryStructure!.OvertimeRate));
             CreateMap<OvertimeRecordDto, OvertimeRecord>();
-            CreateMap<OvertimeRecord, OvertimeRecordDto>();
 
+            CreateMap<PaySlip, PaySlipDto>()
+                .ForMember(des => des.EmployeeName, opt => opt.MapFrom(src => src.Employee!.Name))
+                .ForMember(des => des.EmployeeSurname, opt => opt.MapFrom(src => src.Employee!.Surname));
             CreateMap<PaySlipDto, PaySlip>();
-            CreateMap<PaySlip, PaySlipDto>();
 
             CreateMap<PayRollCycleDto, PayRollCycle>();
             CreateMap<PayRollCycle, PayRollCycleDto>();

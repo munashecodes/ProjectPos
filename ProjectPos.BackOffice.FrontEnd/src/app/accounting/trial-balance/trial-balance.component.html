@@ -1,1 +1,130 @@
-<p>trial-balance works!</p>
+<style>
+    .button-gap {
+        margin-left: 10px;
+    }
+</style>
+<div class="card">
+    <div class="col-12">
+        <p-fieldset class="col-6" legend="Period Select">
+                
+            <div class="col-9 flex flex-column justify-between md:flex-row p-1 w-full gap-5">
+                <span class="p-float-label">
+                    <p-dropdown appendTo="body" inputId="id" [options]="filterItems | keyvalue" optionLabel="value" optionValue="value" [(ngModel)]="selectedFilter"
+                        placeholder="Filter By" (onChange)="filterBookingsMethod()">
+                    </p-dropdown>
+                    <label for="currency">Filter By</label>
+                </span>
+                <span class="p-float-label" *ngIf="selectedFilter == 'Month'">
+                    <p-dropdown appendTo="body" inputId="id" [options]="monthFilter | keyvalue" optionLabel="value" optionValue="value"
+                        placeholder="Select Month" (onChange)="filterByMonth($event)">
+                    </p-dropdown>
+                    <label for="currency">Month</label>
+                </span>
+                <span class="p-float-label" *ngIf="selectedFilter == 'Year'">
+                            <p-calendar 
+                                [(ngModel)]="date" 
+                                view="year" 
+                                dateFormat="yy" />
+                    <label for="currency">Year</label>
+                </span>
+                <span class="p-float-label" *ngIf="selectedFilter == 'Date'">
+                    <p-calendar appendTo="body" dateFormat="dd/mm/yy" [(ngModel)]="dateQuery" (onSelect)="filterByDate()">
+                    </p-calendar>
+                    <label htmlFor="description">Date</label>
+                </span>
+                <span class="p-float-label" *ngIf="selectedFilter == 'Date Range'">
+                    <p-calendar appendTo="body" dateFormat="dd/mm/yy" [(ngModel)]="dateRange.start" >
+                    </p-calendar>
+                    <label htmlFor="description">From</label></span>
+                <span class="p-float-label" *ngIf="selectedFilter == 'Date Range'">
+                    <p-calendar appendTo="body" dateFormat="dd/mm/yy" [(ngModel)]="dateRange.end" (onSelect)="filterByDateRange()"></p-calendar>
+                    <!-- <p-calendar [(ngModel)]="dateRange" selectionMode="range" [readonlyInput]="true" inputId="range" [showTime]="false" (onSelect)="filterByEndDate($event)"></p-calendar> -->
+                    <label htmlFor="description">To</label>
+                </span>
+                
+                
+                
+                 
+                
+            </div>
+            
+    
+        
+        
+    </p-fieldset>
+        </div>
+    
+
+
+</div>
+<p-dialog [(visible)]="trialBalanceModal" [style]="{ width: '70%' }" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <p-table #dt1 [value]="trialbalance"  responsiveLayout="scroll" styleClass="p-datatable-striped" [rows]="10"
+                [globalFilterFields]="['id', 'accountType']"  rowGroupMode="rowspan" groupRowsBy="accountType"
+                [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                selectionMode="multiple" [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Trial Balance</h5>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr style="height: 0.25rem; font-size: 12px">
+                        <th style="font-size: larger; background-color: grey; color: white;">
+                            Account Type
+                        </th>
+                        <th style="font-size: larger; background-color: grey; color: white;">
+                            Name
+                        </th>
+                        <th style="font-size: larger; background-color: grey; color: white;">
+                            Debit
+                        </th>
+                        <th style="font-size: larger; background-color: grey; color: white;">
+                            Credit
+                        </th>
+                        
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-trial let-rowIndex="rowIndex" let-rowgroup="rowgroup" let-rowspan="rowspan">
+                    <tr style="height: 0.25rem; font-size: 11px">
+                        <td style="width: 15%; min-width: 10rem" *ngIf="rowgroup" [attr.rowspan]="rowspan">
+                            <span class="p-column-title">Voucher Ref</span>
+                            {{ trial.accountType }}
+                        </td>
+                        <td style="width: 10%; min-width: 10rem">
+                            <span class="p-column-title">Voucher No</span>
+                            {{ trial.name}}
+                        </td>
+                        <td style="width: 15%; min-width: 10rem">
+                            <span class="p-column-title">Agent</span>
+                            {{ trial.debitBalance }}
+                        </td>
+                        <td style="width: 15%; min-width: 10rem">
+                            <span class="p-column-title">Agent</span>
+                            {{ trial.creditBalance }}
+                        </td>
+                        
+                        
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                    <tr>
+                        <td colspan="2" class="text-right text-2xl font-bold">Totals</td>
+                        <td class="text-2xl">{{ debitBalance | currency: 'USD' }}</td>
+                        <td class="text-2xl">{{ creditTotal | currency: 'USD' }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        
+        
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Close" icon="pi pi-times" styleClass="p-button-danger"
+            ></p-button>
+    </ng-template>
+</p-dialog>
+
+
+

@@ -98,7 +98,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.monthlyAverageOrderValue = this.monthRevenue / this.monthOrders;
         });
 
-        this.salesOrderService.getMonthAllItems(humanReadableMonth)
+        this.salesOrderService.getMonthAllItems(humanReadableMonth, 0)
         .subscribe(res => {
             console.log(res.data);
             this.monthOrderItems = res.data;
@@ -118,7 +118,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.monthTop5DryGoods = sortedDryProducts.slice(0, 5);
         });
 
-        this.salesOrderService.getAllItems()
+        this.salesOrderService.getTodaySales(0)
         .subscribe(res => {
             console.log(res.data);
             this.orderItems = res.data;

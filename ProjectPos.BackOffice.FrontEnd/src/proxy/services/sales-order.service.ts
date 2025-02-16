@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { SalesOrderDto } from '../interfaces/sales-order-dto';
 import { ServiceResponse } from '../interfaces/service-response';
 import { environment } from 'src/environments/environment';
+import { start } from 'repl';
 
 // const url = sessionStorage.getItem('urls');
 const url = environment.apiUrl;
@@ -41,16 +42,20 @@ export class SalesOrderService {
     return this.http.get<any>(`${url}/getAllTodaySalesOrders`);
   }
 
-  getAllItems() {
-    return this.http.get<any>(`${url}/getAllSalesOrderItems`);
+  getTodaySales(id: number) {
+    return this.http.get<any>(`${url}/getAllSalesOrderItems?id=${id}`);
   }
 
-  getMonthAllItems(month: number) {
-    return this.http.get<any>(`${url}/getAllMonthSalesOrderItems/${month}`);
+  getMonthAllItems(month: number, id: number) {
+    return this.http.get<any>(`${url}/getAllMonthSalesOrderItems/${month}?id=${id}`);
   }
 
   getAllItemsByDate(date: string, id: number) {
     return this.http.get<any>(`${url}/getAllSalesOrderItem?id=${id}&date=${date}`);
+  }
+
+  getAllItemsByDateRange(start: string, end: string, id: number) {
+    return this.http.get<any>(`${url}/getAllSalesOrderItemByRange?id=${id}&start=${start}&end=${end}`);
   }
 
   getAllByDate(date: any) {

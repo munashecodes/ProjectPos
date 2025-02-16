@@ -40,6 +40,7 @@ import { CrudRoutingModule } from '../demo/components/pages/crud/crud-routing.mo
 import { ExpensesComponent } from './expenses/expenses.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { FieldsetModule } from 'primeng/fieldset';
 
 
 @NgModule({
@@ -53,6 +54,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
   ],
   imports: [
     CommonModule,
+    FieldsetModule,
     AccountingRoutingModule,
     FormsModule,
     ChartModule,

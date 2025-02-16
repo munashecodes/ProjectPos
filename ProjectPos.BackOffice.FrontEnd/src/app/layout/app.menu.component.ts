@@ -202,11 +202,11 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-bitcoin', 
                         routerLink: ['/cashier/manage-rates'] 
                     },
-                    { 
-                        label: 'BankNote Details', 
-                        icon: 'pi pi-fw pi-dollar', 
-                        routerLink: ['/cashier/bank-note-details'] 
-                    },
+                    // { 
+                    //     label: 'BankNote Details', 
+                    //     icon: 'pi pi-fw pi-dollar', 
+                    //     routerLink: ['/cashier/bank-note-details'] 
+                    // },
                 ]
             },
             { 
@@ -262,7 +262,12 @@ export class AppMenuComponent implements OnInit {
                         label: 'Stock Report', 
                         icon: 'pi pi-fw pi-id-card', 
                         routerLink: ['/reporting/stock-take'] 
-                    }
+                    },
+                    { 
+                        label: 'Cost Of Goods Sold Report', 
+                        icon: 'pi pi-fw pi-id-card', 
+                        routerLink: ['/reporting/cogs-report'] 
+                    },
                     // { 
                     //     label: 'Manage Product Prices', 
                     //     icon: 'pi pi-fw pi-id-card', 
@@ -280,7 +285,7 @@ export class AppMenuComponent implements OnInit {
 
         this.ProcurementItems = [
             { 
-                label: 'Purchacing', 
+                label: 'Purchasing', 
                 roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'StockController', 'ReceivingClerk'],
                 icon: 'pi pi-fw pi-id-card', 
                 routerLink: ['/procurement/orders'] ,

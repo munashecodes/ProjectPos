@@ -186,6 +186,245 @@ namespace ProjectPos.Services.AppServices
             }
         }
 
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItems(int? id)
+        {
+            try
+            {
+                var products = _context.SalesOrderItems!
+                    .Include(x => x.Product)
+                    .Include(x => x.SalesOrder)
+                    .Where(x => x.SalesOrder!.CreationTime.Date == DateTime.Today)
+                    .OrderBy(x => x.ProductName)
+                    .ToList();
+
+                var _products = _mapper.Map<IEnumerable<SalesOrderItem>, IEnumerable<SalesOrderItemDto>>(products);
+
+                var grouped = products
+                    .GroupBy(x => x.ProductName)
+                    .Select(x => new GroupedSalesOrderItemDto
+                    {
+                        Category = x.FirstOrDefault().Product!.Category,
+                        SubCategory = _context.SubCategories!.FirstOrDefault(z => z.Id == x.FirstOrDefault().Product!.SubCategoryId)!.Name,
+                        SubCategoryId = x.FirstOrDefault().Product!.SubCategoryId,
+                        ProductName = x.Key,
+                        Quantity = x.Sum(z => z.Quantity),
+                        UnitPrice = x.FirstOrDefault().UnitPrice,
+                        Price = x.Sum(z => z.Price),
+                        BarCode = x.FirstOrDefault().BarCode,
+                        ProductId = x.FirstOrDefault().ProductId,
+                        Unit = x.FirstOrDefault().Unit
+                    });
+
+                return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+                {
+                    Data = grouped,
+                    IsSuccess = true,
+                    Message = $"Found  products",
+                    Time = DateTime.Now,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while getting all products");
+                return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+                {
+                    IsSuccess = false,
+                    Message = $"Network Failed: {ex.Message}",
+                    Time = DateTime.Now,
+                };
+            }
+        }
+
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetMonthSalesOrderItems(int month, int? id)
+{
+    try
+    {
+        var products = new List<SalesOrderItem>();
+        if(id == 0)
+        {
+            products = _context.SalesOrderItems!
+            .Include(x => x.Product)
+            .Include(x => x.SalesOrder)
+            .Where(x => x.SalesOrder!.CreationTime.Month == month)
+            .OrderBy(x => x.ProductName)
+            .ToList();
+        }
+        else
+        {
+           products = _context.SalesOrderItems!
+            .Include(x => x.Product)
+            .Include(x => x.SalesOrder)
+            .Where(x => x.SalesOrder!.CreationTime.Month == month && x.SalesOrder.CreatorId == id)
+            .OrderBy(x => x.ProductName)
+            .ToList();
+        }
+
+        var _products = _mapper.Map<IEnumerable<SalesOrderItem>, IEnumerable<SalesOrderItemDto>>(products);
+
+        var grouped = products
+            .GroupBy(x => x.ProductName)
+            .Select(x => new GroupedSalesOrderItemDto
+            {
+                Category = x.FirstOrDefault().Product!.Category,
+                SubCategory = _context.SubCategories!.FirstOrDefault(z => z.Id == x.FirstOrDefault().Product!.SubCategoryId)!.Name,
+                SubCategoryId = x.FirstOrDefault().Product!.SubCategoryId,
+                ProductName = x.Key,
+                Quantity = x.Sum(z => z.Quantity),
+                UnitPrice = x.FirstOrDefault().UnitPrice,
+                Price = x.Sum(z => z.Price),
+                BarCode = x.FirstOrDefault().BarCode,
+                ProductId = x.FirstOrDefault().ProductId,
+                Unit = x.FirstOrDefault().Unit
+            });
+
+        return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+        {
+            Data = grouped,
+            IsSuccess = true,
+            Message = $"Found  products",
+            Time = DateTime.Now,
+        };
+
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error while getting all products");
+        return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+        {
+            IsSuccess = false,
+            Message = $"Network Failed: {ex.Message}",
+            Time = DateTime.Now,
+        };
+    }
+}
+
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItems(DateTime date, int? id)
+{
+    try
+    {
+        var products = new List<SalesOrderItem>();
+
+        if (id == 0)
+        {
+            products = _context.SalesOrderItems!
+            .Include(x => x.Product)
+            .Include(x => x.SalesOrder)
+            .OrderBy(x => x.ProductName)
+            .Where(x => x.SalesOrder!.CreationTime.Date == date.Date)
+            .ToList();
+        }
+        else
+        {
+            products = _context.SalesOrderItems!
+            .Include(x => x.Product)
+            .Include(x => x.SalesOrder)
+            .OrderBy(x => x.ProductName)
+            .Where(x => x.SalesOrder!.CreationTime.Date == date.Date && x.SalesOrder.CreatorId == id)
+            .ToList();
+        }
+        
+        var categories = _context.SubCategories!.ToList();
+
+        var grouped = products
+            .GroupBy(x => x.ProductName)
+            .Select(x => new GroupedSalesOrderItemDto
+            {
+                Category = x.FirstOrDefault()!.Product!.Category,
+                SubCategory = _context.SubCategories!.FirstOrDefault(z => z.Id == x.FirstOrDefault().Product!.SubCategoryId)!.Name,
+                ProductName = x.Key,
+                Quantity = x.Sum(z => z.Quantity),
+                UnitPrice = x.FirstOrDefault()!.UnitPrice,
+                Price = x.Sum(z => z.Price),
+                BarCode = x.FirstOrDefault()!.BarCode,
+                ProductId = x.FirstOrDefault()!.ProductId,
+                Unit = x.FirstOrDefault()!.Unit
+            });
+
+        return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+        {
+            Data = grouped,
+            IsSuccess = true,
+            Message = $"Found  products",
+            Time = DateTime.Now,
+        };
+
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error while getting all products");
+        return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+        {
+            IsSuccess = false,
+            Message = $"Network Failed: {ex.Message}",
+            Time = DateTime.Now,
+        };
+    }
+}
+
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItemsByRange(DateTime start, DateTime end, int? id)
+{
+    try
+    {
+        var products = new List<SalesOrderItem>();
+
+        if (id == 0)
+        {
+            products = _context.SalesOrderItems!
+            .Include(x => x.Product)
+            .Include(x => x.SalesOrder)
+            .OrderBy(x => x.ProductName)
+            .Where(x => x.SalesOrder!.CreationTime.Date >= start.Date && x.SalesOrder!.CreationTime.Date <= end.Date)
+            .ToList();
+        }
+        else
+        {
+            products = _context.SalesOrderItems!
+            .Include(x => x.Product)
+            .Include(x => x.SalesOrder)
+            .OrderBy(x => x.ProductName)
+            .Where(x => x.SalesOrder!.CreationTime.Date >= start.Date && x.SalesOrder!.CreationTime.Date <= end.Date && x.SalesOrder.CreatorId == id)
+            .ToList();
+        }
+
+        var categories = _context.SubCategories!.ToList();
+
+        var grouped = products
+            .GroupBy(x => x.ProductName)
+            .Select(x => new GroupedSalesOrderItemDto
+            {
+                Category = x.FirstOrDefault()!.Product!.Category,
+                SubCategory = _context.SubCategories!.FirstOrDefault(z => z.Id == x.FirstOrDefault().Product!.SubCategoryId)!.Name,
+                ProductName = x.Key,
+                Quantity = x.Sum(z => z.Quantity),
+                UnitPrice = x.FirstOrDefault()!.UnitPrice,
+                Price = x.Sum(z => z.Price),
+                BarCode = x.FirstOrDefault()!.BarCode,
+                ProductId = x.FirstOrDefault()!.ProductId,
+                Unit = x.FirstOrDefault()!.Unit
+            });
+
+        return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+        {
+            Data = grouped,
+            IsSuccess = true,
+            Message = $"Found  products",
+            Time = DateTime.Now,
+        };
+
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error while getting all products");
+        return new ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>>
+        {
+            IsSuccess = false,
+            Message = $"Network Failed: {ex.Message}",
+            Time = DateTime.Now,
+        };
+    }
+}
+
         public ServiceResponse<IEnumerable<SalesOrderDto>> GetAll(DateTime date)
         {
             try

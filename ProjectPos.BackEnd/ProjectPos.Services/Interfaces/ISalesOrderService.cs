@@ -19,9 +19,10 @@ namespace ProjectPos.Services.Interfaces
         public ServiceResponse<IEnumerable<SalesOrderDto>> GetByCustomerId(int id);
         public ServiceResponse<IEnumerable<SalesOrderDto>> GetAll();
         public Task<ServiceResponse<IEnumerable<SalesOrderDto>>> GetAllToday();
-        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItems();
-        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetMonthSalesOrderItems(int month);
-        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItems(DateTime date, int id);
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItems(int? id);
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetMonthSalesOrderItems(int month, int? id);
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItems(DateTime date, int? id);
+        public ServiceResponse<IEnumerable<GroupedSalesOrderItemDto>> GetSalesOrderItemsByRange(DateTime start, DateTime end, int? id);
         public ServiceResponse<IEnumerable<SalesOrderDto>> GetAll(DateTime date);
         public ServiceResponse<IEnumerable<SalesOrderDto>> GetAll(DateTime startDate, DateTime endDate);
         public ServiceResponse<IEnumerable<GetSalesOrderByUserDto>> GetAllDate(DateTime date);

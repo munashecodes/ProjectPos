@@ -38,11 +38,15 @@ import { CrudRoutingModule } from '../demo/components/pages/crud/crud-routing.mo
 import { InventoryRoutingModule } from '../inventory/inventory-routing.module';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
+import { CostOfGoodsSoldReportComponent } from './cost-of-goods-sold-report/cost-of-goods-sold-report.component';
+import { SalesReportComponent } from './sales-report/sales-report.component';
 
 
 @NgModule({
   declarations: [
-    StockTakeComponent
+    StockTakeComponent,
+    CostOfGoodsSoldReportComponent,
+    SalesReportComponent
   ],
   imports: [
     CommonModule,
