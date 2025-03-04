@@ -16,5 +16,6 @@ export interface PaymentDto extends FullAuditedEntityDto<number> {
     exchangeRate?: number;
     orderDate?: Date;
     vat?: number;
+    ecocashSuccessCode?: string
     methodOfPay?: SaleType;
 }

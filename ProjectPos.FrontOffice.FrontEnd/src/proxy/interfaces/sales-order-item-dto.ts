@@ -20,6 +20,7 @@ export interface SalesOrderItemDto extends EntityDto<number> {
     unit?: Unit;
     unitPrice?: number;
     price?: number;
+    isReturned?: boolean;
     currencyUnitPrice?: number;
     currencyPrice?: number;
 }

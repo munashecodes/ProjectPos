@@ -28,20 +28,8 @@ public class CostOfGoodsController
         [FromQuery] DateOnly endDate,
         [FromQuery] string? timeRange)
     {
-        // Handle different filter types (month, year, etc.)
-        var (calculatedStart, calculatedEnd) = CalculateDateRange(startDate, endDate, timeRange);
-        return await _costOfGoodsReport.GetCogsReport(calculatedStart, calculatedEnd);
+        return await _costOfGoodsReport.GetCogsReport(startDate, endDate);
     }
     
-    private (DateOnly? start, DateOnly? end) CalculateDateRange(DateOnly start, DateOnly? end, string? range)
-    {
-        // Implement logic for different filter types
-        // Example for "month" filter:
-        if (range == "current-month")
-        {
-            var now = DateOnly.FromDateTime(DateTime.Now);
-            return (new DateOnly(now.Year, now.Month, 1), now);
-        }
-        return (start, end);
-    }
+    
 }

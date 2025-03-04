@@ -23,22 +23,37 @@ public class CostOfGoodsReport : ICostOfGoodsReport
             .ToListAsync();
 
         var report = new CogsReportDto();
+        var groupedItems = new Dictionary<(int ProductId, decimal CostPerUnit), CogsReportItemDto>();
 
         foreach (var item in salesItems)
         {
-            var productId = item.ProductId ?? 0;
-            var costPerUnit = await GetProductCost(item.ProductId.Value, item.SalesOrder.CreationTime);
+            if (!item.ProductId.HasValue) continue;
 
-            report.Items.Add(new CogsReportItemDto
+            var costPerUnit = await GetProductCost(
+                item.ProductId.Value, 
+                item.SalesOrder.CreationTime
+            );
+
+            var key = (item.ProductId.Value, costPerUnit);
+            
+            if (groupedItems.TryGetValue(key, out var existingItem))
             {
-                ProductId = productId,
-                ProductName = item.Product?.Name ?? "N/A",
-                QuantitySold = item.Quantity ?? 0,
-                UnitPrice = item.UnitPrice ?? 0,
-                CostPerUnit = costPerUnit
-            });
+                existingItem.QuantitySold += item.Quantity ?? 0;
+            }
+            else
+            {
+                groupedItems.Add(key, new CogsReportItemDto
+                {
+                    ProductId = item.ProductId.Value,
+                    ProductName = item.ProductName ?? "N/A",
+                    QuantitySold = item.Quantity ?? 0,
+                    UnitPrice = item.UnitPrice ?? 0,
+                    CostPerUnit = costPerUnit
+                });
+            }
         }
 
+        report.Items = groupedItems.Values.ToList();
         report.TotalRevenue = report.Items.Sum(i => i.Revenue);
         report.TotalCogs = report.Items.Sum(i => i.Cogs);
         report.TotalProfit = report.TotalRevenue - report.TotalCogs;

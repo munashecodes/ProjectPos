@@ -1,117 +1,172 @@
 <div *ngIf="report">
-    <p-card header="Cost of Goods Report">
-      <p-tabView>
-        <p-tabPanel header="All">
-          <p-toolbar class="flex justify-start gap-8">
-            <p-dropdown 
-              [options]="categories | keyvalue" 
-              optionLabel="value"
-              optionValue="key"
-              [(ngModel)]="selectedCategory" 
-              placeholder="Select Category" 
-              (onChange)="onCategoryChange()">
-            </p-dropdown>
-            <p-dropdown 
-              [options]="filteredSubCategories" 
-              optionLabel="name"
-              [(ngModel)]="selectedSubCategory" 
-              placeholder="Select Subcategory">
-            </p-dropdown>
-            <p-button label="Apply Filters" (click)="applyFilters()"></p-button>
-            <p-button label="Refresh" icon="pi pi-sync" (click)="resetFilters()" styleClass="p-button-secondary"></p-button>
+  <p-card header="Cost of Goods Report">
+    <p-tabView>
+      <p-tabPanel header="Not Sold">
+        <p-toolbar class="flex justify-start gap-8">
+          <p-dropdown
+            [options]="categories | keyvalue"
+            optionLabel="value"
+            optionValue="key"
+            [(ngModel)]="selectedCategory"
+            placeholder="Select Category"
+            (onChange)="onCategoryChange()"
+          >
+          </p-dropdown>
+          <p-dropdown
+            [options]="filteredSubCategories"
+            optionLabel="name"
+            [(ngModel)]="selectedSubCategory"
+            placeholder="Select Subcategory"
+          >
+          </p-dropdown>
+          <p-button label="Apply Filters" (click)="applyFilters()"></p-button>
+          <p-button
+            label="Refresh"
+            icon="pi pi-sync"
+            (click)="resetFilters()"
+            styleClass="p-button-secondary"
+          ></p-button>
         </p-toolbar>
-  
-          <h3>Total Estimated Profit: {{ estimatedProfit | currency }}</h3>
-  
-          <p-table [value]="filteredItems" tableStyle="min-width: 50rem">
+
+        <h3>Total Estimated Profit: {{ estimatedProfit | currency }}</h3>
+
+        <p-table [value]="filteredItems" tableStyle="min-width: 50rem">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Product</th>
+              <th>Quantity On Hand</th>
+              <th>Average Cost</th>
+              <th>Current Price</th>
+              <th>Estimated Profit</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td>{{ item.productName }}</td>
+              <td>{{ item.quantityOnHand }}</td>
+              <td>{{ item.averageCost | currency }}</td>
+              <td>{{ item.currentPrice | currency }}</td>
+              <td>
+                <p [ngClass]="{
+                  'profit': item.estimatedProfit > 0,
+                  'loss': item.estimatedProfit < 0,
+                  'zero-profit': item.estimatedProfit === 0
+                }">
+                  {{ item.estimatedProfit | currency }}
+                </p>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-tabPanel>
+
+      <p-tabPanel header="Sold">
+        <p-toolbar class="flex justify-start gap-8">
+          <p-dropdown
+            [(ngModel)]="filter.timeRange"
+            placeholder="Select Time Range"
+            [options]="timeRanges"
+            (onChange)="onTimeRangeChange()"
+            class="p-mr-2"
+          >
+          </p-dropdown>
+
+          <div *ngIf="filter.timeRange === 'date'">
+            
+           
+            <p-calendar
+              [(ngModel)]="filter.startDate"
+              [showIcon]="true"
+              (onSelect)="onTimeRangeChange()"
+              placeholder="Select Date"
+              dateFormat="dd MM yy"
+              [readonlyInput]="true"
+            ></p-calendar>
+          </div>
+
+          <div *ngIf="filter.timeRange === 'month'">
+           
+            <p-calendar
+              [(ngModel)]="month"
+              view="month"
+              (onSelect)="onTimeRangeChange()"
+              placeholder="Select Month"
+              dateFormat="MM yy"
+              [readonlyInput]="true"
+            ></p-calendar>
+          </div>
+
+          <div *ngIf="filter.timeRange === 'year'">
+            <label>Year</label>
+            <p-calendar
+              [(ngModel)]="year"
+              view="year"
+              (onSelect)="onTimeRangeChange()"
+              placeholder="Select Year"
+              dateFormat="yy"
+              [readonlyInput]="true"
+            ></p-calendar>
+          </div>
+
+          <div *ngIf="filter.timeRange === 'custom'">
+            <label>Date Range</label>
+            <p-calendar
+              [(ngModel)]="rangeDates"
+              placeholder="Select Date Range"
+              selectionMode="range"
+              [readonlyInput]="true"
+            ></p-calendar>
+          </div>
+          <p-button label="Apply Filters" (click)="applyFilterSold()"></p-button>
+          <p-button
+            label="Refresh"
+            (click)="loadReportSold()"
+            icon="pi pi-sync"
+            class="p-button-success"
+          ></p-button>
+        </p-toolbar>
+
+        <div *ngIf="soldReport">
+          <h3>Total Revenue: {{ soldReport.totalRevenue | currency }}</h3>
+          <h3>
+            Total Cost Of Goods Sold: {{ soldReport.totalCogs | currency }}
+          </h3>
+          <h3>Total Profit: {{ soldReport.totalProfit | currency }}</h3>
+
+          <p-table
+            [value]="soldReport.items"
+            tableStyle="min-width: 50rem"
+            class="p-mt-3"
+          >
             <ng-template pTemplate="header">
               <tr>
                 <th>Product</th>
-                <th>Quantity On Hand</th>
-                <th>Average Cost</th>
-                <th>Current Price</th>
-                <th>Estimated Profit</th>
+                <th>Quantity Sold</th>
+                <th>Unit Price</th>
+                <th>COGS</th>
+                <th>Profit</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-item>
               <tr>
                 <td>{{ item.productName }}</td>
-                <td>{{ item.quantityOnHand }}</td>
-                <td>{{ item.averageCost | currency }}</td>
-                <td>{{ item.currentPrice | currency }}</td>
-                <td>{{ item.estimatedProfit | currency }}</td>
+                <td>{{ item.quantitySold }}</td>
+                <td>{{ item.unitPrice | currency }}</td>
+                <td>{{ item.cogs | currency }}</td>
+                <td>
+                  <p [ngClass]="{
+                    'profit': item.profit > 0,
+                    'loss': item.profit < 0,
+                    'zero-profit': item.profit === 0
+                  }">
+                    {{ item.profit | currency }}
+                  </p>
+                </td>
               </tr>
             </ng-template>
           </p-table>
-        </p-tabPanel>
-  
-        <p-tabPanel header="Sold">
-            
-                <p-toolbar class="flex justify-start gap-8">
-                    <p-dropdown 
-      [(ngModel)]="filter.timeRange" 
-      placeholder="Select Time Range" 
-      [options]="timeRanges"
-      (onChange)="onTimeRangeChange()"
-      class="p-mr-2">
-      
-    </p-dropdown>
-
-    <div *ngIf="filter.timeRange === 'date'">
-      <label>Date</label>
-      <p-calendar [(ngModel)]="filter.startDate" [showIcon]="true"></p-calendar>
-    </div>
-
-    <div *ngIf="filter.timeRange === 'month'">
-      <label>Month</label>
-      <p-calendar [(ngModel)]="filter.startDate" view="month" dateFormat="mm/yy" [readonlyInput]="true"></p-calendar>
-    </div>
-
-    <div *ngIf="filter.timeRange === 'year'">
-      <label>Year</label>
-      <p-calendar [(ngModel)]="filter.startDate" view="year" dateFormat="yy" [readonlyInput]="true"></p-calendar>
-    </div>
-
-    <div *ngIf="filter.timeRange === 'custom'">
-      <label>Date Range</label>
-      <p-calendar [(ngModel)]="rangeDates" selectionMode="range" [readonlyInput]="true"></p-calendar>
-    </div>
-
-    <p-button label="Load" (click)="loadReport()" icon="pi pi-refresh" class="p-button-success"></p-button>
-                  </p-toolbar>
-                
-                  <div *ngIf="soldReport">
-                    
-                      <h3>Total Revenue: {{ soldReport.totalRevenue | currency }}</h3>
-                      <h3>Total Cost Of Goods Sold: {{ soldReport.totalCogs | currency }}</h3>
-                      <h3>Total Profit: {{ soldReport.totalProfit | currency }}</h3>
-                   
-                
-                    <p-table [value]="soldReport.items" tableStyle="min-width: 50rem" class="p-mt-3">
-                      <ng-template pTemplate="header">
-                        <tr>
-                          <th>Product</th>
-                          <th>Quantity Sold</th>
-                          <th>Unit Price</th>
-                          <th>COGS</th>
-                          <th>Profit</th>
-                        </tr>
-                      </ng-template>
-                      <ng-template pTemplate="body" let-item>
-                        <tr>
-                          <td>{{ item.productName }}</td>
-                          <td>{{ item.quantitySold }}</td>
-                          <td>{{ item.unitPrice | currency }}</td>
-                          <td>{{ item.cogs | currency }}</td>
-                          <td>{{ item.profit | currency }}</td>
-                        </tr>
-                      </ng-template>
-                    </p-table>
-                  </div>
-
-           
-            
-          </p-tabPanel>
-      </p-tabView>
-    </p-card>
-  </div>
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </p-card>
+</div>

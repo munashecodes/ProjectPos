@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectPos.Data.DbContexts;
 
@@ -11,9 +12,11 @@ using ProjectPos.Data.DbContexts;
 namespace ProjectPos.Data.Migrations
 {
     [DbContext(typeof(ProjectPosDbContext))]
-    partial class ProjectPosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250304110818_addedEcocashSuccessCode")]
+    partial class addedEcocashSuccessCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2635,9 +2638,6 @@ namespace ProjectPos.Data.Migrations
 
                     b.Property<decimal?>("UnitPrice")
                         .HasColumnType("decimal(12, 2)");
-
-                    b.Property<bool>("isReturned")
-                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 

@@ -31,6 +31,7 @@ namespace ProjectPos.Services.DTOs
         [Column(TypeName = "decimal(12, 2)")]
         public decimal? VAT { get; set; }
         public Currency? Currency { get; set; }
+        public string? EcocashSuccessCode { get; set; }
         public SaleType? MethodOfPay { get; set; }
         public DateTime? OrderDate { get; set; }
     }

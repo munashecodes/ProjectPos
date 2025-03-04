@@ -435,6 +435,7 @@ namespace ProjectPos.Services.AppServices
                 if (day == null)
                 {
                     var companies = _context.SalesOrders!
+                        .Include(x => x.Payments)
                         .Include(x => x.Customer!)
                             .ThenInclude(c => c.Address)
                         .Include(x => x.SalesOrderItems!)
@@ -505,6 +506,7 @@ namespace ProjectPos.Services.AppServices
                 startDate = startDate.AddDays(1);
                 endDate = endDate.AddDays(1);
                 var companies = _context.SalesOrders!
+                    .Include(x => x.Payments)
                     .Include(x => x.Customer!)
                         .ThenInclude(c => c.Address)
                     .Include(x => x.SalesOrderItems!)
@@ -554,6 +556,7 @@ namespace ProjectPos.Services.AppServices
                 if (day == null)
                 {
                     var sales = _context.SalesOrders!
+                        .Include(c => c.Payments)
                     .Include(x => x.Customer!)
                         .ThenInclude(c => c.Address)
                     .Include(x => x.SalesOrderItems!)
@@ -578,6 +581,8 @@ namespace ProjectPos.Services.AppServices
                             UserId = x.Key,
                             SalesOrders = x.OrderByDescending(z => z.CreationTime).ToList(),
                             AmountTotal = x.ToList().Sum(z => z.Price),
+                            MethodOfPay = x.FirstOrDefault().Payments.FirstOrDefault(p => p.SalesOrderId == x.FirstOrDefault().Id).MethodOfPay,
+                           EcocashSuccessCode = x.FirstOrDefault().Payments.FirstOrDefault(p => p.SalesOrderId == x.FirstOrDefault().Id).EcocashSuccessCode,
                             UserName = _context.SystemUsers!.FirstOrDefault(y => y.Id == x.Key)!.FullName,
                             BalanceTotal = x.ToList().Sum(z => z.Balance),
                             PaidTotal = x.ToList().Sum(z => z.Price) - x.ToList().Sum(z => z.Balance),
@@ -740,6 +745,8 @@ namespace ProjectPos.Services.AppServices
                         UserId = x.Key,
                         SalesOrders = x.OrderByDescending(z => z.CreationTime).ToList(),
                         AmountTotal = x.ToList().Sum(z => z.Price),
+                        MethodOfPay = x.FirstOrDefault().Payments.FirstOrDefault(p => p.SalesOrderId == x.FirstOrDefault().Id).MethodOfPay,
+                        EcocashSuccessCode = x.FirstOrDefault().Payments.FirstOrDefault(p => p.SalesOrderId == x.FirstOrDefault().Id).EcocashSuccessCode,
                         UserName = _context.SystemUsers!.FirstOrDefault(y => y.Id == x.Key)!.FullName,
                         BalanceTotal = x.ToList().Sum(z => z.Balance),
                         PaidTotal = x.ToList().Sum(z => z.Price) - x.ToList().Sum(z => z.Balance),
@@ -1190,8 +1197,9 @@ namespace ProjectPos.Services.AppServices
             {
                 
                 var ord = _mapper.Map<SalesOrderDto, SalesOrder>(order);
+
+                ord.SalesOrderItems = AdjustStockOnUpdate(ord.SalesOrderItems);
                 var _order = _context.SalesOrders!.Update(ord);
-                
                 _context.SaveChanges();
                 return new ServiceResponse<SalesOrderDto>
                 {
@@ -1213,21 +1221,34 @@ namespace ProjectPos.Services.AppServices
             }
         }
 
-        // public void AdjustStockOnUpdate(SalesOrderDto order, SalesOrder salesOrder)
-        // {
-        //     Dictionary<int, int> inventories = [];
-        //     foreach (var item in salesOrder.SalesOrderItems)
-        //     {
-        //         if (item.ProductId is not null && !inventories.ContainsKey((int)item.ProductId))
-        //         {
-        //             var quantityChange = order.SalesOrderItems.FirstOrDefault(x => x.ProductId == item.ProductId)!.Quantity;
-        //             var newQuantityChange = (item.Quantity == quantityChange) ? 0 : ;
-        //             inventories.Add((int)item.ProductId);
-        //         }
-        //         
-        //     }
-        //     
-        // }
+        public ICollection<SalesOrderItem> AdjustStockOnUpdate(ICollection<SalesOrderItem> orders)
+        {
+            
+            
+            foreach (var item in orders)
+            {
+                if (item.Quantity < 0)
+                {
+                    var product = _context.ProductInventories.AsNoTracking().FirstOrDefault(i => i.Id == item.ProductId);
+                    var toBeReturned = 0 - item.Quantity;
+                    product.QuantityOnHand += toBeReturned;
+                        ;
+                    _context.ProductInventories.Update(product);
+                    _context.SaveChanges();
+                    
+                    item.isReturned = true;
+                    
+                }
+
+                
+
+            }
+
+            return orders;
+
+
+
+        }
 
 
         // Helper method to adjust account balance

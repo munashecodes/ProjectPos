@@ -16,6 +16,7 @@ namespace ProjectPos.Services.DTOs
         public Unit? Unit { get; set; }
         [Column(TypeName = "decimal(12, 2)")]
         public decimal? UnitPrice { get; set; }
+        public bool isReturned { get; set; } =  false;
         [Column(TypeName = "decimal(12, 2)")]
         public decimal? Price { get; set; }
     }

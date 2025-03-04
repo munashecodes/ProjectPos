@@ -548,11 +548,8 @@ export class PointOfSaleComponent implements OnInit {
             }
             else{
               this.product = { ...foundProduct}
-              this.confirm = {
-                quantity: foundProduct.isWeighted === true ? this.barcodeComponents.weight : 1
-              };
-              
-              this.confirmAddToCart();
+              this.confirm = 
+              this.quantityModal = true
             }
           }
           else{
@@ -1061,6 +1058,7 @@ export class PointOfSaleComponent implements OnInit {
           this.newOder.payments = []
         }
         this.newOder.payments.push(this.payment);
+        this.payment = {} as PaymentDto;
         this.save();
       }
     }

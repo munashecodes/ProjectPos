@@ -33,6 +33,7 @@ namespace ProjectPos.Data.EntityModels
         public Currency? Currency { get; set; }
         public SaleType? MethodOfPay { get; set; }
         public DateTime OrderDate { get; set; }
+        public string? EcocashSuccessCode { get; set; }
         public int? ProofOfPaymentId { get; set; }
         public bool IsPostedToJournal { get; set; } = false;
 

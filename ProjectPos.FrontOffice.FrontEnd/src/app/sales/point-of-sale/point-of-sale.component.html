@@ -385,8 +385,23 @@
 							<input type="number" pInputText id="description" [(ngModel)]="paidValue" required autofocus
 								[ngClass]="{'ng-invalid ng-dirty' : submitted && !paidValue}" (input)="getChange($event)"/>
 						</div>
+						
 					</div>
 				</div>
+				<div *ngIf="newOder.saleType === 'EcoCash'">
+					<h3>Ecocash Reference </h3>
+				<div class="grid">
+					<div class="col-12">
+						<div class="field" >
+							
+							<input type="text" pInputText id="description" [(ngModel)]="payment.ecocashSuccessCode" required autofocus
+								[ngClass]="{'ng-invalid ng-dirty' : submitted && !payment.ecocashSuccessCode}" (input)="getChange($event)"/>
+						</div>
+					</div>
+				</div>
+
+				</div>
+				
 				<h3>Change:  		<b>{{changeValue | currency}}</b> </h3>
 
 				<div class="keypad">
@@ -421,7 +436,7 @@
             <ng-template pTemplate="footer">
 				<button pButton pRipple label="CANCEL" class="button" style="background-color: red;"
 					(click)="payModal = false" (click)="clear2()"></button>
-                <button pButton pRipple icon="pi pi-check" class="button" style="background-color: rgb(5, 154, 5);" label="Ok"
+                <button pButton pRipple icon="pi pi-check" [disabled]="(newOder.saleType === 'EcoCash' && !payment.ecocashSuccessCode)" class="button" style="background-color: rgb(5, 154, 5);" label="Ok"
 					(click)="saveOrder()"></button>
             </ng-template>
         </p-dialog>

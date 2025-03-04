@@ -15,7 +15,6 @@ export class ReportService {
     let params = new HttpParams();
     if (filter.startDate) params = params.set('startDate', filter.startDate);
     if (filter.endDate) params = params.set('endDate', filter.endDate);
-    if (filter.timeRange) params = params.set('timeRange', filter.timeRange);
     
     return this.http.get<ServiceResponse<CogsReport>>(`${baseUrl}/CostOfGoods/cogs`, { params });
   }

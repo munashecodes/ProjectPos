@@ -70,6 +70,9 @@
                                 <th pSortableColumn="country">Balance <p-sortIcon field="country"></p-sortIcon></th>
                                 <th pSortableColumn="country">Status <p-sortIcon field="country"></p-sortIcon></th>
                                 <th pSortableColumn="country">Date <p-sortIcon field="country"></p-sortIcon></th>
+                                <th pSortableColumn="country">Method Of Payment<p-sortIcon field="country"></p-sortIcon></th>
+                                <th pSortableColumn="country">Ecocash Code <p-sortIcon field="country"></p-sortIcon></th>
+
                                 <th></th>
                             </tr>
                         </ng-template>
@@ -124,6 +127,14 @@
                                 <td style="width:14.28%; min-width:10rem;">
                                     <span class="p-column-title">Date Effected</span>
                                     {{ order.creationTime | date: 'd MMMM y' }}
+                                </td>
+                                <td style="width:14.28%; min-width:10rem;">
+                                    <span class="p-column-title">Date Effected</span>
+                                    {{ order.payments[0].methodOfPay }}
+                                </td>
+                                <td style="width:14.28%; min-width:10rem;">
+                                    <span class="p-column-title">Date Effected</span>
+                                    {{  order.payments[0].ecocashSuccessCode || "N/A"}}
                                 </td>
                                 <td style="width:14.28%; min-width:8rem;">
                                     <div class="flex">

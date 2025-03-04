@@ -21,6 +21,8 @@ import { UserService } from 'src/proxy/services/user.service';
 })
 export class CostOfGoodsSoldReportComponent implements OnInit {
   rangeDates: any[] = []
+  year: any
+  month: any;
   filter: ReportFilter = {};
   soldReport: CogsReport = {} as CogsReport;
   products: ProductInventoryDto[] = [];
@@ -116,14 +118,63 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
   }
 
   onTimeRangeChange() {
-    // Logic to handle time range selection
-    if (this.filter.timeRange === 'custom') {
-      this.filter.startDate = this.rangeDates[0] || null;
-      this.filter.endDate = this.rangeDates[1] || null;
-    } else {
-      this.filter.startDate = null;
-      this.filter.endDate = null;
+    const now = new Date();
+
+    switch (this.filter.timeRange) {
+      case 'today':
+        this.filter.startDate = new Date(); // Set to today
+        this.filter.endDate = new Date(); // Set to today
+        break;
+      case 'month':
+        this.filter.startDate = this.getStartOfMonth(this.month);
+        this.filter.endDate = this.getEndOfMonth(this.month);
+        break;
+      case 'year':
+        this.filter.startDate = this.getStartOfYear(this.year);
+        this.filter.endDate = this.getEndOfYear(this.year);
+        break;
+      case 'custom':
+        this.filter.startDate = this.rangeDates[0] || null;
+        this.filter.endDate = this.rangeDates[1] || null;
+        break;
+      case 'date':
+        this.filter.startDate = this.filter.startDate
+        this.filter.endDate = this.filter.startDate
+        break;
+      default:
+        this.filter.startDate = null;
+        this.filter.endDate = null;
+        break;
     }
+  }
+  applyFilterSold(){
+    this.filter.startDate = new Date(this.filter.startDate.getTime() + 2 *  60 * 60 * 1000).toISOString().split('T')[0]
+    this.filter.endDate = new Date(this.filter.endDate.getTime() + 2 *  60 * 60 * 1000).toISOString().split('T')[0]
+    const filterPayload: ReportFilter = {
+      startDate: this.filter.startDate,
+      endDate: this.filter.endDate,
+      timeRange: this.filter.timeRange
+    };
+
+    this.reportService.getCogsReport(filterPayload).subscribe(res => this.soldReport = res.data || {} as CogsReport);
+  }
+
+  getStartOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  getEndOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  }
+
+  getStartOfYear(date: Date): Date {
+    return new Date(date.getFullYear(), 0, 1);
+  }
+
+  getEndOfYear(date: Date): Date {
+    return new Date(date.getFullYear(), 11, 31);
   }
 
 }
+
+

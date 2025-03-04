@@ -41,7 +41,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<CashUpDto>
                 {
                     IsSuccess = true,
-                    Message = "Customer Registered Successfully",
+                    Message = "Cashup Saved Successfully",
                     Time = DateTime.Now,
                 };
             }
@@ -51,7 +51,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<CashUpDto>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Cashup addition Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
@@ -154,7 +154,7 @@ namespace ProjectPos.Services.AppServices
                 return new ServiceResponse<IEnumerable<GetCashUpList>>
                 {
                     IsSuccess = false,
-                    Message = $"Customer Registration Failed: {ex.Message}",
+                    Message = $"Getting cashup Failed: {ex.Message}",
                     Time = DateTime.Now,
                 };
             }
