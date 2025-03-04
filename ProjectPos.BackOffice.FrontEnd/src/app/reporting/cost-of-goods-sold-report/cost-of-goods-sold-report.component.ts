@@ -3,10 +3,14 @@ import { Table } from 'primeng/table';
 import { Category } from 'src/proxy/enums/category';
 import { OrderOption } from 'src/proxy/enums/order-option';
 import { ReconFilter } from 'src/proxy/enums/recon-filter';
+import { CogsReport, CostOfGoodsReport, CostOfGoodsReportItem } from 'src/proxy/interfaces/cogs-report-dtos';
 import { GroupedGrvItemsDto } from 'src/proxy/interfaces/grouped-grv-items-dto';
+import { ProductInventoryDto } from 'src/proxy/interfaces/product-inventory-dto';
 import { SubCategoryDto } from 'src/proxy/interfaces/sub-category-dto';
 import { UserDto } from 'src/proxy/interfaces/user-dto';
 import { GoodsReceivedVoucherLineService } from 'src/proxy/services/goods-received-voucher-line.service';
+import { ProductInventoryService } from 'src/proxy/services/product-inventory.service';
+import { ReportFilter, ReportService } from 'src/proxy/services/report.service';
 import { SubCategoryService } from 'src/proxy/services/sub-category.service';
 import { UserService } from 'src/proxy/services/user.service';
 
@@ -16,291 +20,110 @@ import { UserService } from 'src/proxy/services/user.service';
   styleUrls: ['./cost-of-goods-sold-report.component.scss']
 })
 export class CostOfGoodsSoldReportComponent implements OnInit {
- 
-  products: GroupedGrvItemsDto[] = [];
-
-  filteredProducts: GroupedGrvItemsDto[] = [];
-
-  totalCount = 0;
-
-  totalSales = 0;
-
-  openingCount = 0;
-
-  openingCost = 0;
-
-  closingCount = 0;
-
-  closingCost = 0;
-
-  totalProfit = 0;
-
-  user: UserDto = {} as UserDto;
-
-  tailor: UserDto = {} as UserDto;
-
-  tailors: UserDto[] = [];
-
-  totalRevenue = 0;
-
-  reconFilters: ReconFilter[] = Object.values(ReconFilter);
-
-  recon: ReconFilter = ReconFilter.ALL;
-
-  month = new Date();
-
-  date = new Date().toISOString();
-
-  start = new Date().toISOString();
-
-  end = new Date().toISOString();
-  
-  rangeDates: Date[] | undefined;
-
-  subCat: SubCategoryDto = {} as SubCategoryDto;
-
+  rangeDates: any[] = []
+  filter: ReportFilter = {};
+  soldReport: CogsReport = {} as CogsReport;
+  products: ProductInventoryDto[] = [];
+  report: CostOfGoodsReport = {} as CostOfGoodsReport; // Your report data
+  categories = Category; 
   subCategories: SubCategoryDto[] = [];
-
   filteredSubCategories: SubCategoryDto[] = [];
+  selectedCategory: Category = {} as Category;
+  estimatedProfit: number = 0;
+  selectedSubCategory: SubCategoryDto = {} as SubCategoryDto;
+  filteredItems:CostOfGoodsReportItem[] = [];
+  timeRanges = [
+    'today',
+    'month',
+    'year',
+    'custom',
+    'date'
 
-  filterOptions: OrderOption[] = Object.values(OrderOption);
-
-  option = OrderOption.TODAY;
-  
-  cols: any[] = [];
-
-  departments: Category[] = Object.values(Category);
-
-  department: Category = Category.DryGoods;
-
+  ]
   constructor(
-    private grvLinesService: GoodsReceivedVoucherLineService,
-    private subCategoryService: SubCategoryService,
-    private userService: UserService
-  ) { }
-
+    private reportService: ReportService,
+     private productInventoryService: ProductInventoryService,
+        private categoryService: SubCategoryService,
+  ) {
+    
+  }
   ngOnInit(): void {
-    this.user = JSON.parse(sessionStorage.getItem('loggedUser') || '{}');
-
-    this.grvLinesService.getTodaySales()
-    .subscribe(res => {
-      console.log(res)
+    this.filter = {
+      startDate: new Date(new Date().getTime() + 2 *  60 * 60 * 1000).toISOString().split('T')[0],
+      endDate: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString().split('T')[0],
+      timeRange: 'today'
+    }
+    this.loadReport();
+    this.loadReportSold()
+    this.productInventoryService.getAllList()
+    .subscribe((res) => {
+      console.log(res);
       this.products = res.data;
-      this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-      this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-      this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-      this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-      this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-      this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
-      this.totalProfit = this.openingCost + this.totalSales - this.closingCost;
+    });
 
-      this.filteredProducts = this.products;
-    })
-    
-
-    this.subCategoryService.getAllList()
-    .subscribe(res => {
-      console.log(res)
+    // get all subCategories from rhe database
+    this.categoryService.getAllList()
+    .subscribe((res) => {
+      console.log(res);
       this.subCategories = res.data;
-      this.filteredSubCategories = this.subCategories;
-    })
-
-    this.userService.getAllList()
-    .subscribe(res => {
-      console.log(res)
-      this.tailors = res.data;
-    })
+    });
   }
 
-  onMainFilter(){
-    if(this.option === OrderOption.TODAY){
-      this.getTodaySales();
+  loadReport() {
+    this.reportService.getCostOfGoodsReport().subscribe(res => {
+      this.report = res.data || {} as CostOfGoodsReport
+      this.filteredItems = this.report.items;
+      this.estimatedProfit = this.report.totalEstimatedProfit;
     }
+    );
   }
 
-  getTodaySales() {
-    this.totalCount = 0!;
-    this.totalSales = 0;
-    this.openingCost = 0;
-    this.openingCount = 0;
-    this.closingCost = 0;
-    this.closingCount = 0;
-    this.totalProfit = 0;
-    this.totalRevenue = 0;
-    var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
-
-    this.grvLinesService.getTodaySales()
-    .subscribe(res => {
-      console.log(res)
-      this.products = res.data;
-      this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-      this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-      this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-      this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-      this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-      this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
-      this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
-
-      this.filteredProducts = this.products;
-    })
+  loadReportSold() {
+    this.reportService.getCogsReport(this.filter).subscribe(res => this.soldReport = res.data || {} as CogsReport);
   }
 
-  getMonthSales() {
-    this.totalCount = 0!;
-    this.totalSales = 0;
-    this.openingCost = 0;
-    this.openingCount = 0;
-    this.closingCost = 0;
-    this.closingCount = 0;
-    this.totalProfit = 0;
-    this.totalRevenue = 0;
-    let mon = this.month.getMonth() + 1;
-    var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
+  onCategoryChange() {
+    // Filter subcategories based on the selected category
+    this.filteredSubCategories = this.subCategories
+      .filter(subCat => subCat.category === this.selectedCategory);
+  }
+
+  applyFilters() {
     
-    this.grvLinesService.getMonthAllItems(mon)
-    .subscribe(res => {
-      console.log(res)
-      this.products = res.data;
-      this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-      this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-      this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-      this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-      this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-      this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
-      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
+    this.filteredItems = this.report.items.filter(item => {
+      const matchesSubCategory = this.selectedSubCategory 
+        ? item.subCategoryId === this.selectedSubCategory.id 
+        : true;
 
-      this.filteredProducts = this.products;
-    })
+      return matchesSubCategory;
+    });
+
+    this.estimatedProfit = this.filteredItems.reduce((acc, cur) => acc + cur.estimatedProfit, 0);
   }
 
-  getDateSales() {
-    this.totalCount = 0!;
-    this.totalSales = 0;
-    this.openingCost = 0;
-    this.openingCount = 0;
-    this.closingCost = 0;
-    this.closingCount = 0;
-    this.totalProfit = 0;
-    this.totalRevenue = 0;
-    this.date = new Date(new Date(this.date).getTime() + (2 * 60 * 60 * 1000)).toISOString();
-    var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
-    
-    this.grvLinesService.getAllItemsByDate(this.date)
-    .subscribe(res => {
-      console.log(res)
-      this.products = res.data;
-      this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-      this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-      this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-      this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-      this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-      this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
-      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
-
-      this.filteredProducts = this.products;
-    })
+  resetFilters() {
+    // Reset the filters and show all items
+    this.selectedCategory = {} as Category;
+    this.selectedSubCategory = {} as SubCategoryDto;
+    this.filteredItems = this.report.items; // Reset to all items
+    this.estimatedProfit = this.report.totalEstimatedProfit;
+    this.filteredSubCategories = []; // Clear subcategory options
   }
-
-  getDateRangeSales() {
-    if(this.rangeDates![1]){
-      this.totalCount = 0!;
-      this.totalSales = 0;
-      this.openingCost = 0;
-      this.openingCount = 0;
-      this.closingCost = 0;
-      this.closingCount = 0;
-      this.totalProfit = 0;
-      this.totalRevenue = 0;
-      this.start = new Date(new Date(this.rangeDates![0]).getTime() + (2 * 60 * 60 * 1000)).toISOString();
-      this.end = new Date(new Date(this.rangeDates![1]).getTime() + (2 * 60 * 60 * 1000)).toISOString();
-      var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
-      
-      this.grvLinesService.getAllItemsByDateRange(this.start, this.end)
-      .subscribe(res => {
-        console.log(res)
-        this.products = res.data;
-        this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-        this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-        this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-        this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-        this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-        this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-        this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
-        this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
-
-        this.filteredProducts = this.products;
-      })
-    }
-  }
-
-  filterByCategory() {
-    this.totalCount = 0!;
-    this.totalSales = 0;
-    this.openingCost = 0;
-    this.openingCount = 0;
-    this.closingCost = 0;
-    this.closingCount = 0;
-    this.totalProfit = 0;
-    this.totalRevenue = 0;
-    this.filteredProducts = this.products.filter(product => product.subCategoryId === this.subCat.id);
-    this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-    this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-    this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-    this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-    this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-    this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-    this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
-    this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
-  }
-
-  onClearFilter() {
-    this.totalCount = 0!;
-    this.totalSales = 0;
-    this.openingCost = 0;
-    this.openingCount = 0;
-    this.closingCost = 0;
-    this.closingCount = 0;
-    this.totalProfit = 0;
-    this.totalRevenue = 0;
-    this.filteredSubCategories = this.subCategories;
-    this.filteredProducts = this.products;
-    this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-    this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-    this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-    this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-    this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-    this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-    this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
-    this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
-  }
-
-  filterByDepartment() {
-    this.totalCount = 0!;
-    this.totalSales = 0;
-    this.openingCost = 0;
-    this.openingCount = 0;
-    this.closingCost = 0;
-    this.closingCount = 0;
-    this.totalProfit = 0;
-    this.totalRevenue = 0;
-    this.filteredProducts = this.products.filter(product => product.category === this.department);
-    this.filteredSubCategories = this.subCategories.filter(subCat => subCat.category === this.department);
-    this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
-    this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
-    this.openingCount = this.products.reduce((acc, product) => acc + product.openingQuantity!, 0);
-    this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
-    this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
-    this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-    this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
-    this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
-  }
+  
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  onTimeRangeChange() {
+    // Logic to handle time range selection
+    if (this.filter.timeRange === 'custom') {
+      this.filter.startDate = this.rangeDates[0] || null;
+      this.filter.endDate = this.rangeDates[1] || null;
+    } else {
+      this.filter.startDate = null;
+      this.filter.endDate = null;
+    }
   }
 
 }

@@ -243,9 +243,11 @@ export class ProductPriceComponent {
               (x) => x.id === this.newProductPrice.id
             );
 
-            if (index !== -1) {
-              this.productPrices[index] = res.data;
-            }
+            this.productPrices = [
+              ...this.productPrices.slice(0, index),
+              res.data,
+              ...this.productPrices.slice(index + 1),
+            ]
           }
 
           this.messageService.add({

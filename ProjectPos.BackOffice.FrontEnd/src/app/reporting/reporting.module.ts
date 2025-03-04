@@ -40,6 +40,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { CostOfGoodsSoldReportComponent } from './cost-of-goods-sold-report/cost-of-goods-sold-report.component';
 import { SalesReportComponent } from './sales-report/sales-report.component';
+import { CardModule } from 'primeng/card';
+
 
 
 @NgModule({
@@ -59,6 +61,7 @@ import { SalesReportComponent } from './sales-report/sales-report.component';
     StyleClassModule,
     PanelMenuModule,
     ButtonModule,
+    CardModule,
     DashboardsRoutingModule,
     ToastModule,
     DialogModule,
@@ -85,7 +88,9 @@ import { SalesReportComponent } from './sales-report/sales-report.component';
     TabMenuModule,
     TabViewModule,
     FieldsetModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    CalendarModule,
+  
   ],
   providers: [
     ConfirmationService
