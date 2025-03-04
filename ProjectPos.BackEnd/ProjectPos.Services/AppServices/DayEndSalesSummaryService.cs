@@ -342,21 +342,22 @@ namespace ProjectPos.Services.AppServices
                     {
                         SaleType.EcoCash => 24,
                         SaleType.Cash => 16,
-                        SaleType.Credit => 18,
+                        // SaleType.Credit => 18,
                         _ => 17
                     },
+                    18,
                     23, // Revenue account
                     25,  // VAT account
                     27, // Cost of sales
                     28  // Inventory account
-                }).Distinct();
+                }).Distinct().ToList();
 
                 // Fetch accounts in a single query
                 var accounts = await _context.Accounts
                     .Where(a => requiredAccountIds.Contains(a.Id))
                     .ToDictionaryAsync(a => a.Id);
 
-                if (accounts.Count != requiredAccountIds.Count())
+                if (accounts.Count != requiredAccountIds.Count)
                     throw new Exception("Missing accounts for journal processing.");
 
                 var journalEntries = new List<JournalEntry>();

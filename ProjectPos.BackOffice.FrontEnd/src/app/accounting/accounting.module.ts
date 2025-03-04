@@ -41,7 +41,10 @@ import { ExpensesComponent } from './expenses/expenses.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FieldsetModule } from 'primeng/fieldset';
-
+import { IncomeStatementComponent } from './income-statement/income-statement.component';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { PanelModule } from 'primeng/panel';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [
@@ -50,11 +53,16 @@ import { FieldsetModule } from 'primeng/fieldset';
     CreditNotesComponent,
     DeptorsAndCreditorsComponent,
     TrialBalanceComponent,
-    ExpensesComponent
+    ExpensesComponent,
+    IncomeStatementComponent
   ],
   imports: [
     CommonModule,
     FieldsetModule,
+    ProgressSpinnerModule,
+    PanelMenuModule,
+    PanelModule,
+    ProgressBarModule,
     AccountingRoutingModule,
     FormsModule,
     ChartModule,

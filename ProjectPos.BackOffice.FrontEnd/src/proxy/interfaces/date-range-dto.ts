@@ -1,4 +1,4 @@
 export interface DateRangeDto {
-    start?: string,
-    end?: string,
+    start?: any,
+    end?: any,
 }

@@ -4,6 +4,5 @@ export enum SaleType {
   EcoCash = 'EcoCash',
   CreditCard = 'Credit Card',
   Credit = 'Credit',
-  Prepayment = 'Prepayment',
 }
 

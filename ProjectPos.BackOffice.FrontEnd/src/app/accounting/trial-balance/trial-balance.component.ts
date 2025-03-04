@@ -62,6 +62,8 @@ export class TrialBalanceComponent implements OnInit {
   }
 
   async filterByDateRange(){
+    this.dateRange.start = new Date(this.dateRange.start.getTime() + (2 * 60 * 60 * 1000)).toISOString()
+    this.dateRange.end = new Date(this.dateRange.end.getTime() + (2 * 60 * 60 * 1000)).toISOString()
     this.trialBalanceService.getAll(this.dateRange).subscribe((res) => {
       if(res.isSuccess){
         this.trialbalance = res.data;

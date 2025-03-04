@@ -21,6 +21,12 @@ public class GroupedGrvItemsDto : EntityDto<int>
     [Column(TypeName = "decimal(12, 2)")]
     public decimal? TotalCost { get; set; }
     [Column(TypeName = "decimal(12, 2)")]
+    public decimal? SellingPrice { get; set; }
+    [Column(TypeName = "decimal(12, 2)")]
+    public decimal? ProfitMade { get; set; }
+    [Column(TypeName = "decimal(12, 2)")]
+    public decimal? RevenueMade { get; set; }
+    [Column(TypeName = "decimal(12, 2)")]
     public decimal? OpeningStock { get; set; }
     [Column(TypeName = "decimal(12, 2)")]
     public decimal? ClosingStock { get; set; }

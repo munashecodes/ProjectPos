@@ -578,7 +578,8 @@ export class PurchaseOrderComponent implements OnInit {
     this.submitted = false;
     this.deleteModal = false
     this.approveModal = false;
-
+    this.newOrder = {} as PurchaceOrderDto
+    this.company = {} as CompanyDto
     this.quantity = 0;
     this.totalPrice = 0;
     this.selectedStockItem = {} as any;

@@ -41,19 +41,21 @@ export class AppTopBarComponent implements OnInit {
 
     reconItems: SalesOrderItemDto[] = [];
 
-    fruits: SalesOrderItemDto[] = [];
+    liqour: SalesOrderItemDto[] = [];
 
-    beverages: SalesOrderItemDto[] = [];
+    dryGroceries: SalesOrderItemDto[] = [];
 
-    spices: SalesOrderItemDto[] = [];
+    healthAndBeauty: SalesOrderItemDto[] = [];
 
-    sweets: SalesOrderItemDto[] = [];
+    confectionery: SalesOrderItemDto[] = [];
 
-    vegetables: SalesOrderItemDto[] = [];
+    sweetsAndChips: SalesOrderItemDto[] = [];
 
-    cereals: SalesOrderItemDto[] = [];
+    stationery: SalesOrderItemDto[] = [];
 
-    unallocated :  SalesOrderItemDto[] = [];
+    perishables :  SalesOrderItemDto[] = [];
+
+    smallItems :  SalesOrderItemDto[] = [];
 
     currentDate: Date = new Date();
     
@@ -207,14 +209,15 @@ export class AppTopBarComponent implements OnInit {
     }
     
     categorizeItems() {
-        const categories = ['Fruits', 'Vegetables', 'Beverage', 'Spices', 'Sweets', 'Cereals', 'Unallocated'];
-        this.fruits = this.reconItems.filter(x => x.subCategory === categories[0]);
-        this.vegetables = this.reconItems.filter(x => x.subCategory === categories[1]);
-        this.beverages = this.reconItems.filter(x => x.subCategory === categories[2]);
-        this.spices = this.reconItems.filter(x => x.subCategory === categories[3]);
-        this.sweets = this.reconItems.filter(x => x.subCategory === categories[4]);
-        this.cereals = this.reconItems.filter(x => x.subCategory === categories[5]);
-        this.unallocated = this.reconItems.filter(x => x.subCategory === categories[6]);
+        const categories = ['LIQUOR', 'DRY GROCERY', 'HEALTH AND BEAUTY', 'CONFECTIONERY', 'SWEETS AND BEAUTY', 'STATIONERY', 'PERISHABLES', 'SMALL ITEMS'];
+        this.liqour = this.reconItems.filter(x => x.subCategory === categories[0]);
+        this.dryGroceries = this.reconItems.filter(x => x.subCategory === categories[1]);
+        this.healthAndBeauty = this.reconItems.filter(x => x.subCategory === categories[2]);
+        this.confectionery = this.reconItems.filter(x => x.subCategory === categories[3]);
+        this.sweetsAndChips = this.reconItems.filter(x => x.subCategory === categories[4]);
+        this.stationery = this.reconItems.filter(x => x.subCategory === categories[5]);
+        this.perishables = this.reconItems.filter(x => x.subCategory === categories[6]);
+        this.smallItems = this.reconItems.filter(x => x.subCategory === categories[7]);
     }
     
     onCashUp() {
@@ -225,10 +228,8 @@ export class AppTopBarComponent implements OnInit {
     
         // Logo and address
         pdf.setFontSize(8);
-        pdf.addImage('assets/demo/images/logos/FARM-LOGO.png\n', 'PNG', 40, 5, 25, 15);
-        pdf.text('Andile Fresh Farm Produce | Post Office Box 000'
-            + '\n0 Magwaza Complex | Mkhosana Main\nVictoria Falls | Zimbabwe\n+263 77 957 7216 | example@email.com'
-            + '\nVat No 0000000 | BP No 0000000\nwww.andilefreshfarm.com', 50, 25, { align: 'center' });
+        pdf.text('T&T Solar | Post Office Box 642'
+        +'\nChinotimba\nVictoria Falls | Zimbabwe\n+263 783 134 362 | ', 50, 25, { align: 'center' });
     
         pdf.setFontSize(12);
         pdf.text('TELLER:            '
@@ -243,13 +244,14 @@ export class AppTopBarComponent implements OnInit {
     
         // Consolidating all items into one array
         let groupedData = [
-            { category: 'Sweets', items: this.sweets },
-            { category: 'Vegetables', items: this.vegetables },
-            { category: 'Fruits', items: this.fruits },
-            { category: 'Beverage', items: this.beverages },
-            { category: 'Spices', items: this.spices },
-            { category: 'Cereals', items: this.cereals },
-            { category: 'Unallocated', items: this.unallocated }
+            { category: 'LIQUOR', items: this.liqour },
+            { category: 'DRY GROCERY', items: this.dryGroceries},
+            { category: 'HEALTH AND BEAUTY', items: this.healthAndBeauty },
+            { category: 'CONFECTIONERY', items: this.confectionery },
+            { category: 'SWEETS AND CHIPS', items: this.sweetsAndChips },
+            { category: 'STATIONERY', items: this.stationery },
+            { category: 'PERISHABLES', items: this.perishables },
+            { category: 'SMALL ITEMS', items: this.smallItems }
         ];
     
         let tableData: any[] = [];
@@ -300,8 +302,8 @@ export class AppTopBarComponent implements OnInit {
             },
         });
     
-        pdf.autoPrint();
-        window.open(pdf.output('bloburl'));
+        //pdf.autoPrint();
+        //window.open(pdf.output('bloburl'));
     }
     
   

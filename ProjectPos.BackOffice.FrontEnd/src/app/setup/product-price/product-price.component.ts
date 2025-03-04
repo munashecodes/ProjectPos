@@ -87,7 +87,7 @@ export class ProductPriceComponent {
   }
 
   updatePriceProducts(){
-    this.products = this.products.filter(p => !this.productPrices.some(pp => pp.product?.id === p.id));
+    this.products = this.products.filter(p => !this.productPrices.some(pp => pp.productInventoryId === p.id));
 
   }
 
@@ -142,10 +142,12 @@ export class ProductPriceComponent {
       (res) => {
         console.log(res);
         if (res.isSuccess) {
+          this.products = this.products.filter(p => p.id !== this.newProductPrice.productInventoryId)
           if (!Array.isArray(this.productPrices)) {
             this.productPrices = [];
           } else {
             this.productPrices = [ res.data, ...this.productPrices];
+            
           }
 
           this.messageService.add({

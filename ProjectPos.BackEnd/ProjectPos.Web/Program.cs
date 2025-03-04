@@ -37,7 +37,7 @@ namespace ProjectPos.Web
                 q.AddTrigger(opts => opts
                     .ForJob(jobKey)
                     .WithIdentity("EndOfDayTrigger")
-                    .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(23, 0))); // 11:00 PM
+                    .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(23, 00))); // 11:00 PM
             });
 
             builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
@@ -86,6 +86,7 @@ namespace ProjectPos.Web
             builder.Services.AddTransient<IPaySlipService, PaySlipService>();
             builder.Services.AddTransient<ITrialBalanceService, TrialBalanceService>();
             builder.Services.AddTransient<IGoodsReceivedVoucherLineService, GoodsReceivedVoucherLineService>();
+            builder.Services.AddTransient<IIncomeStatementService, IncomeStatementService>();
             builder.Services.AddScheduler();
 
             builder.Services.AddControllers();

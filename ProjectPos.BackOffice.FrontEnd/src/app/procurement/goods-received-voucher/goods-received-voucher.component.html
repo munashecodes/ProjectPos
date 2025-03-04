@@ -868,7 +868,7 @@
             </p-dialog>
 
             <!-- pay maodal -->
-            <p-dialog [(visible)]="payModal"  [modal]="true" [style]="{width:'300px'}" class="p-fluid">
+            <p-dialog [(visible)]="payModal"  [modal]="true" (onHide)="clearTable()" [style]="{width:'300px'}" class="p-fluid">
                 <ng-template pTemplate="content text-center">
                     <div class="formgrid grid">
                         <div class="field col-12">
@@ -881,7 +881,7 @@
                             <div class="field">
                                 <label for="company">Method Of Pay</label>
                                 <p-dropdown appendTo="body" class="p-inputtext-sm" [(ngModel)]="payment.methodOfPay" inputId="name"
-                                    [options]="paymentTypes" placeholder="Method Of Pay" [disabled]="!payment.currency">
+                                    [options]="paymentTypes | keyvalue" optionLabel="value" optionValue="key" placeholder="Method Of Pay" [disabled]="!payment.currency">
                                 </p-dropdown>
                             </div>
                             <div class="formgrid grid">

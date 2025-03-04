@@ -137,6 +137,9 @@ namespace ProjectPos.Web
                 .ForMember(dest => dest.BarCode, opt => opt.MapFrom(src => src.Product!.BarCode))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Product!.Name));
             CreateMap<ProductPriceDto, ProductPrice>();
+            
+            CreateMap<DayEndSalesSummaryDto, DayEndSalesSummary>();
+            CreateMap<DayEndSalesSummary, DayEndSalesSummaryDto>();
 
             CreateMap<ProofOfPayment, ProofOfPaymentDto>()
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.Name));

@@ -83,6 +83,8 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                  .Where(x => x.GoodsReceivedVoucher!.CreationTime.Date == date.Date && x.GoodsReceivedVoucher.IsApproved)
                  .OrderBy(x => x.Product!.Name)
                  .ToList();
+            
+            var productPrices = _context.ProductPrices!.ToList();
 
             var _products = _mapper.Map<IEnumerable<GoodsReceivedVoucherLine>, IEnumerable<GoodsReceivedVoucherLineDto>>(products);
 
@@ -96,10 +98,22 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                     ProductName = x.Key,
                     Quantity = x.Sum(z => z.ReceivedQuantity),
                     UnitCost = (decimal)x.FirstOrDefault().UnitPrice,
+                    SellingPrice = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
                     TotalCost = (decimal)x.Sum(z => z.Price),
                     BarCode = x.FirstOrDefault().Product.BarCode,
                     ProductId = x.FirstOrDefault().ProductInventoryId,
+                    ProfitMade = 
+                        CalculateProfit
+                        (
+                            (decimal)productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
+                            (decimal)x.FirstOrDefault()!.UnitPrice!,
+                            (decimal)(openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                ? openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0 + (x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0))
+                        ),
                     Unit = x.FirstOrDefault().Unit,
+                    RevenueMade = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price * (decimal)((x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                        ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0)),
                     VoucherNumber = x.FirstOrDefault().VoucherNumber,
                     OpeningQuantity = openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
                                         ? openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0,
@@ -188,6 +202,8 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                  .Where(x => x.GoodsReceivedVoucher!.CreationTime.Month == month && x.GoodsReceivedVoucher.IsApproved)
                  .OrderBy(x => x.Product!.Name)
                  .ToList();
+            
+            var productPrices = _context.ProductPrices!.ToList();
 
             var _products = _mapper.Map<IEnumerable<GoodsReceivedVoucherLine>, IEnumerable<GoodsReceivedVoucherLineDto>>(products);
 
@@ -201,10 +217,22 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                     ProductName = x.Key,
                     Quantity = x.Sum(z => z.ReceivedQuantity),
                     UnitCost = (decimal)x.FirstOrDefault()!.UnitPrice!,
+                    SellingPrice = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
+                    ProfitMade = 
+                        CalculateProfit
+                        (
+                            (decimal)productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
+                            (decimal)x.FirstOrDefault()!.UnitPrice!,
+                            (decimal)(openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                ? openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0 + (x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                    ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0))
+                        ),
                     TotalCost = (decimal)x.Sum(z => z.Price)!,
                     BarCode = x.FirstOrDefault()!.Product!.BarCode,
                     ProductId = x.FirstOrDefault()!.ProductInventoryId,
                     Unit = x.FirstOrDefault()!.Unit,
+                    RevenueMade = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price * (decimal)((x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                        ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0)),
                     VoucherNumber = x.FirstOrDefault()!.VoucherNumber,
                     OpeningQuantity = openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
                                         ? openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0,
@@ -240,6 +268,11 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
         }
     }
 
+    private decimal CalculateProfit(decimal sellingPrice, decimal costPrice, decimal quantity)
+    {
+        return (sellingPrice * quantity) - (costPrice * quantity);
+    }
+    
     public ServiceResponse<List<GroupedGrvItemsDto>> GetGrvItemsByRange(DateTime start, DateTime end)
     {
         try
@@ -300,6 +333,8 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                             && x.GoodsReceivedVoucher.IsApproved)
                  .OrderBy(x => x.Product!.Name)
                  .ToList();
+            
+            var productPrices = _context.ProductPrices!.ToList();
 
             var _products = _mapper.Map<IEnumerable<GoodsReceivedVoucherLine>, IEnumerable<GoodsReceivedVoucherLineDto>>(products);
 
@@ -313,6 +348,18 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                     ProductName = x.Key,
                     Quantity = x.Sum(z => z.ReceivedQuantity),
                     UnitCost = (decimal)x.FirstOrDefault().UnitPrice,
+                    RevenueMade = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price * (decimal)((x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                        ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0)),
+                    SellingPrice = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
+                    ProfitMade = 
+                        CalculateProfit
+                        (
+                            (decimal)productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
+                            (decimal)x.FirstOrDefault()!.UnitPrice!,
+                            (decimal)(openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                ? openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0 + (x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                    ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0))
+                        ),
                     TotalCost = (decimal)x.Sum(z => z.Price),
                     BarCode = x.FirstOrDefault().Product.BarCode,
                     ProductId = x.FirstOrDefault().ProductInventoryId,
@@ -378,6 +425,8 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                  .OrderBy(x => x.Product!.Name)
                  .ToList();
 
+            var productPrices = _context.ProductPrices!.ToList();
+
             var _products = _mapper.Map<IEnumerable<GoodsReceivedVoucherLine>, IEnumerable<GoodsReceivedVoucherLineDto>>(products);
 
             var grouped = products
@@ -391,8 +440,21 @@ public class GoodsReceivedVoucherLineService : IGoodsReceivedVoucherLineService
                     Quantity = x.Sum(z => z.ReceivedQuantity),
                     UnitCost = (decimal)x.FirstOrDefault().UnitPrice,
                     TotalCost = (decimal)x.Sum(z => z.Price),
+                    RevenueMade = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price * (decimal)(openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                        ? openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0 + (x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                        ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0)),
+                    SellingPrice = productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
                     BarCode = x.FirstOrDefault().Product.BarCode,
                     ProductId = x.FirstOrDefault().ProductInventoryId,
+                    ProfitMade = 
+                        CalculateProfit
+                        (
+                            (decimal)productPrices.FirstOrDefault(pp => pp.ProductInventoryId == x.FirstOrDefault().ProductInventoryId).Price,
+                            (decimal)x.FirstOrDefault()!.UnitPrice!,
+                            (decimal)(openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                ? openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0 + (x.Sum(z => z.ReceivedQuantity)) - (closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null
+                                    ? closingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId)!.QuantityOnHand : 0))
+                        ),
                     Unit = x.FirstOrDefault().Unit,
                     VoucherNumber = x.FirstOrDefault().VoucherNumber,
                     OpeningQuantity = openingInventory!.FirstOrDefault(z => z.Id == x.FirstOrDefault()!.ProductInventoryId) != null

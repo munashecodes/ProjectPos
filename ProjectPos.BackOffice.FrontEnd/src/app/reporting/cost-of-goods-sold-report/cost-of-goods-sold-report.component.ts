@@ -33,13 +33,15 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
 
   closingCost = 0;
 
-  balance = 0;
+  totalProfit = 0;
 
   user: UserDto = {} as UserDto;
 
   tailor: UserDto = {} as UserDto;
 
   tailors: UserDto[] = [];
+
+  totalRevenue = 0;
 
   reconFilters: ReconFilter[] = Object.values(ReconFilter);
 
@@ -90,7 +92,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
       this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
       this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
       this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.balance = this.openingCost + this.totalSales - this.closingCost;
+      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
+      this.totalProfit = this.openingCost + this.totalSales - this.closingCost;
 
       this.filteredProducts = this.products;
     })
@@ -123,8 +126,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCount = 0;
     this.closingCost = 0;
     this.closingCount = 0;
-    this.balance = 0;
-
+    this.totalProfit = 0;
+    this.totalRevenue = 0;
     var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
 
     this.grvLinesService.getTodaySales()
@@ -137,7 +140,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
       this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
       this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
       this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.balance = this.openingCost + this.totalSales - this.closingCost;
+      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
+      this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
 
       this.filteredProducts = this.products;
     })
@@ -150,8 +154,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCount = 0;
     this.closingCost = 0;
     this.closingCount = 0;
-    this.balance = 0;
-
+    this.totalProfit = 0;
+    this.totalRevenue = 0;
     let mon = this.month.getMonth() + 1;
     var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
     
@@ -165,7 +169,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
       this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
       this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
       this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.balance = this.openingCost + this.totalSales - this.closingCost;
+      this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
+      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
 
       this.filteredProducts = this.products;
     })
@@ -178,8 +183,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCount = 0;
     this.closingCost = 0;
     this.closingCount = 0;
-    this.balance = 0;
-
+    this.totalProfit = 0;
+    this.totalRevenue = 0;
     this.date = new Date(new Date(this.date).getTime() + (2 * 60 * 60 * 1000)).toISOString();
     var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
     
@@ -193,7 +198,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
       this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
       this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
       this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-      this.balance = this.openingCost + this.totalSales - this.closingCost;
+      this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
+      this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
 
       this.filteredProducts = this.products;
     })
@@ -207,8 +213,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
       this.openingCount = 0;
       this.closingCost = 0;
       this.closingCount = 0;
-      this.balance = 0;
-
+      this.totalProfit = 0;
+      this.totalRevenue = 0;
       this.start = new Date(new Date(this.rangeDates![0]).getTime() + (2 * 60 * 60 * 1000)).toISOString();
       this.end = new Date(new Date(this.rangeDates![1]).getTime() + (2 * 60 * 60 * 1000)).toISOString();
       var id = this.recon === ReconFilter.USER ? this.tailor.id : 0;
@@ -223,7 +229,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
         this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
         this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
         this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-        this.balance = this.openingCost + this.totalSales - this.closingCost;
+        this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
+        this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
 
         this.filteredProducts = this.products;
       })
@@ -237,8 +244,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCount = 0;
     this.closingCost = 0;
     this.closingCount = 0;
-    this.balance = 0;
-
+    this.totalProfit = 0;
+    this.totalRevenue = 0;
     this.filteredProducts = this.products.filter(product => product.subCategoryId === this.subCat.id);
     this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
     this.totalSales = this.products.reduce((acc, product) => acc + product.totalCost!, 0);
@@ -246,7 +253,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
     this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
     this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-    this.balance = this.openingCost + this.totalSales - this.closingCost;
+    this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
+    this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
   }
 
   onClearFilter() {
@@ -256,8 +264,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCount = 0;
     this.closingCost = 0;
     this.closingCount = 0;
-    this.balance = 0;
-
+    this.totalProfit = 0;
+    this.totalRevenue = 0;
     this.filteredSubCategories = this.subCategories;
     this.filteredProducts = this.products;
     this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
@@ -266,7 +274,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
     this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
     this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-    this.balance = this.openingCost + this.totalSales - this.closingCost;
+    this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
+    this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
   }
 
   filterByDepartment() {
@@ -276,7 +285,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCount = 0;
     this.closingCost = 0;
     this.closingCount = 0;
-    this.balance = 0;
+    this.totalProfit = 0;
+    this.totalRevenue = 0;
     this.filteredProducts = this.products.filter(product => product.category === this.department);
     this.filteredSubCategories = this.subCategories.filter(subCat => subCat.category === this.department);
     this.totalCount = this.products.reduce((acc, product) => acc + product.quantity!, 0);
@@ -285,7 +295,8 @@ export class CostOfGoodsSoldReportComponent implements OnInit {
     this.openingCost = this.products.reduce((acc, product) => acc + product.openingStock!, 0);
     this.closingCount = this.products.reduce((acc, product) => acc + product.closingQuantity!, 0);
     this.closingCost = this.products.reduce((acc, product) => acc + product.closingStock!, 0);
-    this.balance = this.openingCost + this.totalSales - this.closingCost;
+    this.totalProfit = this.products.reduce((acc, product) => acc + product.profitMade!, 0);
+    this.totalRevenue = this.products.reduce((acc, product) => acc + product.revenueMade!, 0);
   }
 
   onGlobalFilter(table: Table, event: Event) {

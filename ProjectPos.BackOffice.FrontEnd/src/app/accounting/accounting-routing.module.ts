@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { InvoicingComponent } from './invoicing/invoicing.component';
 import { PaymentsComponent } from './payments/payments.component';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { IncomeStatementComponent } from './income-statement/income-statement.component';
+import { TrialBalanceComponent } from './trial-balance/trial-balance.component';
 
 const routes: Routes = [
   {
@@ -16,6 +18,14 @@ const routes: Routes = [
   {
     path: 'expenses',
     component: ExpensesComponent
+  },
+  {
+    path: 'income-statement',
+    component: IncomeStatementComponent
+  },
+  {
+    path: 'trial-balance',
+    component: TrialBalanceComponent
   }
 ];
 

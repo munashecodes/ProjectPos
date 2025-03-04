@@ -8,6 +8,7 @@ export interface GroupedGrvItemsDto {
     category?: Category;
     subCategory?: string;
     subCategoryId?: number;
+    sellingPrice?: number;
     barCode?: string;
     productId?: number;
     product?: ProductInventoryDto;
@@ -22,4 +23,6 @@ export interface GroupedGrvItemsDto {
     closingQuantity?: number;
     openingStock?: number;
     closingStock?: number;
+    profitMade?: number;
+    revenueMade?: number;
 }

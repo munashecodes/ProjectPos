@@ -62,9 +62,10 @@
                                 <th pSortableColumn="quantity" style="width:20%; min-width:10rem;">Purchaced Qty<p-sortIcon field="quantity"></p-sortIcon></th>
                                 <th style="width:20%; min-width:10rem;">Closing Qty</th>
                                 <th style="width:20%; min-width:10rem;">Opening Cost</th>
-                                <th pSortableColumn="price" style="width:20%; min-width:10rem;">Purchaced Cost<p-sortIcon field="price"></p-sortIcon></th>
                                 <th style="width:20%; min-width:10rem;">Closing Cost</th>
-                                <th style="width:20%; min-width:10rem;">Balance</th>
+                                <th pSortableColumn="price" style="width:20%; min-width:10rem;">Purchased Cost<p-sortIcon field="price"></p-sortIcon></th>
+                                <th style="width:20%; min-width:10rem;">Revenue Made</th>
+                                <th style="width:20%; min-width:10rem;">Profit Made</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-item>
@@ -99,29 +100,35 @@
                                 </td>
                                 <td style="width:15%; min-width:10rem;">
                                     <span class="p-column-title">price</span>
-                                    {{item.totalCost | currency:'USD':'symbol'}}
-                                </td>
-                                <td style="width:15%; min-width:10rem;">
-                                    <span class="p-column-title">price</span>
                                     {{item.closingStock | currency:'USD':'symbol'}}
                                 </td>
                                 <td style="width:15%; min-width:10rem;">
                                     <span class="p-column-title">price</span>
-                                    {{item.closingStock + item.totalCost - item.closingStock | currency:'USD':'symbol'}}
+                                    {{item.totalCost | currency:'USD':'symbol'}}
+                                </td>
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">price</span>
+                                    {{item.revenueMade| currency:'USD':'symbol'}}
+                                </td>
+                                
+                                <td style="width:15%; min-width:10rem;">
+                                    <span class="p-column-title">price</span>
+                                    {{item.profitMade | currency:'USD':'symbol'}}
                                 </td>
                                 
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="footer" >
                             <tr style="font-size: larger;">
-                                <th colspan="3" class="text-left">Total Purchaces</th>
+                                <th colspan="3" class="text-left">Total Purchases</th>
                                 <th class="text-left">{{openingCount.toFixed(2) }}</th>
                                 <th class="text-left">{{totalCount.toFixed(2) }}</th>
-                                <th class="text-left">{{openingCount.toFixed(2) }}</th>
+                                <th class="text-left">{{closingCount.toFixed(2) }}</th>
                                 <th class="text-left">{{(openingCost) | currency:'USD' }}</th>
                                 <th class="text-left">{{(totalSales) | currency:'USD' }}</th>
                                 <th class="text-left">{{(closingCost) | currency:'USD' }}</th>
-                                <th class="text-left">{{(balance) | currency:'USD' }}</th>
+                                <th class="text-left">{{(totalRevenue) | currency:'USD' }}</th>
+                                <th class="text-left">{{(totalProfit) | currency:'USD' }}</th>
                             </tr>
                         </ng-template>
                     </p-table>

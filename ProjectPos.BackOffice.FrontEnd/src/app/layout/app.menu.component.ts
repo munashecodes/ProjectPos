@@ -192,6 +192,7 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-file-import', 
                         routerLink: ['/cashier/cashier-reports'] 
                     },
+                    
                     { 
                         label: 'Recons Reports', 
                         icon: 'pi pi-fw pi-file-import', 
@@ -259,6 +260,11 @@ export class AppMenuComponent implements OnInit {
                     //     routerLink: ['/setup/sub-categories'] 
                     // },
                     { 
+                        label: 'Sales Report', 
+                        icon: 'pi pi-fw pi-id-card', 
+                        routerLink: ['/reporting/sales-report'] 
+                    },
+                    { 
                         label: 'Stock Report', 
                         icon: 'pi pi-fw pi-id-card', 
                         routerLink: ['/reporting/stock-take'] 
@@ -302,6 +308,12 @@ export class AppMenuComponent implements OnInit {
 
         this.AcountsItems = [
             { 
+                label: 'Income Statement', 
+                roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
+                icon: 'pi pi-fw pi-id-card', 
+                routerLink: ['/accounting/income-statement'] 
+            },,
+            { 
                 label: 'Proof of Payments', 
                 roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
                 icon: 'pi pi-fw pi-id-card', 
@@ -312,6 +324,12 @@ export class AppMenuComponent implements OnInit {
                 roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk', 'Cashier'],
                 icon: 'pi pi-fw pi-id-card', 
                 routerLink: ['/accounting/invoicing'] 
+            },
+            { 
+                label: 'Trial Balance', 
+                roles: ['Admin', 'SysAdmin', 'SysDeveloper', 'Manager', 'Supervisor', 'Accountant', 'AccountsClerk'],
+                icon: 'pi pi-fw pi-id-card', 
+                routerLink: ['/accounting/trial-balance'] 
             },
             // { 
             //     label: 'Credit Notes', 

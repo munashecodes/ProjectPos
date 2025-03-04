@@ -121,7 +121,7 @@ export class GoodsReceivedVoucherComponent implements OnInit {
 
   cols: any[] = [];
 
-  paymentTypes: SaleType[] = Object.values(SaleType);
+  paymentTypes = SaleType;
 
   currencies: Currency [] = Object.values(Currency);
 
@@ -388,9 +388,14 @@ export class GoodsReceivedVoucherComponent implements OnInit {
     this.approveModal = true;
     this.submitted = false;
   }
+
+  clearTable(){
+    this.payment = {} as PurchaceOrderPaymentDto
+  }
   
   edit(grv: GoodsReceivedVoucherDto){
     this.newGrv = { ...grv};
+    this.newGrv.creationTime = new Date(grv.creationTime)
     this.editModal = true;
     this.submitted = false;
   }
